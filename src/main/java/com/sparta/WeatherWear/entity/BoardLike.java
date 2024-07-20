@@ -1,4 +1,5 @@
 package com.sparta.WeatherWear.entity;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 

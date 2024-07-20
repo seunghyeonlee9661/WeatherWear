@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.dto;
 
-import jakarta.persistence.Column;
+import com.sparta.WeatherWear.enums.UserGender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +25,7 @@ public class UserRequestDTO {
     private Integer stn;
     
     @NotBlank(message = "성별은 필수 항목입니다.")
-    private String gender;
+    private UserGender gender;
 
     @NotNull(message = "지역을 선택해주세요.")
     private Date birthday;

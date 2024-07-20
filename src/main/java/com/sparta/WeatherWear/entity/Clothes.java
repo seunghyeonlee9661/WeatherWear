@@ -1,5 +1,7 @@
 package com.sparta.WeatherWear.entity;
 
+import com.sparta.WeatherWear.enums.ClothesColor;
+import com.sparta.WeatherWear.enums.ClothesType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -15,10 +17,10 @@ public class Clothes {
     private User user;
 
     @Column(name = "color", length = 50, nullable = false)
-    private String color;
+    private ClothesColor color;
 
     @Column(name = "type", length = 50, nullable = false)
-    private String type;
+    private ClothesType type;
 
     @Column(name = "image", length = 255, nullable = false)
     private String image;
