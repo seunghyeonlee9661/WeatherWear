@@ -1,7 +1,5 @@
 package com.sparta.WeatherWear.entity;
 
-import com.sparta.WeatherWear.entity.Board;
-import com.sparta.WeatherWear.entity.CommentLike;
 import jakarta.persistence.*;
 import lombok.Getter;
 import java.util.Date;

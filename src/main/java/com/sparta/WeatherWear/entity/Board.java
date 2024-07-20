@@ -16,14 +16,17 @@ public class Board {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "contents", columnDefinition = "MEDIUMTEXT", nullable = false)
-    private String contents;
+    @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
+    private String title;
 
-    @Column(name = "share", nullable = false)
-    private Byte share;
+    @Column(name = "content", columnDefinition = "MEDIUMTEXT", nullable = false)
+    private String content;
+
+    @Column(name = "isPrivate", nullable = false)
+    private boolean isPrivate;
 
     @Column(name = "stn", nullable = false)
-    private Integer stn;
+    private int stn;
 
     @Column(name = "regist_date", nullable = false)
     private Date registDate;
@@ -35,15 +38,15 @@ public class Board {
     @JoinColumn(name = "weather_id", nullable = false)
     private Weather weather;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardLike> boardLikes;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> boardTags;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardImage> boardImages;
 }
