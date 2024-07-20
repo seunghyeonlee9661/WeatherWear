@@ -5,6 +5,7 @@ import com.sparta.WeatherWear.filter.LoginRedirectFilter;
 import com.sparta.WeatherWear.handler.AccessDeniedHandler;
 import com.sparta.WeatherWear.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.handler.AuthenticationSuccessHandler;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
 @EnableGlobalMethodSecurity(securedEnabled = true)  // @Secured 애노테이션 활성화
+@AllArgsConstructor
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
@@ -32,18 +34,6 @@ public class WebSecurityConfig {
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
-
-
-    /* 생성자 */
-    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration, LoginRedirectFilter loginRedirectFilter, AuthenticationEntryPoint authenticationEntryPoint, AccessDeniedHandler accessDeniedHandler, AuthenticationSuccessHandler authenticationSuccessHandler) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-        this.authenticationConfiguration = authenticationConfiguration;
-        this.loginRedirectFilter = loginRedirectFilter;
-        this.authenticationEntryPoint = authenticationEntryPoint;
-        this.accessDeniedHandler = accessDeniedHandler;
-        this.authenticationSuccessHandler = authenticationSuccessHandler;
-    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -78,17 +68,8 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         // 로그인 없이 접근 가능한 경로
                         .requestMatchers(
-                                "/api/user/login", // 로그인
-                                "/api/user/signup", // 회원가입
-                                //lv4
-                                "/lectures", // 강의 및 강사 목록 페이지
-                                "/teacher/*", // 강사 상세
-                                "/lecture/*", // 강의 상세
-                                //lv5
-                                "/goods", // 굿즈 페이지
-                                "/product/*", // 제품 상세
-                                "/", // 메인 페이지
-                                "/error" // 오류 페이지
+                                "/api/login", // 로그인
+                                "/api/signup"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
@@ -110,10 +91,9 @@ public class WebSecurityConfig {
         });
 
         http.formLogin((formLogin) -> formLogin.
-                loginPage("/login")
-                .loginProcessingUrl("/api/user/login")
-                .successHandler(authenticationSuccessHandler)
-                .failureUrl("/login?error")
+                loginPage("/login") // 로그인 페이지 url
+                .loginProcessingUrl("/api/login") // 로그인 요청 url
+                .successHandler(authenticationSuccessHandler) // 로그인 성공을 처리하는 핸들러
                 .permitAll()
         );
         // JWT 검증 및 인가 필터

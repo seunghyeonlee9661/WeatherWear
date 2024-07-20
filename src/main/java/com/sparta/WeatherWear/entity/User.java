@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.entity;
 
-import com.sparta.WeatherWear.entity.*;
+import com.sparta.WeatherWear.dto.UserRequestDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,11 +42,26 @@ public class User {
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "user")
-    private List<Closet> closets;
+    private List<Clothes> clothes;
 
     @OneToMany(mappedBy = "user")
     private List<Wishlist> wishlists;
 
     @OneToMany(mappedBy = "user")
     private List<CommentLike> commentLikes;
+
+    public User(UserRequestDTO userRequestDTO, String password) {
+        this.email = userRequestDTO.getEmail();
+        this.password = password;
+        this.stn = userRequestDTO.getStn();
+        this.gender = userRequestDTO.getGender();
+        this.birthday = userRequestDTO.getBirthday();
+    }
+
+    public void update(UserRequestDTO userRequestDTO){
+        this.email = userRequestDTO.getEmail();
+        this.stn = userRequestDTO.getStn();
+        this.gender = userRequestDTO.getGender();
+        this.birthday = userRequestDTO.getBirthday();
+    }
 }

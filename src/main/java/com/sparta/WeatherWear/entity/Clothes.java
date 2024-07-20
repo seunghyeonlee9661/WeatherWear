@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Entity
-public class Closet {
+public class Clothes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
