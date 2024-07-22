@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.entity;
 
-import com.sparta.WeatherWear.dto.UserRequestDTO;
+import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.enums.UserGender;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,7 +32,6 @@ public class User {
     @Column(name = "birthday", nullable = false)
     private Date birthday;
 
-    // Relationships
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Board> boards;
 

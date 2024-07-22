@@ -1,4 +1,5 @@
 package com.sparta.WeatherWear.security;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.WeatherWear.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.filter.LoginRedirectFilter;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
@@ -64,25 +66,29 @@ public class WebSecurityConfig {
         // 접근 가능 범위 설정
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
-                        // resources 접근 허용 설정
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        // 로그인 없이 접근 가능한 경로
-                        .requestMatchers(
-                                "/api/login", // 로그인
-                                "/api/signup"
-                        ).permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/teacher", // 강사 정보 불러오기
-                                "/api/teachers", // 강사 목록 불러오기
-                                "/api/lecture", // 강의 정보 불러오기
-                                "/api/lectures", // 강의 목록 불러오기
-                                "/api/products", // 제품 목록 불러오기
-                                "/api/product" // 제품 정보 불러오기
-                        ).permitAll() 
-                        // 그 외 모든 요청 인증처리
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
         );
+//        http.authorizeHttpRequests((authorizeHttpRequests) ->
+//                authorizeHttpRequests
+//                        // resources 접근 허용 설정
+//                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+//                        // 로그인 없이 접근 가능한 경로
+//                        .requestMatchers(
+//                                "/api/login", // 로그인
+//                                "/api/signup"
+//                        ).permitAll()
+//                        .requestMatchers(
+//                                HttpMethod.GET,
+//                                "/api/teacher", // 강사 정보 불러오기
+//                                "/api/teachers", // 강사 목록 불러오기
+//                                "/api/lecture", // 강의 정보 불러오기
+//                                "/api/lectures", // 강의 목록 불러오기
+//                                "/api/products", // 제품 목록 불러오기
+//                                "/api/product" // 제품 정보 불러오기
+//                        ).permitAll()
+//                        // 그 외 모든 요청 인증처리
+//                        .anyRequest().authenticated()
+//        );
 
         // 에러 처리를 위한 핸들러 설정
         http.exceptionHandling((exceptionHandling) -> {
@@ -96,6 +102,7 @@ public class WebSecurityConfig {
                 .successHandler(authenticationSuccessHandler) // 로그인 성공을 처리하는 핸들러
                 .permitAll()
         );
+
         // JWT 검증 및 인가 필터
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         // 로그인 및 JWT 생성 필터
@@ -110,5 +117,15 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
