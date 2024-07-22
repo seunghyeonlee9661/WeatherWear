@@ -1,4 +1,4 @@
-package com.sparta.WeatherWear.entity;
+package com.sparta.WeatherWear.board.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,5 +1,7 @@
 package com.sparta.WeatherWear.entity;
 
+import com.sparta.WeatherWear.board.entity.Board;
+import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.dto.UserRequestDTO;
 import com.sparta.WeatherWear.enums.UserGender;
 import jakarta.persistence.*;
