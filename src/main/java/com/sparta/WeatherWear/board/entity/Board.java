@@ -1,8 +1,11 @@
 package com.sparta.WeatherWear.board.entity;
 
+import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
+import com.sparta.WeatherWear.dto.UserRequestDTO;
 import com.sparta.WeatherWear.entity.Comment;
 import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.entity.Weather;
+import com.sparta.WeatherWear.time.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import java.util.Date;
@@ -10,14 +13,13 @@ import java.util.List;
 
 @Getter
 @Entity
-public class Board {
+public class Board extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String title;
@@ -30,12 +32,6 @@ public class Board {
 
     @Column(name = "stn", nullable = false)
     private int stn;
-
-    @Column(name = "regist_date", nullable = false)
-    private Date registDate;
-
-    @Column(name = "update_date", nullable = false)
-    private Date updateDate;
 
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
@@ -52,4 +48,17 @@ public class Board {
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardImage> boardImages;
+
+    public Board update(BoardUpdateRequestDto requestDTO){
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContents();
+        this.isPrivate = requestDTO.isPrivate();
+        this.stn = requestDTO.getStn();
+        this.weather = requestDTO.getWeather();
+        this.boardLikes = requestDTO.getBoardLikes();
+        this.comments = requestDTO.getComments();
+        this.boardTags = requestDTO.getBoardTags();
+        this.boardImages = requestDTO.getBoardImages();
+        return this;
+    }
 }

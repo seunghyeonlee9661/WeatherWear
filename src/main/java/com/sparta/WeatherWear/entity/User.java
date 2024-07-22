@@ -35,8 +35,8 @@ public class User {
     private Date birthday;
 
     // Relationships
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<Board> boards;
+//    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+//    private List<Board> boards;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardLike> boardLikes;
