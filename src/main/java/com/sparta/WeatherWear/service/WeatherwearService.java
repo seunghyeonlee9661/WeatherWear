@@ -161,6 +161,6 @@ public class WeatherwearService {
     public ResponseEntity<String> createWishlist(NaverProductRequestDTO productRequestDTO,UserDetailsImpl userDetails){
         NaverProduct product = naverProductRepository.findById(productRequestDTO.getId()).orElseGet(() -> naverProductRepository.save(new NaverProduct(productRequestDTO)));
         wishlistRepository.save(new Wishlist(userDetails.getUser(), product));
-        return ResponseEntity.ok("옷이 추가되었습니다.");
+        return ResponseEntity.ok("위시리스트가 추가되었습니다.");
     }
 }

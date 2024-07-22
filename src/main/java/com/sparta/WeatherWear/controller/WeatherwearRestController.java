@@ -74,13 +74,9 @@ public class WeatherwearRestController {
 
     /*______________________NaverShoping_______________________*/
 
-    /* 옷 정보 불러오기 */
+    /* 네이버 쇼핑 불러오기 */
     @GetMapping("/naver/shopping")
-    public ResponseEntity<String> findNaverProduct(@RequestParam(value = "query", required = true) String query,
-                                                @RequestParam(value = "display", required = false,defaultValue="10") int display,
-                                                @RequestParam(value = "start", required = false,defaultValue="1") int start,
-                                                @RequestParam(value = "sort", required = false,defaultValue="sim") String sort,
-                                                @RequestParam(value = "filter", required = false,defaultValue="") String filter) {
+    public ResponseEntity<String> findNaverProduct(@RequestParam(value = "query", required = true) String query, @RequestParam(value = "display", required = false,defaultValue="10") int display, @RequestParam(value = "start", required = false,defaultValue="1") int start, @RequestParam(value = "sort", required = false,defaultValue="sim") String sort, @RequestParam(value = "filter", required = false,defaultValue="") String filter) {
         return service.searchProducts(query,display,start,sort,filter);
     }
 
@@ -93,7 +89,7 @@ public class WeatherwearRestController {
     }
 
     /* 위시리스트 추가하기 */
-    @PostMapping("/wishlist/{product_id}")
+    @PostMapping("/wishlist")
     public ResponseEntity<String> createWishlist(@RequestBody @Valid NaverProductRequestDTO productRequestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.createWishlist(productRequestDTO,userDetails);
     }

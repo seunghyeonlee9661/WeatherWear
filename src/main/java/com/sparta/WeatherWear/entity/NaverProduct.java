@@ -11,35 +11,34 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 public class NaverProduct {
-
     @Id
     private Long id;
 
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String title;
 
-    @Column(name = "link", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "link", columnDefinition = "MEDIUMTEXT")
     private String link;
 
-    @Column(name = "image", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "image", columnDefinition = "MEDIUMTEXT")
     private String image;
 
-    @Column(name = "lprice", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "lprice", columnDefinition = "MEDIUMTEXT")
     private long lprice;
 
-    @Column(name = "hprice", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "hprice", columnDefinition = "MEDIUMTEXT")
     private long hprice;
 
-    @Column(name = "mallName", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "mallName", columnDefinition = "MEDIUMTEXT")
     private String mallName;
 
-    @Column(name = "productType", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "productType", columnDefinition = "MEDIUMTEXT")
     private int productType;
 
-    @Column(name = "maker", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "maker", columnDefinition = "MEDIUMTEXT")
     private String maker;
 
-    @Column(name = "brand", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(name = "brand", columnDefinition = "MEDIUMTEXT")
     private String brand;
 
     public NaverProduct(NaverProductRequestDTO productRequestDTO) {
