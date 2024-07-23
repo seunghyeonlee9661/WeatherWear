@@ -38,11 +38,11 @@ public class Board extends Timestamped {
     private Weather weather;
 
     @OneToMany
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id")
     private List<BoardLike> boardLikes;
 
     @OneToMany
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id")
     private List<Comment> comments;
 
     @OneToMany
