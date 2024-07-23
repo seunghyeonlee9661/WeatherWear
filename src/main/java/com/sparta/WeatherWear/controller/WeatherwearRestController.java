@@ -68,8 +68,8 @@ public class WeatherwearRestController {
 
     /* 옷 정보 삭제 */
     @DeleteMapping("/clothes/{id}")
-    public ResponseEntity<String> removeClothes(@PathVariable("id") long id) {
-        return service.removeClothes(id);
+    public ResponseEntity<String> removeClothes(@PathVariable("id") long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return service.removeClothes(userDetails,id);
     }
 
     /*______________________NaverShoping_______________________*/
@@ -92,6 +92,12 @@ public class WeatherwearRestController {
     @PostMapping("/wishlist")
     public ResponseEntity<String> createWishlist(@RequestBody @Valid NaverProductRequestDTO productRequestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.createWishlist(productRequestDTO,userDetails);
+    }
+
+    /* 옷 정보 삭제 */
+    @DeleteMapping("/wishlist/{id}")
+    public ResponseEntity<String> removeWishlist(@PathVariable("id") long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return service.removeWishlist(userDetails,id);
     }
 
 }

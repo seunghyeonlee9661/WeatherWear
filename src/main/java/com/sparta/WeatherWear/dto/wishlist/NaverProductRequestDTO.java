@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class NaverProductRequestDTO {
-    private Long id;
+    private Long productId;
     private String title;
     private String link;
     private String image;

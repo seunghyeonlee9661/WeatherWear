@@ -42,7 +42,7 @@ public class NaverProduct {
     private String brand;
 
     public NaverProduct(NaverProductRequestDTO productRequestDTO) {
-        this.id = productRequestDTO.getId();
+        this.id = productRequestDTO.getProductId();
         this.title = productRequestDTO.getTitle();
         this.link = productRequestDTO.getLink();
         this.image = productRequestDTO.getImage();

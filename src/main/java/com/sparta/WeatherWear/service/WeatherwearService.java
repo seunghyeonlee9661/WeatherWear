@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,10 +81,12 @@ public class WeatherwearService {
 
     /* 회원 수정 */
     @Transactional
-    public ResponseEntity<String> updateUser(UserDetailsImpl userDetails, UserRequestDTO userCreateRequestDTO) {
+    public ResponseEntity<String> updateUser(UserDetailsImpl userDetails, UserRequestDTO userRequestDTO) {
         User user = userDetails.getUser();
-        if(!passwordEncoder.matches(userCreateRequestDTO.getPassword(),user.getPassword())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
-        user.update(userCreateRequestDTO);
+        if(!passwordEncoder.matches(userRequestDTO.getPassword(),user.getPassword()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
+        user.update(userRequestDTO);
+        userRepository.save(user); // 트랜잭셔널 작동안함 고쳐야됨 ㅠㅠ
         return ResponseEntity.ok().body("User updated successfully");
     }
 
@@ -102,33 +105,22 @@ public class WeatherwearService {
         return ResponseEntity.ok(filteredClothes.stream().map(ClothesResponseDTO::new).collect(Collectors.toList()));
     }
 
-    // 열거형 값 유효성 검사 메서드
-    private <E extends Enum<E>> E validateEnum(String value, Class<E> enumClass) {
-        if (value == null || value.trim().isEmpty()) {
-            return null; // 빈 문자열인 경우 null 반환
-        }
-
-        try {
-            return Enum.valueOf(enumClass, value.toUpperCase()); // 대문자로 변환하여 비교
-        } catch (IllegalArgumentException e) {
-            return null; // 유효하지 않은 값인 경우 null 반환
-        }
-    }
-
     /* 옷 추가 */
     @Transactional
     public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO){
         Clothes clothes = new Clothes(clothesRequestDTO,userDetails.getUser());
         clothesRepository.save(clothes);
-        return ResponseEntity.ok("옷이 추가되었습니다.");
+        return ResponseEntity.ok("Clothes created successfully");
     }
 
     /* 옷 삭제 */
     @Transactional
-    public ResponseEntity<String> removeClothes(long id){
+    public ResponseEntity<String> removeClothes(UserDetailsImpl userDetails, long id){
         Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
+        if(!clothes.getUser().getId().equals(userDetails.getUser().getId()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 옷장 아이템이 아닙니다.");
         clothesRepository.delete(clothes);
-        return ResponseEntity.ok("옷이 삭제되었습니다.");
+        return ResponseEntity.ok("Clothes delete successfully");
     }
 
     /*______________________Naver_______________________*/
@@ -139,10 +131,8 @@ public class WeatherwearService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Naver-Client-Id", clientId);
         headers.set("X-Naver-Client-Secret", clientSecret);
-
         /* url 정의 */
         String apiUrl = "https://openapi.naver.com/v1/search/shop.json?query=" + query+ "&display=" + display + "&start=" + start + "&sort=" + sort + "&filter=" + filter;
-
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return new RestTemplate().exchange(apiUrl, HttpMethod.GET, entity, String.class);
     }
@@ -151,16 +141,27 @@ public class WeatherwearService {
 
     /* 위시리스트 불러오기 */
     public ResponseEntity<List<WishlistResponseDTO>> getWishlist(UserDetailsImpl userDetails, int page){
-        Pageable pageable = PageRequest.of(page,8);
-        Page<Wishlist> wishlistPage = wishlistRepository.findByUserId(userDetails.getUser().getId(),pageable);
+        Pageable pageable = PageRequest.of(page, 8);
+        // 전체 데이터 가져오기
+        Page<Wishlist> wishlistPage = wishlistRepository.findByUserId(userDetails.getUser().getId(), pageable);
         return ResponseEntity.ok(wishlistPage.stream().map(WishlistResponseDTO::new).collect(Collectors.toList()));
     }
 
     /* 위시리스트 추가 */
     @Transactional
     public ResponseEntity<String> createWishlist(NaverProductRequestDTO productRequestDTO,UserDetailsImpl userDetails){
-        NaverProduct product = naverProductRepository.findById(productRequestDTO.getId()).orElseGet(() -> naverProductRepository.save(new NaverProduct(productRequestDTO)));
+        NaverProduct product = naverProductRepository.findById(productRequestDTO.getProductId()).orElseGet(() -> naverProductRepository.save(new NaverProduct(productRequestDTO)));
         wishlistRepository.save(new Wishlist(userDetails.getUser(), product));
-        return ResponseEntity.ok("위시리스트가 추가되었습니다.");
+        return ResponseEntity.ok("Wishlist created successfully");
+    }
+
+    /* 위시리스트 삭제 */
+    @Transactional
+    public ResponseEntity<String> removeWishlist(UserDetailsImpl userDetails, long id){
+        Wishlist wishlist = wishlistRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Wishlist"));
+        if(!wishlist.getUser().getId().equals(userDetails.getUser().getId()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 위시리스트 아이템이 아닙니다.");
+        wishlistRepository.delete(wishlist);
+        return ResponseEntity.ok("Wishlist delete successfully");
     }
 }
