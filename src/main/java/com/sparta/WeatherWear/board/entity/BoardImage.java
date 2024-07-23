@@ -10,10 +10,12 @@ public class BoardImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    @Column(name = "save_folder", length = 255, nullable = false)
+    private String saveFolder;
 
-    @Column(name = "url", length = 255, nullable = false)
-    private String url;
+    @Column(name = "original_file", length = 255, nullable = false)
+    private String originalFile;
+
+    @Column(name = "save_file", length = 255, nullable = false)
+    private String saveFile;
 }

@@ -37,16 +37,20 @@ public class Board extends Timestamped {
     @JoinColumn(name = "weather_id", nullable = false)
     private Weather weather;
 
-    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany
+    @JoinColumn(name = "board_id", nullable = false)
     private List<BoardLike> boardLikes;
 
-    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany
+    @JoinColumn(name = "board_id", nullable = false)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany
+    @JoinColumn(name = "board_id", nullable = false)
     private List<BoardTag> boardTags;
 
-    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany
+    @JoinColumn(name = "board_id")
     private List<BoardImage> boardImages;
 
     public Board update(BoardUpdateRequestDto requestDTO){
