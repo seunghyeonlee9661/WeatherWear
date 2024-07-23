@@ -5,5 +5,5 @@ import com.sparta.WeatherWear.entity.Board;
 import com.sparta.WeatherWear.entity.BoardTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BoardTagRepository extends JpaRepository<BoardTag, Integer> {
+public interface BoardTagRepository extends JpaRepository<BoardTag, Long> {
 }

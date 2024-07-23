@@ -1,7 +1,7 @@
 package com.sparta.WeatherWear.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.WeatherWear.dto.UserLoginRequestDTO;
+import com.sparta.WeatherWear.dto.user.UserLoginRequestDTO;
 import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
@@ -23,7 +23,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     /* 로그인 과정 진행 위치 */
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/login");
     }
 
     /* 로그인 진행 및 JWT 토큰 반환 */
@@ -52,6 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
         String token = jwtUtil.createToken(username);
+        log.info(token);
         jwtUtil.addJwtToCookie(token, response);
     }
 

@@ -2,9 +2,11 @@ package com.sparta.WeatherWear.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor // 기본 생성자 추가
 public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

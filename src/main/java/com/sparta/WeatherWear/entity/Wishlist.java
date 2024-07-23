@@ -2,9 +2,11 @@ package com.sparta.WeatherWear.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor // 기본 생성자 추가
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +16,12 @@ public class Wishlist {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "naver_item", nullable = false)
-    private String naverItem;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private NaverProduct product;
+
+    public Wishlist(User user, NaverProduct product){
+        this.user = user;
+        this.product = product;
+    }
 }
