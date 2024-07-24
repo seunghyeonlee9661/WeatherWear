@@ -21,8 +21,10 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-/* JWT */
+/*
+작성자 : 이승현
+JWT 생성, 검증을 맡은 클래스
+*/
 @Component
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
@@ -44,7 +46,6 @@ public class JwtUtil {
 
     // 토큰 생성
     public String createToken(User user) {
-
         Map<String, Object> additionalClaims = new HashMap<>();
         additionalClaims.put("nickname", user.getNickname());
         Date date = new Date();

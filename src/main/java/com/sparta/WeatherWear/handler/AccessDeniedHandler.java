@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-/* 올바른 권한이 아닌 경우에 대한 예외 처리! */
+/*
+작성자 : 이승현
+올바른 권한이 아닌 경우에 대한 예외 처리
+*/
 @Component
 public class AccessDeniedHandler implements org.springframework.security.web.access.AccessDeniedHandler {
     @Override

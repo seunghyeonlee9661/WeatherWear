@@ -3,7 +3,10 @@ package com.sparta.WeatherWear.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+/*
+작성자 : 이승현
+위시리스트 Entity
+ */
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가

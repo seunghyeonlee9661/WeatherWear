@@ -30,7 +30,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+/*
+작성자 : 이승현
+사용자 관련 서비스 처리
+*/
 @Service
 public class WeatherwearService {
 
@@ -82,14 +85,36 @@ public class WeatherwearService {
 
     /* 회원 수정 */
     @Transactional
-    public ResponseEntity<String> updateUser(UserDetailsImpl userDetails, UserRequestDTO userRequestDTO) {
+    public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, UserRequestDTO userRequestDTO) {
         User user = userDetails.getUser();
         if(!passwordEncoder.matches(userRequestDTO.getPassword(),user.getPassword()))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
-        user.update(userRequestDTO);
+        user.updateInfo(userRequestDTO);
         userRepository.save(user); // 트랜잭셔널 작동안함 고쳐야됨 ㅠㅠ
         return ResponseEntity.ok().body("User updated successfully");
     }
+
+    /* 회원 비밀번호 수정 */
+    @Transactional
+    public ResponseEntity<String> updateUserPassword(UserDetailsImpl userDetails, String password) {
+        User user = userDetails.getUser();
+        if(!passwordEncoder.matches(password,user.getPassword()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
+        user.updatePassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        return ResponseEntity.ok().body("User updated successfully");
+    }
+
+    /* 회원 사진 수정 */
+    @Transactional
+    public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, String Image) {
+        User user = userDetails.getUser();
+        user.updateImage(Image);
+        // 이미지 업로드 후 변경하는 기능 필요
+        userRepository.save(user);
+        return ResponseEntity.ok().body("User updated successfully");
+    }
+
 
     /*______________________Clothes_______________________*/
 

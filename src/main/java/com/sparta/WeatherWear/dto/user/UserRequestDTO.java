@@ -9,7 +9,10 @@ import lombok.Getter;
 
 import java.util.Date;
 
-/* 사용자 생성 요청 */
+/*
+작성자 : 이승현
+사용자 회원가입 요청 DTO
+ */
 @Getter
 public class UserRequestDTO {
 
@@ -17,7 +20,7 @@ public class UserRequestDTO {
     @Email(message = "유효한 이메일 주소여야 합니다.")
     private String email;
 
-    @NotNull(message = "닉네임은 필수 항목입니다.")
+    @NotBlank(message = "닉네임은 필수 항목입니다.")
     private String nickname;
 
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
@@ -31,10 +34,10 @@ public class UserRequestDTO {
     @NotNull(message = "지역을 선택해주세요.")
     private Integer stn;
 
-    @NotNull(message = "성별은 필수 항목입니다.")
+    @NotBlank(message = "성별은 필수 항목입니다.")
     private String gender;
 
-    @NotNull(message = "지역을 선택해주세요.")
+    @NotNull(message = "생년월일을 선택해주세요.")
     private Date birthday;
 
 }

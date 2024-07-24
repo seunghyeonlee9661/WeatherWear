@@ -6,7 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+/*
+작성자 : 이승현
+ 네이버 제품 정보 Entity - 위시리스트의 목록에서 해당 아이템을 참조합니다.
+ */
 @Getter
 @Entity
 @NoArgsConstructor

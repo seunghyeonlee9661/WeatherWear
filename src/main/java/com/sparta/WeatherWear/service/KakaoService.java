@@ -3,13 +3,14 @@ package com.sparta.WeatherWear.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.WeatherWear.dto.user.KakaoUserInfoDto;
+import com.sparta.WeatherWear.dto.user.KakaoUserResponseDto;
 import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.repository.UserRepository;
 import com.sparta.WeatherWear.security.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +23,20 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.UUID;
-
+/*
+작성자 : 이승현
+카카오 서비스 처리 기능
+*/
 @Slf4j(topic = "KAKAO Login")
 @Service
 @RequiredArgsConstructor
 public class KakaoService {
+
+    @Value("${kakao.client.id}")
+    private String client_id;
+
+    @Value("${kakao.redirect.uri}")
+    private String redirect_uri;
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -34,23 +44,23 @@ public class KakaoService {
     private final JwtUtil jwtUtil;
 
     public ResponseEntity<String> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
-        // 1. "인가 코드"로 "액세스 토큰" 요청
+        // "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
-        // 2. 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-        KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
+        // 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
+        KakaoUserResponseDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
-        // 3. 필요시에 회원가입
+        // 카카오 유저를 찾아서 없을 경우 회원 가입 진행
         User kakaoUser = registerKakaoUser(kakaoUserInfo);
 
-        // 4. JWT 토큰 반환
+        // JWT 토큰 쿠키에 추가
         String createToken =  jwtUtil.createToken(kakaoUser);
-        System.out.println("createToken : " + createToken);
         jwtUtil.addJwtToCookie(createToken, response);
         return ResponseEntity.ok("Kakao login successfully");
     }
 
-    private User registerKakaoUser(KakaoUserInfoDto kakaoUserInfo) {
+    // 카카오 회원가입 진행
+    private User registerKakaoUser(KakaoUserResponseDto kakaoUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
@@ -71,7 +81,8 @@ public class KakaoService {
 
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
-                kakaoUser = new User(encodedPassword, email,kakaoUserInfo.getNickname(), kakaoId);
+                String image = kakaoUserInfo.getImage();
+                kakaoUser = new User(encodedPassword, email,kakaoUserInfo.getNickname(), kakaoId,image);
             }
             userRepository.save(kakaoUser);
         }
@@ -79,6 +90,7 @@ public class KakaoService {
     }
 
 
+    // 카카오 토큰 처리
     private String getToken(String code) throws JsonProcessingException {
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder.fromUriString("https://kauth.kakao.com").path("/oauth/token").encode().build().toUri();
@@ -90,8 +102,8 @@ public class KakaoService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "58964ac977f1abb0693b2cb7121c1a5c");
-        body.add("redirect_uri", "http://localhost:8080/api/kakao/callback");
+        body.add("client_id", client_id);
+        body.add("redirect_uri", redirect_uri);
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -110,39 +122,24 @@ public class KakaoService {
         return jsonNode.get("access_token").asText();
     }
 
-    private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+    private KakaoUserResponseDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         // 요청 URL 만들기
-        URI uri = UriComponentsBuilder
-                .fromUriString("https://kapi.kakao.com")
-                .path("/v2/user/me")
-                .encode()
-                .build()
-                .toUri();
+        URI uri = UriComponentsBuilder.fromUriString("https://kapi.kakao.com").path("/v2/user/me").encode().build().toUri();
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
-        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
-                .post(uri)
-                .headers(headers)
-                .body(new LinkedMultiValueMap<>());
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri).headers(headers).body(new LinkedMultiValueMap<>());
 
         // HTTP 요청 보내기
-        ResponseEntity<String> response = restTemplate.exchange(
-                requestEntity,
-                String.class
-        );
+        ResponseEntity<String> response = restTemplate.exchange(requestEntity,String.class);
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties")
-                .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
-                .get("email").asText();
-
-        log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
-        return new KakaoUserInfoDto(id, nickname, email);
+        String nickname = jsonNode.get("properties").get("nickname").asText();
+        String email = jsonNode.get("kakao_account").get("email").asText();
+        String image = jsonNode.get("kakao_account").get("image").asText();
+        return new KakaoUserResponseDto(id, nickname, email,image);
     }
 }

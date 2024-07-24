@@ -5,7 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
-/* 사용자 로그인 요청 */
+/*
+작성자 : 이승현
+사용자 로그인 요청 DTO
+ */
 @Getter
 public class UserLoginRequestDTO {
 

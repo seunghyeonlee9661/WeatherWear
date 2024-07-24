@@ -2,7 +2,7 @@ package com.sparta.WeatherWear.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.WeatherWear.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.filter.JwtAuthorizationFilter;
-//import com.sparta.WeatherWear.filter.LoginRedirectFilter;
+import com.sparta.WeatherWear.filter.LoginRedirectFilter;
 import com.sparta.WeatherWear.handler.AccessDeniedHandler;
 import com.sparta.WeatherWear.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.handler.AuthenticationSuccessHandler;
@@ -21,8 +21,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.client.RestTemplate;
 
+/*
+작성자 : 이승현
+카카오 로그인 응답 확인을 위한 기능
+ */
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
 @EnableGlobalMethodSecurity(securedEnabled = true)  // @Secured 애노테이션 활성화
@@ -32,7 +35,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-//    private final LoginRedirectFilter loginRedirectFilter;
+    private final LoginRedirectFilter loginRedirectFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -68,6 +71,7 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .anyRequest().permitAll()
         );
+        // 로그인 관련 경로 설정
 //        http.authorizeHttpRequests((authorizeHttpRequests) ->
 //                authorizeHttpRequests
 //                        // resources 접근 허용 설정
@@ -96,6 +100,7 @@ public class WebSecurityConfig {
             exceptionHandling.authenticationEntryPoint(authenticationEntryPoint);
         });
 
+        // 로그인 처리 진행
         http.formLogin((formLogin) -> formLogin.
                 loginPage("/login") // 로그인 페이지 url
                 .loginProcessingUrl("/api/login") // 로그인 요청 url
@@ -108,7 +113,7 @@ public class WebSecurityConfig {
         // 로그인 및 JWT 생성 필터
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         // 로그인 유저 리다이렉트 필터
-//        http.addFilterBefore(loginRedirectFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(loginRedirectFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

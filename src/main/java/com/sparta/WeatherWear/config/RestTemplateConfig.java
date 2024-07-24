@@ -7,6 +7,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 
+/*
+작성자 : 이승현
+카카오 로그인 응답 확인을 위한 기능
+ */
 @Configuration
 public class RestTemplateConfig  {
     @Bean
