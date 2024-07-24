@@ -22,7 +22,7 @@ public class Board extends Timestamped {
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String title;

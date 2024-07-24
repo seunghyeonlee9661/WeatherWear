@@ -43,12 +43,12 @@ public class BoardController {
         return boardService.findBoardAll(requestDto);
     }
 
-//    /* 게시물 수정 */
-//    @PutMapping("/{user_id}")
-//    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@PathVariable Long user_id, @RequestBody BoardUpdateRequestDto requestDto) {
-//        return boardService.updateBoard(user_id, requestDto);
-//    }
-//
+    /* 게시물 수정 */
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@RequestBody BoardUpdateRequestDto requestDto,@CookieValue(JwtUtil.AUTHORIZATION_HEADER) String tokenValue, HttpServletResponse res) {
+        return boardService.updateBoard(requestDto, tokenValue, res);
+    }
+
 //    /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
 //    @DeleteMapping("/{user_id}")
 //    public ResponseEntity<String> removeBoard(@PathVariable Long user_id) {

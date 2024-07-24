@@ -139,9 +139,26 @@ public class BoardService {
 
     }
 
-//    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(Long userId, BoardUpdateRequestDto requestDTO) {
-//    }
-//
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, String tokenValue , HttpServletResponse res) {
+        if (requestDTO == null) {
+            log.info("요청한 수정 내용이 없습니다.");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        // 토큰에서 사용자 정보 가져오기
+        Claims info = getInfoFromToken(tokenValue, res);
+        // 사용자 권한
+        String userId = info.getSubject();
+        System.out.println("userId = " + userId);
+
+        // 유저 아이디와 게시물의 id 가 같은지 확인
+        String boardUserId = requestDTO.getUserId();
+
+        if()
+
+
+        
+    }
+
 //    public ResponseEntity<String> removeBoard(Long userId) {
 //    }
 
