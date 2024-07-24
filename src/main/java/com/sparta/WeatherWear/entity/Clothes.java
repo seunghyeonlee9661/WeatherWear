@@ -28,13 +28,16 @@ public class Clothes {
     @Enumerated(EnumType.STRING)
     private ClothesType type;
 
-    @Column(name = "image", length = 255, nullable = false)
+    @Column(name = "image", nullable = true)
     private String image;
 
     public Clothes(ClothesRequestDTO clothesRequestDTO, User user) {
         this.user = user;
         this.color = clothesRequestDTO.getColor();
         this.type = clothesRequestDTO.getType();
-        this.image = clothesRequestDTO.getImage();
+    }
+
+    public void updateImage (String image){
+        this.image = image;
     }
 }

@@ -7,18 +7,15 @@ import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.NaverProductRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
 import com.sparta.WeatherWear.entity.User;
-import com.sparta.WeatherWear.enums.ClothesColor;
-import com.sparta.WeatherWear.enums.ClothesType;
-import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
 import com.sparta.WeatherWear.service.KakaoService;
 import com.sparta.WeatherWear.service.WeatherwearService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -93,8 +90,8 @@ public class WeatherwearRestController {
 
     /* 옷 정보 추가 */
     @PostMapping("/clothes")
-    public ResponseEntity<String> createClothes(@RequestBody @Valid ClothesRequestDTO clothesRequestDTO,@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return service.createClothes(userDetails,clothesRequestDTO);
+    public ResponseEntity<String> createClothes(@RequestPart("clothesRequestDTO") @Validated ClothesRequestDTO clothesRequestDTO,@RequestPart(value = "file" , required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return service.createClothes(userDetails,clothesRequestDTO,file);
     }
 
     /* 옷 정보 삭제 */

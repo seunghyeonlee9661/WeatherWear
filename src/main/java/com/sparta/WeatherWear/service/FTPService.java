@@ -39,16 +39,15 @@ public class FTPService {
             ftpClient.login(ftpUser, ftpPassword);
             ftpClient.enterLocalPassiveMode();
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            String userDir = ftpUploadDir + "user/";
 
-            logger.info("FTP Upload Directory: {}", userDir);
+            logger.info("FTP Upload Directory: {}", ftpUploadDir);
             // FTP 서버의 디렉토리로 이동
-            boolean changeDir = ftpClient.changeWorkingDirectory(userDir);
+            boolean changeDir = ftpClient.changeWorkingDirectory(ftpUploadDir);
             if (!changeDir) {
-                throw new IOException("Failed to change directory on FTP server: " + userDir);
+                throw new IOException("Failed to change directory on FTP server: " + ftpUploadDir);
             }
             // 파일 업로드
-            System.out.println("File uploaded start to FTP server: " + userDir + filename);
+            System.out.println("File uploaded start to FTP server: " + ftpUploadDir + filename);
             InputStream inputStream = file.getInputStream();
             if (inputStream == null) {
                 throw new IOException("Failed to get input stream from file");
@@ -56,7 +55,7 @@ public class FTPService {
             boolean uploaded = ftpClient.storeFile(filename, inputStream);
             inputStream.close();
             if (uploaded) {
-                System.out.println("File uploaded successfully to FTP server: " + userDir + filename);
+                System.out.println("File uploaded successfully to FTP server: " + ftpUploadDir + filename);
             } else {
                 // 오류 메시지 출력
                 String reply = ftpClient.getReplyString();

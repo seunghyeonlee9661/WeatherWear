@@ -112,7 +112,7 @@ public class WeatherwearService {
     @Transactional
     public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, MultipartFile file) throws IOException {
         User user = userDetails.getUser(); // 사용자 확인
-        String ftpFilename = String.valueOf(user.getId()); // 파일 이름 선정
+        String ftpFilename = "user/" + String.valueOf(user.getId()); // 파일 이름 선정
         boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
         if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
             String imageURL = "http://119.56.220.32/images/user/" + ftpFilename;
@@ -141,10 +141,25 @@ public class WeatherwearService {
 
     /* 옷 추가 */
     @Transactional
-    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO){
+    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) throws IOException {
         Clothes clothes = new Clothes(clothesRequestDTO,userDetails.getUser());
-        clothesRepository.save(clothes);
-        return ResponseEntity.ok("Clothes created successfully");
+        Clothes savedClothes = clothesRepository.save(clothes);
+        if(file != null){
+            String ftpFilename = "clothes/" + String.valueOf(savedClothes.getId()); // 파일 이름 선정
+            try{
+                boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
+                if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
+                    String imageURL = "http://119.56.220.32/images/" + ftpFilename;
+                    clothes.updateImage(imageURL);
+                    clothesRepository.save(savedClothes);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Clothes create Failed");
+                }
+            }catch (IOException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+            }
+        }
+        return ResponseEntity.ok().body("Clothes created successfully");
     }
 
     /* 옷 삭제 */
