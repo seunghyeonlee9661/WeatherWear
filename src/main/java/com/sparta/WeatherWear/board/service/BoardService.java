@@ -102,6 +102,7 @@ public class BoardService {
 
     }
 
+    // 페이징 구현 추가 필요
     public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(Long userId) {
         List<Board> boards = boardRepository.findByUserId(userId);
 
@@ -123,9 +124,21 @@ public class BoardService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(Long user_id, BoardfindRequestDto requestDTO) {
-//    }
-//
+    // 페이징 구현 추가 필요
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(BoardfindRequestDto requestDTO) {
+        List<Board> boards = boardRepository.findAll();
+        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+
+        for (Board board : boards) {
+            responseDtos.add(new BoardCreateResponseDto(board));
+        }
+        // Creating the ApiResponse object
+        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
+        // Returning the response entity with the appropriate HTTP status
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
 //    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(Long userId, BoardUpdateRequestDto requestDTO) {
 //    }
 //
