@@ -6,6 +6,9 @@ import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
+import com.sparta.WeatherWear.security.JwtUtil;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BoardService {
 
+    private final JwtUtil jwtUtil;
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
 
@@ -81,9 +85,20 @@ public class BoardService {
 
 
 
-//    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(Long userId, Long boardId) {
-//    }
-//
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(()->
+                new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
+        );
+
+        // newBoard -> responseDto로 반환
+        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
+        // Creating the ApiResponse object
+        ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
+        // Returning the response entity with the appropriate HTTP status
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
 //    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(Long userId) {
 //    }
 //
@@ -96,5 +111,15 @@ public class BoardService {
 //    public ResponseEntity<String> removeBoard(Long userId) {
 //    }
 
-
+    public Claims getInfoFromToken(String tokenValue, HttpServletResponse res) {
+        // JWT 토큰 substring
+        String token = jwtUtil.substringToken(tokenValue);
+        // 토큰 검증
+        if(!jwtUtil.validateToken(token, res)){
+            throw new IllegalArgumentException("Token Error");
+        }
+        // 토큰에서 사용자 정보 가져오기
+        Claims info = jwtUtil.getUserInfoFromToken(token);
+        return info;
+    }
 }

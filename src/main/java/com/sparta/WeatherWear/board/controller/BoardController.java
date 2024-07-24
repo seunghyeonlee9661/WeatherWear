@@ -2,6 +2,8 @@ package com.sparta.WeatherWear.board.controller;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
+import com.sparta.WeatherWear.security.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +25,11 @@ public class BoardController {
         return boardService.createBoard(requestDto, images);
     }
 
-//    /* 게시물 id로 조회 */
-//    @GetMapping("/find/{user_id}/{board_id}")
-//    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long user_id, @PathVariable Long board_id) {
-//        return boardService.findBoardById(user_id,board_id);
-//    }
+    /* 게시물 id로 조회 */
+    @GetMapping("/find/{board_id}")
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long board_id) {
+        return boardService.findBoardById(board_id);
+    }
 //
 //    /* 게시물 user_id 전체 목록 조회 (페이징) */
 //    @GetMapping("/find/{user_id}")
