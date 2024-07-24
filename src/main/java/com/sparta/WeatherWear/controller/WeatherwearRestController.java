@@ -21,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 /*
@@ -55,17 +57,16 @@ public class WeatherwearRestController {
         return service.updateUserInfo(userDetails,requestDTO);
     }
 
-    /* 사용자 정보 수정 */
+    /* 사용자 비밀번호 수정 */
     @PutMapping("/user/password")
     public ResponseEntity<String>  updateUserPassword(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.updateUserPassword(userDetails,request.get("password"));
     }
 
-    // 추가 작업 필요한 부분
-    /* 사용자 정보 수정 */
+    /* 사용자 이미지 수정 */
     @PutMapping("/user/image")
-    public ResponseEntity<String>  updateUserImage(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return service.updateUserImage(userDetails,request.get("image"));
+    public ResponseEntity<String>  updateUserImage(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return service.updateUserImage(userDetails,file);
     }
 
     /* 사용자 정보 삭제 */

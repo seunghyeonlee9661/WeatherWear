@@ -36,7 +36,7 @@ public class User {
     private int stn;
 
     // 사용자 이미지 url
-    @Column(name = "image", length = 10, nullable = true)
+    @Column(name = "image", nullable = true)
     private String image;
 
     // 성별

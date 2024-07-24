@@ -9,25 +9,24 @@ import com.sparta.WeatherWear.entity.Clothes;
 import com.sparta.WeatherWear.entity.NaverProduct;
 import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.entity.Wishlist;
-import com.sparta.WeatherWear.enums.ClothesColor;
-import com.sparta.WeatherWear.enums.ClothesType;
 import com.sparta.WeatherWear.repository.ClothesRepository;
 import com.sparta.WeatherWear.repository.NaverProductRepository;
 import com.sparta.WeatherWear.repository.UserRepository;
 import com.sparta.WeatherWear.repository.WishlistRepository;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 /*
@@ -48,13 +47,17 @@ public class WeatherwearService {
     private final WishlistRepository wishlistRepository;
     private final NaverProductRepository naverProductRepository;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private final FTPService ftpService;
 
-    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository) {
+
+    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository, FTPService ftpService) {
         this.clothesRepository = clothesRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.wishlistRepository = wishlistRepository;
         this.naverProductRepository = naverProductRepository;
+        this.ftpService = ftpService;
     }
 
     /*______________________User_______________________*/
@@ -107,14 +110,19 @@ public class WeatherwearService {
 
     /* 회원 사진 수정 */
     @Transactional
-    public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, String Image) {
-        User user = userDetails.getUser();
-        user.updateImage(Image);
-        // 이미지 업로드 후 변경하는 기능 필요
-        userRepository.save(user);
-        return ResponseEntity.ok().body("User updated successfully");
+    public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, MultipartFile file) throws IOException {
+        User user = userDetails.getUser(); // 사용자 확인
+        String ftpFilename = String.valueOf(user.getId()); // 파일 이름 선정
+        boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
+        if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
+            String imageURL = "http://119.56.220.32/images/user/" + ftpFilename;
+            user.updateImage(imageURL);
+            userRepository.save(user);
+            return ResponseEntity.ok().body("User image updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User image updated fail");
+        }
     }
-
 
     /*______________________Clothes_______________________*/
 
