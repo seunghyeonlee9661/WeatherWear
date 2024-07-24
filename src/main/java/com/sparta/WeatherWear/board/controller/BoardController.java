@@ -30,12 +30,12 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long board_id) {
         return boardService.findBoardById(board_id);
     }
-//
-//    /* 게시물 user_id 전체 목록 조회 (페이징) */
-//    @GetMapping("/find/{user_id}")
-//    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(@PathVariable Long user_id) {
-//        return boardService.findBoardByUserId(user_id);
-//    }
+
+    /* 게시물 user_id 전체 목록 조회 (페이징) */
+    @GetMapping("/find/{user_id}")
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(@PathVariable Long user_id) {
+        return boardService.findBoardByUserId(user_id);
+    }
 //
 //    /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
 //    @GetMapping("/find-all/{user_id}")
@@ -49,7 +49,7 @@ public class BoardController {
 //        return boardService.updateBoard(user_id, requestDto);
 //    }
 //
-//    /* 게시물 삭제 */
+//    /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
 //    @DeleteMapping("/{user_id}")
 //    public ResponseEntity<String> removeBoard(@PathVariable Long user_id) {
 //        return boardService.removeBoard(user_id);

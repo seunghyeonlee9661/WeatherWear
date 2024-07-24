@@ -11,6 +11,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class BoardService {
 
     private final JwtUtil jwtUtil;
@@ -99,9 +102,27 @@ public class BoardService {
 
     }
 
-//    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(Long userId) {
-//    }
-//
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(Long userId) {
+        List<Board> boards = boardRepository.findByUserId(userId);
+
+        // 예외처리 추가 필요
+        if (boards.isEmpty()) {
+            log.info("해당 유저가 없거나 유저가 작성한 게시물이 없습니다");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        // newBoard -> responseDto로 반환
+        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+
+        for (Board board : boards) {
+            responseDtos.add(new BoardCreateResponseDto(board));
+        }
+        // Creating the ApiResponse object
+        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
+        // Returning the response entity with the appropriate HTTP status
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 //    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(Long user_id, BoardfindRequestDto requestDTO) {
 //    }
 //
