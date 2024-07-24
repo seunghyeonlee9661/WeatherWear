@@ -4,8 +4,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
-
-/* 사용자 생성 요청 */
+/*
+작성자 : 이승현
+사용자 삭제 요청 DTO
+ */
 @Getter
 public class UserDeleteRequestDTO {
 

@@ -9,7 +9,10 @@ import lombok.Getter;
 
 import java.util.Date;
 
-/* 사용자 생성 요청 */
+/*
+작성자 : 이승현
+사용자 회원가입 요청 DTO
+ */
 @Getter
 public class UserRequestDTO {
 
@@ -17,17 +20,24 @@ public class UserRequestDTO {
     @Email(message = "유효한 이메일 주소여야 합니다.")
     private String email;
 
+    @NotBlank(message = "닉네임은 필수 항목입니다.")
+    private String nickname;
+
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,15}$", message = "비밀번호는 8-15자 길이여야 하며, 최소 하나의 문자, 하나의 숫자 및 하나의 특수 문자를 포함해야 합니다.")
     private String password;
 
+    @NotBlank(message = "비밀번호 확인은 필수 항목입니다.")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,15}$", message = "비밀번호는 8-15자 길이여야 하며, 최소 하나의 문자, 하나의 숫자 및 하나의 특수 문자를 포함해야 합니다.")
+    private String passwordCheck;
+
     @NotNull(message = "지역을 선택해주세요.")
     private Integer stn;
 
-    @NotNull(message = "성별은 필수 항목입니다.")
-    private UserGender gender;
+    @NotBlank(message = "성별은 필수 항목입니다.")
+    private String gender;
 
-    @NotNull(message = "지역을 선택해주세요.")
+    @NotNull(message = "생년월일을 선택해주세요.")
     private Date birthday;
 
 }

@@ -1,7 +1,10 @@
 package com.sparta.WeatherWear.dto.wishlist;
 
 import lombok.Getter;
-
+/*
+작성자 : 이승현
+네이버 아이템 요청 DTO
+ */
 @Getter
 public class NaverProductRequestDTO {
     private Long productId;

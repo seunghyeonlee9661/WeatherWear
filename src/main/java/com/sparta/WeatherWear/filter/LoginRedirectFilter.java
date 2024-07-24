@@ -10,15 +10,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-/* 로그인한 사용자가 로그인 페이지에 접근한 경우 대처하는 필터 - Javascript도 가능 */
+/*
+작성자 : 이승현
+로그인한 사용자가 로그인 페이지에 접근한 경우 대처하는 필터
+*/
 @Component
 public class LoginRedirectFilter extends OncePerRequestFilter {
+
+    private String loginURL = "/login";
+    private String redirectURL = "/";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && request.getRequestURI().equals("/login")) {
-            response.sendRedirect("/");
+        if (authentication != null && authentication.isAuthenticated() && request.getRequestURI().equals(loginURL)) {
+            response.sendRedirect(redirectURL);
             return;
         }
         filterChain.doFilter(request, response);

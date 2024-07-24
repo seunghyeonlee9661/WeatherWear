@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.dto.clothes.ClothesRequestDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
@@ -8,8 +9,12 @@ import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
 import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.enums.ClothesColor;
 import com.sparta.WeatherWear.enums.ClothesType;
+import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
+import com.sparta.WeatherWear.service.KakaoService;
 import com.sparta.WeatherWear.service.WeatherwearService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +24,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-
+/*
+작성자 : 이승현
+사용자 관련 서비스 API 처리
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class WeatherwearRestController {
     private final WeatherwearService service;
+    private final KakaoService kakaoService;
 
     /*______________________User_______________________*/
 
@@ -42,14 +51,35 @@ public class WeatherwearRestController {
 
     /* 사용자 정보 수정 */
     @PutMapping("/user")
-    public ResponseEntity<String>  removeUser(@RequestBody @Valid UserRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return service.updateUser(userDetails,requestDTO);
+    public ResponseEntity<String>  updateUserInfo(@RequestBody @Valid UserRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return service.updateUserInfo(userDetails,requestDTO);
+    }
+
+    /* 사용자 정보 수정 */
+    @PutMapping("/user/password")
+    public ResponseEntity<String>  updateUserPassword(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return service.updateUserPassword(userDetails,request.get("password"));
+    }
+
+    // 추가 작업 필요한 부분
+    /* 사용자 정보 수정 */
+    @PutMapping("/user/image")
+    public ResponseEntity<String>  updateUserImage(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return service.updateUserImage(userDetails,request.get("image"));
     }
 
     /* 사용자 정보 삭제 */
     @DeleteMapping("/user")
     public ResponseEntity<String>  removeUser(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.removeUser(userDetails,request.get("password"));
+    }
+
+
+    /*______________________Kakao_______________________*/
+
+    @GetMapping("/kakao/callback")
+    public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        return kakaoService.kakaoLogin(code,response);
     }
 
     /*______________________Clothes_______________________*/

@@ -4,7 +4,10 @@ import com.sparta.WeatherWear.entity.Clothes;
 import com.sparta.WeatherWear.enums.ClothesColor;
 import com.sparta.WeatherWear.enums.ClothesType;
 import lombok.Getter;
-
+/*
+작성자 : 이승현
+옷 데이터 반환 DTO
+ */
 @Getter
 public class ClothesResponseDTO {
     private Long id;

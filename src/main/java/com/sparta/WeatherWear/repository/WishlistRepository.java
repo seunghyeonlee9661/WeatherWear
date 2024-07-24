@@ -1,7 +1,5 @@
 package com.sparta.WeatherWear.repository;
 
-
-import com.sparta.WeatherWear.entity.Clothes;
 import com.sparta.WeatherWear.entity.Wishlist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -10,7 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /*
-자원 파일 관리를 위한 설정
+작성자 : 이승현
+자원 파일 관리를 위한 경로 설정
  */
 
 @Configuration

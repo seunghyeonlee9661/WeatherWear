@@ -6,7 +6,10 @@ import com.sparta.WeatherWear.enums.ClothesType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+/*
+작성자 : 이승현
+ 사용자의 옷 목록 Entity
+ */
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
