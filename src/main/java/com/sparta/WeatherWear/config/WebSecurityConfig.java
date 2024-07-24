@@ -2,7 +2,7 @@ package com.sparta.WeatherWear.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.WeatherWear.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.filter.JwtAuthorizationFilter;
-import com.sparta.WeatherWear.filter.LoginRedirectFilter;
+//import com.sparta.WeatherWear.filter.LoginRedirectFilter;
 import com.sparta.WeatherWear.handler.AccessDeniedHandler;
 import com.sparta.WeatherWear.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.handler.AuthenticationSuccessHandler;
@@ -32,7 +32,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final LoginRedirectFilter loginRedirectFilter;
+//    private final LoginRedirectFilter loginRedirectFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -108,7 +108,7 @@ public class WebSecurityConfig {
         // 로그인 및 JWT 생성 필터
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         // 로그인 유저 리다이렉트 필터
-        http.addFilterBefore(loginRedirectFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(loginRedirectFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -117,11 +117,6 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
     }
 
     @Bean

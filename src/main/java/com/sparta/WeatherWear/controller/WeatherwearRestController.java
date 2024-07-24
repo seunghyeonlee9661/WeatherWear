@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.dto.clothes.ClothesRequestDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
@@ -8,8 +9,12 @@ import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
 import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.enums.ClothesColor;
 import com.sparta.WeatherWear.enums.ClothesType;
+import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
+import com.sparta.WeatherWear.service.KakaoService;
 import com.sparta.WeatherWear.service.WeatherwearService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +30,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class WeatherwearRestController {
     private final WeatherwearService service;
+    private final KakaoService kakaoService;
 
     /*______________________User_______________________*/
 
@@ -50,6 +56,14 @@ public class WeatherwearRestController {
     @DeleteMapping("/user")
     public ResponseEntity<String>  removeUser(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.removeUser(userDetails,request.get("password"));
+    }
+
+
+    /*______________________Kakao_______________________*/
+
+    @GetMapping("/kakao/callback")
+    public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        return kakaoService.kakaoLogin(code,response);
     }
 
     /*______________________Clothes_______________________*/

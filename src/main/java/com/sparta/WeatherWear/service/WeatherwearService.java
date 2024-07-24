@@ -65,6 +65,7 @@ public class WeatherwearService {
     @Transactional
     public ResponseEntity<String> createUser(UserRequestDTO userCreateRequestDTO){
         if (userRepository.findByEmail(userCreateRequestDTO.getEmail()).isPresent()) throw new IllegalArgumentException("중복된 Email 입니다.");
+        if (!userCreateRequestDTO.getPassword().equals(userCreateRequestDTO.getPasswordCheck())) throw new IllegalArgumentException("비밀번호 확인이 일치하지 않습니다.");
         User user = new User(userCreateRequestDTO,passwordEncoder.encode(userCreateRequestDTO.getPassword()));
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
