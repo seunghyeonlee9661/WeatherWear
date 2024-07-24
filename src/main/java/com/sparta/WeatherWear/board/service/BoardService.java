@@ -6,7 +6,9 @@ import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
+import com.sparta.WeatherWear.repository.UserRepository;
 import com.sparta.WeatherWear.security.JwtUtil;
+import com.sparta.WeatherWear.security.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -18,12 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -31,6 +29,8 @@ import java.util.UUID;
 public class BoardService {
 
     private final JwtUtil jwtUtil;
+    private final BoardImageRepository boardImageRepository;
+    private UserRepository userRepository;
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
 
@@ -138,23 +138,63 @@ public class BoardService {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
-
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, String tokenValue , HttpServletResponse res) {
+    @Transactional
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, List<MultipartFile> images) {
         if (requestDTO == null) {
             log.info("요청한 수정 내용이 없습니다.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = getInfoFromToken(tokenValue, res);
-        // 사용자 권한
-        String userId = info.getSubject();
-        System.out.println("userId = " + userId);
+
+        // user 정보 가져오기 (id)
+        Long userId = userDetails.getUser().getId();
 
         // 유저 아이디와 게시물의 id 가 같은지 확인
-        String boardUserId = requestDTO.getUserId();
+        Long boardUserId = requestDTO.getUserId();
 
-        if()
+        if(userId == null || boardUserId == null) {
+            log.info("User의 Id 값이 없습니다.");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
 
+        // 같으면 update 실행
+        if(boardUserId.equals(userId)) {
+            // 수정할 board을 가져오기
+            Board board = boardRepository.findById(requestDTO.getUserId()).orElseThrow(()->
+                    new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
+            );;
+            // request 로 받아 온 값 넣기
+            Board updateBoard = board.update(requestDTO);
+            
+            // 날씨 정보 & 사진 업데이트하기
+            // 사진 업데이트
+            if(images != null) {
+                // 기존 사진을 제거해야 한다
+                List<BoardImage> boardImages = updateBoard.getBoardImages();
+                boardImageRepository.deleteAll(boardImages);
+
+                // 추가 - 사진 저장 메서드 실행
+                boardImageService.uploadImage(updateBoard, images);
+
+                // 사진 확인
+                for (BoardImage boardImage : boardImages) {
+                    System.out.println("boardImage_path = " + boardImage.getImagePath());
+                }
+            }
+
+            // 해당하는 날씨 정보가 존재하는 지 먼저 확인 (캐싱)
+
+
+            // newBoard -> responseDto로 반환
+            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
+            // Creating the ApiResponse object
+            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board updated successfully", responseDto);
+            // Returning the response entity with the appropriate HTTP status
+            return new ResponseEntity<>(response, HttpStatus.OK);
+            
+        }else {
+            log.info("User의 Id 값이 없습니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         
     }

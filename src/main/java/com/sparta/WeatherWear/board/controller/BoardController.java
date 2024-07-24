@@ -3,10 +3,12 @@ package com.sparta.WeatherWear.board.controller;
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
 import com.sparta.WeatherWear.security.JwtUtil;
+import com.sparta.WeatherWear.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,8 +47,8 @@ public class BoardController {
 
     /* 게시물 수정 */
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@RequestBody BoardUpdateRequestDto requestDto,@CookieValue(JwtUtil.AUTHORIZATION_HEADER) String tokenValue, HttpServletResponse res) {
-        return boardService.updateBoard(requestDto, tokenValue, res);
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@RequestBody BoardUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("images") List<MultipartFile> images) {
+        return boardService.updateBoard(requestDto, userDetails, images);
     }
 
 //    /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */

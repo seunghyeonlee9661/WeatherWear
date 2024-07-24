@@ -67,11 +67,9 @@ public class Board extends Timestamped {
         this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
         this.stn = requestDTO.getStn();
-        this.weather = requestDTO.getWeather();
         this.boardLikes = requestDTO.getBoardLikes();
         this.comments = requestDTO.getComments();
         this.boardTags = requestDTO.getBoardTags();
-        this.boardImages = requestDTO.getBoardImages();
         return this;
     }
 }
