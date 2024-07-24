@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.entity;
 
+import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
 import com.sparta.WeatherWear.dto.UserRequestDTO;
 import com.sparta.WeatherWear.entity.Comment;
@@ -8,6 +9,8 @@ import com.sparta.WeatherWear.entity.Weather;
 import com.sparta.WeatherWear.time.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,21 +40,27 @@ public class Board extends Timestamped {
     @JoinColumn(name = "weather_id", nullable = false)
     private Weather weather;
 
-    @OneToMany
-    @JoinColumn(name = "board_id")
+    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardLike> boardLikes;
 
-    @OneToMany
-    @JoinColumn(name = "board_id")
+    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    @OneToMany
-    @JoinColumn(name = "board_id", nullable = false)
+    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> boardTags;
 
-    @OneToMany
-    @JoinColumn(name = "board_id")
-    private List<BoardImage> boardImages;
+    // Board 엔티티에 image 리스트 필드 추가
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardImage> boardImages = new ArrayList<>();
+
+    public Board(BoardCreateRequestDto requestDto) {
+        this.userId = requestDto.getUserId();
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContents();
+        this.isPrivate = requestDto.isPrivate();
+        this.stn = requestDto.getStn();
+        this.boardTags =requestDto.getBoardTags();
+    }
 
     public Board update(BoardUpdateRequestDto requestDTO){
         this.title = requestDTO.getTitle();

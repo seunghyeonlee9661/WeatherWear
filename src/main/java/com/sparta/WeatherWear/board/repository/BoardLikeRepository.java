@@ -1,4 +1,4 @@
-package com.sparta.WeatherWear.repository;
+package com.sparta.WeatherWear.board.repository;
 
 
 import com.sparta.WeatherWear.board.entity.BoardLike;

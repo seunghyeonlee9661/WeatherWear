@@ -28,7 +28,7 @@ public class BoardCreateResponseDto {
     private List<BoardLike> boardLikes;
     private List<Comment> comments;
     private List<BoardTag> boardTags;
-    private List<BoardImage> boardImages;
+    private List<String> boardImages;
 
     public BoardCreateResponseDto(Board board) {
         this.id = board.getId();
@@ -43,7 +43,7 @@ public class BoardCreateResponseDto {
         this.boardLikes = board.getBoardLikes();
         this.comments = board.getComments();
         this.boardTags = board.getBoardTags();
-        this.boardImages = board.getBoardImages();
+        this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
     }
 
 }

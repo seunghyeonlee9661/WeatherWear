@@ -17,7 +17,5 @@ public class BoardCreateRequestDto {
     private String contents;
     private boolean isPrivate;
     private int stn;
-    private Weather weather;
     private List<BoardTag> boardTags;
-    private List<BoardImage> boardImages;
 }

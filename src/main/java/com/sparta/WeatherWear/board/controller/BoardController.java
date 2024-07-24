@@ -2,9 +2,12 @@ package com.sparta.WeatherWear.board.controller;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,8 +19,8 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDTO) {
-        return boardService.createBoard(requestDTO);
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDto, @Valid @RequestParam("images") List<MultipartFile> images) {
+        return boardService.createBoard(requestDto, images);
     }
 
 //    /* 게시물 id로 조회 */
@@ -34,14 +37,14 @@ public class BoardController {
 //
 //    /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
 //    @GetMapping("/find-all/{user_id}")
-//    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(@PathVariable Long user_id, @RequestBody BoardfindRequestDto requestDTO) {
-//        return boardService.findBoardAll(user_id, requestDTO);
+//    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(@PathVariable Long user_id, @RequestBody BoardfindRequestDto requestDto) {
+//        return boardService.findBoardAll(user_id, requestDto);
 //    }
 //
 //    /* 게시물 수정 */
 //    @PutMapping("/{user_id}")
-//    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@PathVariable Long user_id, @RequestBody BoardUpdateRequestDto requestDTO) {
-//        return boardService.updateBoard(user_id, requestDTO);
+//    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@PathVariable Long user_id, @RequestBody BoardUpdateRequestDto requestDto) {
+//        return boardService.updateBoard(user_id, requestDto);
 //    }
 //
 //    /* 게시물 삭제 */

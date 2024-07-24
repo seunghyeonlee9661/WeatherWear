@@ -12,6 +12,10 @@ public class BoardTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "board_id", nullable = false)
+    private Board board;
+
     @Column(name = "color", length = 50, nullable = false)
     private ClothesColor color;
 
