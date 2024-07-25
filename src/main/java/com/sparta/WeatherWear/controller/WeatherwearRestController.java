@@ -8,7 +8,7 @@ import com.sparta.WeatherWear.dto.wishlist.NaverProductRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
 import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
-import com.sparta.WeatherWear.service.KakaoService;
+import com.sparta.WeatherWear.service.KakaoLoginService;
 import com.sparta.WeatherWear.service.WeatherwearService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -32,7 +32,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class WeatherwearRestController {
     private final WeatherwearService service;
-    private final KakaoService kakaoService;
+    private final KakaoLoginService kakaoLoginService;
 
     /*______________________User_______________________*/
 
@@ -77,7 +77,7 @@ public class WeatherwearRestController {
 
     @GetMapping("/kakao/callback")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        return kakaoService.kakaoLogin(code,response);
+        return kakaoLoginService.kakaoLogin(code,response);
     }
 
     /*______________________Clothes_______________________*/

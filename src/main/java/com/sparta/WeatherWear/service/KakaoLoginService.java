@@ -30,7 +30,7 @@ import java.util.UUID;
 @Slf4j(topic = "KAKAO Login")
 @Service
 @RequiredArgsConstructor
-public class KakaoService {
+public class KakaoLoginService {
 
     @Value("${kakao.client.id}")
     private String client_id;
@@ -134,12 +134,13 @@ public class KakaoService {
 
         // HTTP 요청 보내기
         ResponseEntity<String> response = restTemplate.exchange(requestEntity,String.class);
+        System.out.println(response.getBody());
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties").get("nickname").asText();
         String email = jsonNode.get("kakao_account").get("email").asText();
-        String image = jsonNode.get("kakao_account").get("image").asText();
+        String image = jsonNode.get("properties").get("profile_image").asText();
         return new KakaoUserResponseDto(id, nickname, email,image);
     }
 }

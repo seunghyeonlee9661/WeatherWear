@@ -115,7 +115,7 @@ public class WeatherwearService {
         String ftpFilename = "user/" + String.valueOf(user.getId()); // 파일 이름 선정
         boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
         if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
-            String imageURL = "http://119.56.220.32/images/user/" + ftpFilename;
+            String imageURL = "http://119.56.220.32/images/" + ftpFilename;
             user.updateImage(imageURL);
             userRepository.save(user);
             return ResponseEntity.ok().body("User image updated successfully");
