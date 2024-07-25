@@ -2,28 +2,30 @@ package com.sparta.WeatherWear.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-/*
-작성자 : 이승현
-날씨 정보 캐시 Entity
- */
+import lombok.Setter;
+
+import java.util.Date;
+
 @Getter
+@Setter
 @Entity
-@NoArgsConstructor // 기본 생성자 추가
 public class Weather {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // 날씨 데이터 ID
 
     @Column(name = "stn", nullable = false)
-    private int stn;
+    private int stn; // 지역 코드
 
     @Column(name = "ta", nullable = false)
-    private int ta;
+    private double ta; // 기온
 
     @Column(name = "sky", nullable = false)
-    private String sky;
+    private String sky; // 하늘 상태
 
     @Column(name = "prep", nullable = false)
-    private int prep;
+    private double prep; // 강수량
+
+    @Column(name = "date", nullable = false)
+    private Date date; // 날짜
 }

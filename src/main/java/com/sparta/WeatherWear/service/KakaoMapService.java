@@ -35,7 +35,7 @@ public class KakaoMapService {
         this.addressRepository = addressRepository;
     }
 
-    public Address findAddress(double x, double y) throws JsonProcessingException {
+    public Address findAddressByCoordinate(double x, double y) throws JsonProcessingException {
         String url = String.format(KAKAO_GEOCODING_URL, x, y);
         logger.info(url);
 
