@@ -31,9 +31,6 @@ public class UserRequestDTO {
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,15}$", message = "비밀번호는 8-15자 길이여야 하며, 최소 하나의 문자, 하나의 숫자 및 하나의 특수 문자를 포함해야 합니다.")
     private String passwordCheck;
 
-    @NotNull(message = "지역을 선택해주세요.")
-    private Integer stn;
-
     @NotBlank(message = "성별은 필수 항목입니다.")
     private String gender;
 

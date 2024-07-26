@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.UUID;
 /*
 작성자 : 이승현
-카카오 서비스 처리 기능
+카카오 로그인 서비스 처리 기능
 */
 @Slf4j(topic = "KAKAO Login")
 @Service

@@ -1,74 +1,73 @@
 package com.sparta.WeatherWear.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.WeatherWear.entity.Address;
-import com.sparta.WeatherWear.entity.Weather;
 import com.sparta.WeatherWear.entity.WeatherNew;
 import com.sparta.WeatherWear.repository.WeatherNewRepository;
-import com.sparta.WeatherWear.repository.WeatherRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-
+/*
+ * 작성자 :
+ * 날씨 정보 데이터를 받아서 처리합니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class WeatherService {
-    private static final Logger logger = Logger.getLogger(WeatherService.class.getName());
 
-    @Value("${weather.api.key}")
+    private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
+
+    @Value("${weather.api.key}") //기상청 api 키
     private String serviceKey;
-    @Value("${weather.api.uri}")
+    @Value("${weather.api.uri}") // 기상청 api base uri
     private String weatherURi;
 
     private final WeatherNewRepository weatherNewRepository;
     private final KakaoMapService kakaoMapService;
 
     /* 좌표를 통해 날씨 정보를 반환합니다. 기존에 가지고 있지 않은 날씨 정보는 새롭게 데이터에 저장됩니다. */
-    @Transactional
+    /* 좌표 -> 위치 -> 날씨 */
     public ResponseEntity<WeatherNew> getWeatherByCoordinate(double x, double y) throws JsonProcessingException {
-        // 좌표로 지역 정보를 불러옵니다.
+        // 좌표로 지역 정보를 불러옵니다. 카카오 MAP API
         Address address = kakaoMapService.findAddressByCoordinate(x, y);
         WeatherNew weather = getWeatherByAddress(address);
         return ResponseEntity.ok(weather);
     }
 
     /* 주소와 현재 시간으로 날씨 정보를 반환합니다. */
+    /* 위치 -> 날씨 */
     @Transactional
     public WeatherNew getWeatherByAddress(Address address){
-        // 현재 시간을 분 단위로 내림 처리하여 가져옵니다.
+        /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+
         // Weather 데이터를 조회하고 반환합니다.
-        return weatherNewRepository.findByAddressAndDate(address,Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
-                // Weather가 없는 경우
+        return weatherNewRepository.findByAddressAndDate(address,Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
+                // Weather가 없는 경우 기상청 API에 날씨 정보를 요청합니다.
                 .orElseGet(() -> {
                     WeatherNew newWeather = null;
                     try {
                         // 기상청 API에 날씨 값을 요청합니다.
-                        newWeather = getWeatherByAPI(address,now);
+                        newWeather = getWeatherByAPI(address, now);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -79,44 +78,87 @@ public class WeatherService {
     }
 
     /* 장소와 날짜를 기반으로 API를 요청하고 날씨 정보를 받아옵니다. */
+    /* 출처 : https://www.data.go.kr/data/15084084/openapi.do */
+    /* 위치, 시간 -> 날씨 */
     private WeatherNew getWeatherByAPI(Address address, LocalDateTime date) throws IOException {
-        String baseDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String baseTime = date.format(DateTimeFormatter.ofPattern("HHmm"));
+        /* 현재 시간 값에 따른 API 요청 시간을 생성합니다.*/
+        /* 단기 예보의 경우, 2시부터 3시간 간격으로 데이터를 생성합니다. 예보는 생성 시간 기준 +6시간이 생성됩니다. */
+        logger.info("date : " + date);
+        String baseDate;
+        String baseTime;
+        /* 현재 시간이 2보다 작을 경우 전날 23시 */
+        if (date.getHour() < 2) {
+            baseDate = date.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            baseTime = "2300";
+        /* 시간을 3시간 단위로 조절합니다. */
+        } else {
+            baseDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            int hour = date.getHour();
+            int adjustedHour = (hour - 2) % 24; // 2시부터 시작, 24시간 범위로 조정
+            adjustedHour = (adjustedHour + 24) % 24; // 음수 시간 보정
+            int baseTimeHour = (adjustedHour / 3) * 3 + 2; // 2시부터 3시간 간격
+            // baseTimeHour가 24시를 넘는 경우, 24시에서 빼줍니다.
+            if (baseTimeHour >= 24) {
+                baseTimeHour -= 24;
+            }
+            baseTime = String.format("%02d00", baseTimeHour);
+        }
+        /* 요청을 위한 날짜와 시간 확인! */
+        logger.info("baseDate: " + baseDate + " | baseTime: " + baseTime);
+
         try {
             /* URL 생성*/
             String urlBuilder = weatherURi +
-                    "?serviceKey=" + serviceKey +
+                    "?serviceKey=" + serviceKey + /* <- URLEncoder에 키값을 넣으면 변환 발생으로 직접 입력 */
                     "&pageNo=" + URLEncoder.encode("1", StandardCharsets.UTF_8) +
-                    "&numOfRows=" + URLEncoder.encode("8", StandardCharsets.UTF_8) +
+                    "&numOfRows=" + URLEncoder.encode("20", StandardCharsets.UTF_8) +
                     "&dataType=" + URLEncoder.encode("JSON", StandardCharsets.UTF_8) +
                     "&base_date=" + URLEncoder.encode(baseDate, StandardCharsets.UTF_8) +
                     "&base_time=" + URLEncoder.encode(baseTime, StandardCharsets.UTF_8) +
                     "&nx=" + URLEncoder.encode(String.valueOf(address.getNx()), StandardCharsets.UTF_8) +
                     "&ny=" + URLEncoder.encode(String.valueOf(address.getNy()), StandardCharsets.UTF_8);
-            /* JSONObject */
+            logger.info("urlBuilder : " + urlBuilder);
+
+            /* JSONObject를 처리해서 아이템 목록을 가져옵니다.*/
             JSONObject jsonResponse = getJsonObject(urlBuilder);
-            JSONArray items = jsonResponse.getJSONObject("response")
-                    .getJSONObject("body")
-                    .getJSONObject("items")
-                    .getJSONArray("item");
-            /* 카테고리와 값들을 찾아내서 Map에 저장 */
+            JSONArray items = jsonResponse.getJSONObject("response").getJSONObject("body").getJSONObject("items").getJSONArray("item");
+
+            /* 카테고리와 값들을 찾아내서 저장할 Map 선언 */
             Map<String, Double> weatherData = new HashMap<>();
+
+            /* 요청은 현재 시간 기준 다음 정각 (13시 42분 -> 14시)을 기준으로 날씨 값을 찾아 비교합니다. */
+            LocalDateTime compareDate = date.plusHours(1);
+            String compareDateStr = compareDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String compareTimeStr = compareDate.format(DateTimeFormatter.ofPattern("HHmm"));
+
+            /* 아이템 목록에서 필요한 데이터만 찾아서 Map에 저장 */
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
-                String category = item.getString("category");
-                Double obsrValue = item.optDouble("obsrValue", Double.NaN);
-                weatherData.put(category, obsrValue);
+                String fcstDate = item.getString("fcstDate");
+                String fcstTime = item.getString("fcstTime");
+                if (compareDateStr.equals(fcstDate) && compareTimeStr.equals(fcstTime)) {
+                    String category = item.getString("category");
+                    Double fcstValue = item.optDouble("fcstValue",0.0);
+                    weatherData.put(category, fcstValue);
+                }
             }
-            // Weather 객체에 저장하고 반환
-            return new WeatherNew(baseDate, baseTime,address,
-                    weatherData.getOrDefault("PTY", Double.NaN),
-                    weatherData.getOrDefault("REH", Double.NaN),
-                    weatherData.getOrDefault("RN1", Double.NaN),
-                    weatherData.getOrDefault("T1H", Double.NaN),
-                    weatherData.getOrDefault("UUU", Double.NaN),
-                    weatherData.getOrDefault("VEC", Double.NaN),
-                    weatherData.getOrDefault("VVV", Double.NaN),
-                    weatherData.getOrDefault("WSD", Double.NaN));
+            logger.info("weatherData" + weatherData);
+            // Weather 객체에 저장하고 반환합니다.
+            return new WeatherNew(compareDateStr,compareTimeStr,address,
+                    weatherData.getOrDefault("POP", null),
+                    weatherData.getOrDefault("PTY", null),
+                    weatherData.getOrDefault("PCP", null),
+                    weatherData.getOrDefault("REH", null),
+                    weatherData.getOrDefault("SNO", null),
+                    weatherData.getOrDefault("SKY", null),
+                    weatherData.getOrDefault("TMP", null),
+                    weatherData.getOrDefault("TMN", null),
+                    weatherData.getOrDefault("TMX", null),
+                    weatherData.getOrDefault("UUU", null),
+                    weatherData.getOrDefault("VVV", null),
+                    weatherData.getOrDefault("WAV", null),
+                    weatherData.getOrDefault("VEC", null),
+                    weatherData.getOrDefault("WSD", null));
         } catch (Exception e) {
             throw new RuntimeException("Error parsing weather API response", e);
         }
@@ -127,11 +169,9 @@ public class WeatherService {
         HttpURLConnection conn = (HttpURLConnection) new URL(urlBuilder).openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
-
         BufferedReader rd = new BufferedReader(new InputStreamReader(
                 conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300
                         ? conn.getInputStream() : conn.getErrorStream()));
-
         StringBuilder response = new StringBuilder();
         String line;
         while ((line = rd.readLine()) != null) {

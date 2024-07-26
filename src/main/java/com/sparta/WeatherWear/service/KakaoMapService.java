@@ -15,6 +15,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 import java.util.logging.Logger;
+/*
+* 작성자 : 이승현
+* 위경도 좌표에 대해 카카오 지도 api를 통해 주소 정보를 반환합니다.
+*/
 
 @Service
 public class KakaoMapService {

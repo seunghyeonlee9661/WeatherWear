@@ -1,6 +1,7 @@
 package com.sparta.WeatherWear.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesRequestDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
@@ -127,5 +128,14 @@ public class WeatherwearRestController {
     public ResponseEntity<String> removeWishlist(@PathVariable("id") long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.removeWishlist(userDetails,id);
     }
+
+    /*_________________________Recommend___________________*/
+    
+    /* 추천 아이템들 불러오기 */
+    @GetMapping("/recommend")
+    public ResponseEntity<List<List<ResponseDTO>>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return service.getRecommend(userDetails);
+    }
+
 
 }

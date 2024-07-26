@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-
-/* 이미지 전송을 위해 FTP를 사용해 업로드와 다운로드를 진행합니다. */
+/*
+ * 작성자 : 이승현
+ * 이미지 전송을 위해 FTP를 사용해 업로드와 다운로드를 진행합니다.
+ */
 @Service
 public class FTPService {
 

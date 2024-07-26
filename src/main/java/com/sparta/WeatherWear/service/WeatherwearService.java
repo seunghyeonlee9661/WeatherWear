@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.service;
 
+import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesRequestDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
@@ -27,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 /*
@@ -212,5 +214,25 @@ public class WeatherwearService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 위시리스트 아이템이 아닙니다.");
         wishlistRepository.delete(wishlist);
         return ResponseEntity.ok("Wishlist delete successfully");
+    }
+
+    /*______________________Recommend_______________________*/
+
+    /* 추천 아이템 리스트 불러오는 기능 */
+    public ResponseEntity<List<List<ResponseDTO>>> getRecommend (UserDetailsImpl userDetails){
+        List<List<ResponseDTO>> dtoList = new ArrayList<>();
+
+        /* 날씨 기반 옷차림 추천 */
+        dtoList.add(getClothesByWeather());
+
+
+        return ResponseEntity.ok(dtoList);
+    }
+
+    /* 현재 날씨 정보 기반의 옷 정보를 선별하여 전달합니다. */
+    private List<ResponseDTO> getClothesByWeather(){
+        List<ResponseDTO> clothes = new ArrayList<>();
+//        clothes.add(new ClothesResponseDTO());
+        return clothes;
     }
 }

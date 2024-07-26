@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-
+/*
+날씨 정보 Entity 구버전 - 삭제 부탁드립니다.
+ */
 @Getter
 @Setter
 @Entity
