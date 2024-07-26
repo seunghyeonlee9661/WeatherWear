@@ -6,14 +6,8 @@ import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.NaverProductRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
-import com.sparta.WeatherWear.entity.Clothes;
-import com.sparta.WeatherWear.entity.NaverProduct;
-import com.sparta.WeatherWear.entity.User;
-import com.sparta.WeatherWear.entity.Wishlist;
-import com.sparta.WeatherWear.repository.ClothesRepository;
-import com.sparta.WeatherWear.repository.NaverProductRepository;
-import com.sparta.WeatherWear.repository.UserRepository;
-import com.sparta.WeatherWear.repository.WishlistRepository;
+import com.sparta.WeatherWear.entity.*;
+import com.sparta.WeatherWear.repository.*;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,18 +42,23 @@ public class WeatherwearService {
     private final ClothesRepository clothesRepository;
     private final WishlistRepository wishlistRepository;
     private final NaverProductRepository naverProductRepository;
+    private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
+
     @Autowired
     private final FTPService ftpService;
+    private final WeatherService weatherService;
 
 
-    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository, FTPService ftpService) {
+    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository, AddressRepository addressRepository, FTPService ftpService, WeatherService weatherService) {
         this.clothesRepository = clothesRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.wishlistRepository = wishlistRepository;
         this.naverProductRepository = naverProductRepository;
+        this.addressRepository = addressRepository;
         this.ftpService = ftpService;
+        this.weatherService = weatherService;
     }
 
     /*______________________User_______________________*/
@@ -143,7 +142,7 @@ public class WeatherwearService {
 
     /* 옷 추가 */
     @Transactional
-    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) throws IOException {
+    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) {
         Clothes clothes = new Clothes(clothesRequestDTO,userDetails.getUser());
         Clothes savedClothes = clothesRepository.save(clothes);
         if(file != null){
@@ -219,12 +218,18 @@ public class WeatherwearService {
     /*______________________Recommend_______________________*/
 
     /* 추천 아이템 리스트 불러오는 기능 */
-    public ResponseEntity<List<List<ResponseDTO>>> getRecommend (UserDetailsImpl userDetails){
+    public ResponseEntity<List<List<ResponseDTO>>> getRecommend (UserDetailsImpl userDetails, String city, String county, String district){
+        // 날씨값 찾기
+        Weather weather = weatherService.getWeatherByAddress(city, county, district);
         List<List<ResponseDTO>> dtoList = new ArrayList<>();
-
         /* 날씨 기반 옷차림 추천 */
         dtoList.add(getClothesByWeather());
-
+        /* 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
+        dtoList.add(getClothesByWeather());
+        /* 트랜드 옷차림 추천 */
+        dtoList.add(getClothesByWeather());
+        /* 트랜드 옷차림 추천 */
+        dtoList.add(getClothesByWeather());
 
         return ResponseEntity.ok(dtoList);
     }

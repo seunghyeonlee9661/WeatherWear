@@ -1,9 +1,9 @@
 package com.sparta.WeatherWear.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.entity.Address;
-import com.sparta.WeatherWear.entity.WeatherNew;
-import com.sparta.WeatherWear.repository.WeatherNewRepository;
+import com.sparta.WeatherWear.entity.Weather;
+import com.sparta.WeatherWear.repository.AddressRepository;
+import com.sparta.WeatherWear.repository.WeatherRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,30 +41,24 @@ public class WeatherService {
     @Value("${weather.api.uri}") // 기상청 api base uri
     private String weatherURi;
 
-    private final WeatherNewRepository weatherNewRepository;
-    private final KakaoMapService kakaoMapService;
+    private final WeatherRepository weatherRepository;
+    private final AddressRepository addressRepository;
 
-    /* 좌표를 통해 날씨 정보를 반환합니다. 기존에 가지고 있지 않은 날씨 정보는 새롭게 데이터에 저장됩니다. */
-    /* 좌표 -> 위치 -> 날씨 */
-    public ResponseEntity<WeatherNew> getWeatherByCoordinate(double x, double y) throws JsonProcessingException {
-        // 좌표로 지역 정보를 불러옵니다. 카카오 MAP API
-        Address address = kakaoMapService.findAddressByCoordinate(x, y);
-        WeatherNew weather = getWeatherByAddress(address);
-        return ResponseEntity.ok(weather);
-    }
-
-    /* 주소와 현재 시간으로 날씨 정보를 반환합니다. */
+    /* 시군구와 현재 시간으로 DB에서 날씨 정보를 찾아 반환합니다. */
     /* 위치 -> 날씨 */
     @Transactional
-    public WeatherNew getWeatherByAddress(Address address){
+    public Weather getWeatherByAddress(String city, String county, String district){
+        Address address = addressRepository.findByCityAndCountyAndDistrict(city, county, district).orElseGet(() ->
+                addressRepository.findByCityAndCountyAndDistrict(city, county,null).orElseThrow(() ->
+                        new RuntimeException("Address not found with the given city and county."))
+        );
         /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
-
         // Weather 데이터를 조회하고 반환합니다.
-        return weatherNewRepository.findByAddressAndDate(address,Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
+        Weather weather =  weatherRepository.findByAddressAndDate(address,Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
                 // Weather가 없는 경우 기상청 API에 날씨 정보를 요청합니다.
                 .orElseGet(() -> {
-                    WeatherNew newWeather = null;
+                    Weather newWeather = null;
                     try {
                         // 기상청 API에 날씨 값을 요청합니다.
                         newWeather = getWeatherByAPI(address, now);
@@ -72,15 +66,16 @@ public class WeatherService {
                         throw new RuntimeException(e);
                     }
                     // 새로운 날씨 값을 서버에 저장합니다.
-                    weatherNewRepository.save(newWeather);
+                    weatherRepository.save(newWeather);
                     return newWeather;
                 });
+        return weather;
     }
 
-    /* 장소와 날짜를 기반으로 API를 요청하고 날씨 정보를 받아옵니다. */
+    /* 위치와 날짜를 기반으로 API를 요청하고 날씨 정보를 받아옵니다. */
     /* 출처 : https://www.data.go.kr/data/15084084/openapi.do */
     /* 위치, 시간 -> 날씨 */
-    private WeatherNew getWeatherByAPI(Address address, LocalDateTime date) throws IOException {
+    private Weather getWeatherByAPI(Address address, LocalDateTime date) throws IOException {
         /* 현재 시간 값에 따른 API 요청 시간을 생성합니다.*/
         /* 단기 예보의 경우, 2시부터 3시간 간격으로 데이터를 생성합니다. 예보는 생성 시간 기준 +6시간이 생성됩니다. */
         logger.info("date : " + date);
@@ -144,7 +139,7 @@ public class WeatherService {
             }
             logger.info("weatherData" + weatherData);
             // Weather 객체에 저장하고 반환합니다.
-            return new WeatherNew(compareDateStr,compareTimeStr,address,
+            return new Weather(compareDateStr,compareTimeStr,address,
                     weatherData.getOrDefault("POP", null),
                     weatherData.getOrDefault("PTY", null),
                     weatherData.getOrDefault("PCP", null),

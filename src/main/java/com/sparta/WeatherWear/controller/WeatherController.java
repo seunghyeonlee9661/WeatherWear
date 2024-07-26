@@ -2,7 +2,6 @@ package com.sparta.WeatherWear.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.entity.Weather;
-import com.sparta.WeatherWear.entity.WeatherNew;
 import com.sparta.WeatherWear.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class WeatherController {
     private final WeatherService weatherService;
-    /* 좌표를 통해 날씨 정보를 받아올 수 있도록 요청을 처리합니다.*/
-    @GetMapping("/weathers") // 전체 날씨 조회
-    public ResponseEntity<WeatherNew> getWeatherByCoordinate(@RequestParam(value = "x") double x, @RequestParam(value = "y") double y) throws JsonProcessingException {
-        return weatherService.getWeatherByCoordinate(x, y);
-    }
 
+    /* 주소값을 통해 날씨 정보를 받아올 수 있도록 요청을 처리합니다.*/
+    /* 해당 기능은 주소값 호출에 대한 테스트를 위해 구현되었습니다. */
+    /* 하부 기능은 추천 시스템에서 본격적으로 사용합니다. */
+    @GetMapping("/weathers") // 전체 날씨 조회
+    public ResponseEntity<Weather> getWeatherByAddress(@RequestParam(value = "city") String city, @RequestParam(value = "county") String county,@RequestParam(value = "county") String district) {
+        return ResponseEntity.ok(weatherService.getWeatherByAddress(city,county,district));
+    }
 }
