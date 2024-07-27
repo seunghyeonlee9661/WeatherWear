@@ -125,7 +125,7 @@ public class BoardService {
     }
 
     // 페이징 구현 추가 필요
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(BoardfindRequestDto requestDTO) {
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll() {
         List<Board> boards = boardRepository.findAll();
         List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
 
@@ -198,19 +198,14 @@ public class BoardService {
 
         
     }
+    public ResponseEntity<String> removeBoard(Long boardId, UserDetailsImpl userDetails) {
+        // 사용자가 작성한 게시물인지 확인
+        
+        // 삭제
 
-//    public ResponseEntity<String> removeBoard(Long userId) {
-//    }
+        return new ResponseEntity<>(HttpStatus.OK);
 
-    public Claims getInfoFromToken(String tokenValue, HttpServletResponse res) {
-        // JWT 토큰 substring
-        String token = jwtUtil.substringToken(tokenValue);
-        // 토큰 검증
-        if(!jwtUtil.validateToken(token, res)){
-            throw new IllegalArgumentException("Token Error");
-        }
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-        return info;
+
     }
+
 }

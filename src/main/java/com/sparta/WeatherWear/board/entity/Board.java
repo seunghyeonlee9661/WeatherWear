@@ -9,6 +9,7 @@ import com.sparta.WeatherWear.entity.Weather;
 import com.sparta.WeatherWear.time.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Board extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

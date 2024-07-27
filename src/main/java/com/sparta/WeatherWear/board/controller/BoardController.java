@@ -2,9 +2,7 @@ package com.sparta.WeatherWear.board.controller;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
-import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +39,8 @@ public class BoardController {
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     @GetMapping("/find-all")
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(@RequestBody BoardfindRequestDto requestDto) {
-        return boardService.findBoardAll(requestDto);
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll() {
+        return boardService.findBoardAll();
     }
 
     /* 게시물 수정 */
@@ -51,9 +49,19 @@ public class BoardController {
         return boardService.updateBoard(requestDto, userDetails, images);
     }
 
-//    /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
-//    @DeleteMapping("/{user_id}")
-//    public ResponseEntity<String> removeBoard(@PathVariable Long user_id) {
-//        return boardService.removeBoard(user_id);
+    /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
+    @DeleteMapping("/remove/{board_id}")
+    public ResponseEntity<String> removeBoard(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.removeBoard(board_id, userDetails);
+    }
+//    /*  */
+//    @DeleteMapping("/remove/{board_id}")
+//    public ResponseEntity<String> removeBoard(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return boardService.removeBoard(board_id, userDetails);
+//    }
+//    /*  */
+//    @DeleteMapping("/remove/{board_id}")
+//    public ResponseEntity<String> removeBoard(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return boardService.removeBoard(board_id, userDetails);
 //    }
 }
