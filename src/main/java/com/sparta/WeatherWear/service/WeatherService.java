@@ -44,14 +44,11 @@ public class WeatherService {
     private final WeatherRepository weatherRepository;
     private final AddressRepository addressRepository;
 
-    /* 시군구와 현재 시간으로 DB에서 날씨 정보를 찾아 반환합니다. */
-    /* 위치 -> 날씨 */
+    /* 법정동 코드와 현재 시간으로 DB에서 날씨 정보를 찾아 반환합니다. */
+    /* 법정동 코드 -> 날씨 */
     @Transactional
-    public Weather getWeatherByAddress(String city, String county, String district){
-        Address address = addressRepository.findByCityAndCountyAndDistrict(city, county, district).orElseGet(() ->
-                addressRepository.findByCityAndCountyAndDistrict(city, county,null).orElseThrow(() ->
-                        new RuntimeException("Address not found with the given city and county."))
-        );
+    public Weather getWeatherByAddress(Long id){
+        Address address = addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Address not found with the given city and county."));
         /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
         // Weather 데이터를 조회하고 반환합니다.
@@ -106,7 +103,7 @@ public class WeatherService {
             String urlBuilder = weatherURi +
                     "?serviceKey=" + serviceKey + /* <- URLEncoder에 키값을 넣으면 변환 발생으로 직접 입력 */
                     "&pageNo=" + URLEncoder.encode("1", StandardCharsets.UTF_8) +
-                    "&numOfRows=" + URLEncoder.encode("20", StandardCharsets.UTF_8) +
+                    "&numOfRows=" + URLEncoder.encode("100", StandardCharsets.UTF_8) +
                     "&dataType=" + URLEncoder.encode("JSON", StandardCharsets.UTF_8) +
                     "&base_date=" + URLEncoder.encode(baseDate, StandardCharsets.UTF_8) +
                     "&base_time=" + URLEncoder.encode(baseTime, StandardCharsets.UTF_8) +
@@ -125,6 +122,9 @@ public class WeatherService {
             LocalDateTime compareDate = date.plusHours(1);
             String compareDateStr = compareDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String compareTimeStr = compareDate.format(DateTimeFormatter.ofPattern("HHmm"));
+            logger.info("compareDateStr : " + compareDateStr);
+            logger.info("compareTimeStr : " + compareTimeStr);
+
 
             /* 아이템 목록에서 필요한 데이터만 찾아서 Map에 저장 */
             for (int i = 0; i < items.length(); i++) {

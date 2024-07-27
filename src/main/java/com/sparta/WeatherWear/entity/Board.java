@@ -28,8 +28,9 @@ public class Board {
     @Column(name = "isPrivate", nullable = false)
     private boolean isPrivate;
 
-    @Column(name = "stn", nullable = false)
-    private int stn;
+    @ManyToOne
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
     @Column(name = "regist_date", nullable = false)
     private Date registDate;

@@ -218,9 +218,9 @@ public class WeatherwearService {
     /*______________________Recommend_______________________*/
 
     /* 추천 아이템 리스트 불러오는 기능 */
-    public ResponseEntity<List<List<ResponseDTO>>> getRecommend (UserDetailsImpl userDetails, String city, String county, String district){
+    public ResponseEntity<List<List<ResponseDTO>>> getRecommend (UserDetailsImpl userDetails, long id){
         // 날씨값 찾기
-        Weather weather = weatherService.getWeatherByAddress(city, county, district);
+        Weather weather = weatherService.getWeatherByAddress(id);
         List<List<ResponseDTO>> dtoList = new ArrayList<>();
         /* 날씨 기반 옷차림 추천 */
         dtoList.add(getClothesByWeather());

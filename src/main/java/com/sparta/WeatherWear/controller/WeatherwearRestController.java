@@ -133,7 +133,7 @@ public class WeatherwearRestController {
     
     /* 추천 아이템들 불러오기 */
     @GetMapping("/recommend")
-    public ResponseEntity<List<List<ResponseDTO>>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam(value = "city") String city, @RequestParam(value = "county") String county,@RequestParam(value = "county") String district) {
-        return service.getRecommend(userDetails,city,county,district);
+    public ResponseEntity<List<List<ResponseDTO>>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam(value = "id") Long id) {
+        return service.getRecommend(userDetails,id);
     }
 }

@@ -23,7 +23,7 @@ public class WeatherController {
     /* 해당 기능은 주소값 호출에 대한 테스트를 위해 구현되었습니다. */
     /* 하부 기능은 추천 시스템에서 본격적으로 사용합니다. */
     @GetMapping("/weathers") // 전체 날씨 조회
-    public ResponseEntity<Weather> getWeatherByAddress(@RequestParam(value = "city") String city, @RequestParam(value = "county") String county,@RequestParam(value = "county") String district) {
-        return ResponseEntity.ok(weatherService.getWeatherByAddress(city,county,district));
+    public ResponseEntity<Weather> getWeatherByAddress(@RequestParam(value = "id") Long id) {
+        return ResponseEntity.ok(weatherService.getWeatherByAddress(id));
     }
 }

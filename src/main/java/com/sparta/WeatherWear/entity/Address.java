@@ -12,16 +12,7 @@ import lombok.NoArgsConstructor;
 public class Address {
     @Id
     @Column(name = "code", nullable = false)
-    private Long code; // 행정구역 코드
-
-    @Column(name = "city", nullable = false)
-    private String city; // 시
-
-    @Column(name = "county", nullable = false)
-    private String county; // 군
-
-    @Column(name = "district", nullable = false)
-    private String district; // 구
+    private Long id; // 행정구역 코드
 
     @Column(name = "nx", nullable = false)
     private int nx; // 격자X
