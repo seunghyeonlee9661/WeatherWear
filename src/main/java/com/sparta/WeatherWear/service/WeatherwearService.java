@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.service;
 
-import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesRequestDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
@@ -10,7 +9,6 @@ import com.sparta.WeatherWear.entity.*;
 import com.sparta.WeatherWear.repository.*;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +16,9 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 /*
@@ -32,22 +28,14 @@ import java.util.stream.Collectors;
 @Service
 public class WeatherwearService {
 
-
-    @Value("${naver.client.id}")
-    private String clientId;
-    @Value("${naver.client.secret}")
-    private String clientSecret;
-
     private final UserRepository userRepository;
     private final ClothesRepository clothesRepository;
     private final WishlistRepository wishlistRepository;
     private final NaverProductRepository naverProductRepository;
-    private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     private final FTPService ftpService;
-    private final WeatherService weatherService;
 
 
     public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository, AddressRepository addressRepository, FTPService ftpService, WeatherService weatherService) {
@@ -56,9 +44,7 @@ public class WeatherwearService {
         this.userRepository = userRepository;
         this.wishlistRepository = wishlistRepository;
         this.naverProductRepository = naverProductRepository;
-        this.addressRepository = addressRepository;
         this.ftpService = ftpService;
-        this.weatherService = weatherService;
     }
 
     /*______________________User_______________________*/
@@ -173,20 +159,6 @@ public class WeatherwearService {
         return ResponseEntity.ok("Clothes delete successfully");
     }
 
-    /*______________________Naver_______________________*/
-
-    // 네이버로부터 입력에 대한 검색 결과를 받아오는 기능
-    public ResponseEntity<String> searchProducts(String query, int display, int start, String sort, String filter){
-        /* 헤더 정의 */
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Naver-Client-Id", clientId);
-        headers.set("X-Naver-Client-Secret", clientSecret);
-        /* url 정의 */
-        String apiUrl = "https://openapi.naver.com/v1/search/shop.json?query=" + query+ "&display=" + display + "&start=" + start + "&sort=" + sort + "&filter=" + filter;
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        return new RestTemplate().exchange(apiUrl, HttpMethod.GET, entity, String.class);
-    }
-
     /*______________________Wishlist_______________________*/
 
     /* 위시리스트 불러오기 */
@@ -217,27 +189,4 @@ public class WeatherwearService {
 
     /*______________________Recommend_______________________*/
 
-    /* 추천 아이템 리스트 불러오는 기능 */
-    public ResponseEntity<List<List<ResponseDTO>>> getRecommend (UserDetailsImpl userDetails, long id){
-        // 날씨값 찾기
-        Weather weather = weatherService.getWeatherByAddress(id);
-        List<List<ResponseDTO>> dtoList = new ArrayList<>();
-        /* 날씨 기반 옷차림 추천 */
-        dtoList.add(getClothesByWeather());
-        /* 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
-        dtoList.add(getClothesByWeather());
-        /* 트랜드 옷차림 추천 */
-        dtoList.add(getClothesByWeather());
-        /* 트랜드 옷차림 추천 */
-        dtoList.add(getClothesByWeather());
-
-        return ResponseEntity.ok(dtoList);
-    }
-
-    /* 현재 날씨 정보 기반의 옷 정보를 선별하여 전달합니다. */
-    private List<ResponseDTO> getClothesByWeather(){
-        List<ResponseDTO> clothes = new ArrayList<>();
-//        clothes.add(new ClothesResponseDTO());
-        return clothes;
-    }
 }

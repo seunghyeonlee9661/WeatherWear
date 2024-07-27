@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.dto.user;
 
-import com.sparta.WeatherWear.dto.ResponseDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 /*
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-public class KakaoUserResponseDto implements ResponseDTO {
+public class KakaoUserResponseDto {
     private Long id;
     private String nickname;
     private String email;

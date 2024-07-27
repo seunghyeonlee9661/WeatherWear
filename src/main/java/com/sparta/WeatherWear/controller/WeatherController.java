@@ -1,14 +1,20 @@
 package com.sparta.WeatherWear.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.entity.Weather;
+import com.sparta.WeatherWear.security.UserDetailsImpl;
 import com.sparta.WeatherWear.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
 /*
 작성자 : 이승현
 날씨 관련 요청을 처리하는 API Controller
@@ -25,5 +31,11 @@ public class WeatherController {
     @GetMapping("/weathers") // 전체 날씨 조회
     public ResponseEntity<Weather> getWeatherByAddress(@RequestParam(value = "id") Long id) {
         return ResponseEntity.ok(weatherService.getWeatherByAddress(id));
+    }
+
+    /* 추천 아이템들 불러오기 */
+    @GetMapping("/weathers/random")
+    public ResponseEntity<String> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(weatherService.getWeatherByAddress());
     }
 }

@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.dto.wishlist;
 
-import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.entity.NaverProduct;
 import com.sparta.WeatherWear.entity.Wishlist;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import lombok.Getter;
 위시리스트 반환 요청 DTO
  */
 @Getter
-public class WishlistResponseDTO implements ResponseDTO {
+public class WishlistResponseDTO {
     private long id;
     private NaverProduct product;
 

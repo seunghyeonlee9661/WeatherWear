@@ -37,7 +37,7 @@ public class Weather {
     private Double POP;  // 강수확률 : %
 
     @Column(name = "pty")
-    private Double PTY;  // 강수형태 : 없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4)
+    private int PTY;  // 강수형태 : 없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4)
 
     @Column(name = "pcp")
     private Double PCP;  // 1시간 강수량 (mm)
@@ -49,7 +49,7 @@ public class Weather {
     private Double SNO;  // 1 시간 신적설 (cm)
 
     @Column(name = "sky")
-    private Double SKY;  // 하늘상태 : 맑음(1), 구름많음(3), 흐림(4)
+    private int SKY;  // 하늘상태 : 맑음(1), 구름많음(3), 흐림(4)
 
     @Column(name = "tmp")
     private Double TMP;  // 1 시간 기온 (°C)
@@ -75,7 +75,7 @@ public class Weather {
     @Column(name = "wsd")
     private Double WSD;  // 풍속 (m/s) : -4(약)/4-8.9(약간강)/9-13.9(강)/14-(매우강)
 
-    public Weather(String baseDate, String baseTime, Address address, Double POP, Double PTY, Double PCP, Double REH, Double SNO, Double SKY, Double TMP, Double TMN, Double TMX, Double UUU, Double VVV, Double WAV, Double VEC, Double WSD) throws ParseException {
+    public Weather(String baseDate, String baseTime, Address address, Double POP, int PTY, Double PCP, Double REH, Double SNO, int SKY, Double TMP, Double TMN, Double TMX, Double UUU, Double VVV, Double WAV, Double VEC, Double WSD) throws ParseException {
         this.POP = POP;
         this.PTY = PTY;
         this.PCP = PCP;
