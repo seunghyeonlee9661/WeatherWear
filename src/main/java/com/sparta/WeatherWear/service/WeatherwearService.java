@@ -49,11 +49,6 @@ public class WeatherwearService {
 
     /*______________________User_______________________*/
 
-    /* 회원 정보 호출 */
-    public ResponseEntity<User> findUser(UserDetailsImpl userDetails){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDetails.getUser());
-    }
-
     /* 회원가입 */
     @Transactional
     public ResponseEntity<String> createUser(UserRequestDTO userCreateRequestDTO){
@@ -114,7 +109,7 @@ public class WeatherwearService {
     /*______________________Clothes_______________________*/
 
     /* 옷 목록 불러오기 */
-    public ResponseEntity<List<ClothesResponseDTO>> getClothes(UserDetailsImpl userDetails, int page, String type, String color) {
+    public ResponseEntity<List<ClothesResponseDTO>> getClotheList(UserDetailsImpl userDetails, int page, String type, String color) {
         Pageable pageable = PageRequest.of(page, 8);
         // 전체 데이터 가져오기
         Page<Clothes> clothesPage = clothesRepository.findByUserId(userDetails.getUser().getId(), pageable);
@@ -125,6 +120,13 @@ public class WeatherwearService {
                 .toList();
         return ResponseEntity.ok(filteredClothes.stream().map(ClothesResponseDTO::new).collect(Collectors.toList()));
     }
+
+    /* 옷 정보 불러오기 */
+    public ResponseEntity<ClothesResponseDTO> getClothe(UserDetailsImpl userDetails, long id) {
+        Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
+        return ResponseEntity.ok(new ClothesResponseDTO(clothes));
+    }
+
 
     /* 옷 추가 */
     @Transactional
@@ -186,7 +188,4 @@ public class WeatherwearService {
         wishlistRepository.delete(wishlist);
         return ResponseEntity.ok("Wishlist delete successfully");
     }
-
-    /*______________________Recommend_______________________*/
-
 }

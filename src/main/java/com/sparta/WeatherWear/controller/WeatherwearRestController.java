@@ -7,7 +7,6 @@ import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.NaverProductRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.NaverProductResponseDTO;
 import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
-import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
 import com.sparta.WeatherWear.service.KakaoLoginService;
 import com.sparta.WeatherWear.service.NaverShoppingService;
@@ -34,46 +33,40 @@ import java.util.Map;
 @RequestMapping("/api")
 public class WeatherwearRestController {
 
-    private final WeatherwearService weatherwearServicece;
+    private final WeatherwearService weatherwearService;
     private final NaverShoppingService naverShoppingService;
     private final KakaoLoginService kakaoLoginService;
 
     /*______________________User_______________________*/
 
-    /* 사용자 정보 확인 */
-    @GetMapping("/user")
-    public ResponseEntity<User> findUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return weatherwearServicece.findUser(userDetails);
-    }
-
     /* 사용자 정보 추가 */
     @PostMapping("/user")
     public ResponseEntity<String> createUser(@RequestBody @Valid UserRequestDTO requestDTO) {
-        return weatherwearServicece.createUser(requestDTO);
+        return weatherwearService.createUser(requestDTO);
     }
 
     /* 사용자 정보 수정 */
     @PutMapping("/user")
     public ResponseEntity<String>  updateUserInfo(@RequestBody @Valid UserRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return weatherwearServicece.updateUserInfo(userDetails,requestDTO);
+        return weatherwearService.updateUserInfo(userDetails,requestDTO);
     }
 
     /* 사용자 비밀번호 수정 */
     @PutMapping("/user/password")
     public ResponseEntity<String>  updateUserPassword(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return weatherwearServicece.updateUserPassword(userDetails,request.get("password"));
+        return weatherwearService.updateUserPassword(userDetails,request.get("password"));
     }
 
     /* 사용자 이미지 수정 */
     @PutMapping("/user/image")
     public ResponseEntity<String>  updateUserImage(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return weatherwearServicece.updateUserImage(userDetails,file);
+        return weatherwearService.updateUserImage(userDetails,file);
     }
 
     /* 사용자 정보 삭제 */
     @DeleteMapping("/user")
     public ResponseEntity<String>  removeUser(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return weatherwearServicece.removeUser(userDetails,request.get("password"));
+        return weatherwearService.removeUser(userDetails,request.get("password"));
     }
 
 
@@ -86,22 +79,28 @@ public class WeatherwearRestController {
 
     /*______________________Clothes_______________________*/
 
-    /* 옷 정보 불러오기 */
+    /* 옷 목록 불러오기 */
     @GetMapping("/clothes")
     public ResponseEntity<List<ClothesResponseDTO>> createClothes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "type", required = false, defaultValue = "") String type, @RequestParam(value = "color", required = false, defaultValue = "") String color, @RequestParam(value = "page", defaultValue = "0") int page) {
-        return weatherwearServicece.getClothes(userDetails,page,type,color);
+        return weatherwearService.getClotheList(userDetails,page,type,color);
+    }
+
+    /* 옷 아이템 불러오기 */
+    @GetMapping("/clothes/{id}")
+    public ResponseEntity<ClothesResponseDTO> createClothes(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable("id") long id) {
+        return weatherwearService.getClothe(userDetails,id);
     }
 
     /* 옷 정보 추가 */
     @PostMapping("/clothes")
     public ResponseEntity<String> createClothes(@RequestPart("clothesRequestDTO") @Validated ClothesRequestDTO clothesRequestDTO,@RequestPart(value = "file" , required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return weatherwearServicece.createClothes(userDetails,clothesRequestDTO,file);
+        return weatherwearService.createClothes(userDetails,clothesRequestDTO,file);
     }
 
     /* 옷 정보 삭제 */
     @DeleteMapping("/clothes/{id}")
     public ResponseEntity<String> removeClothes(@PathVariable("id") long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return weatherwearServicece.removeClothes(userDetails,id);
+        return weatherwearService.removeClothes(userDetails,id);
     }
 
     /*______________________NaverShoping_______________________*/
@@ -117,19 +116,19 @@ public class WeatherwearRestController {
     /* 위시리스트 불러오기 */
     @GetMapping("/wishlist")
     public ResponseEntity<List<WishlistResponseDTO>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "page", defaultValue = "0") int page) {
-        return weatherwearServicece.getWishlist(userDetails,page);
+        return weatherwearService.getWishlist(userDetails,page);
     }
 
     /* 위시리스트 추가하기 */
     @PostMapping("/wishlist")
     public ResponseEntity<String> createWishlist(@RequestBody @Valid NaverProductRequestDTO productRequestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return weatherwearServicece.createWishlist(productRequestDTO,userDetails);
+        return weatherwearService.createWishlist(productRequestDTO,userDetails);
     }
 
     /* 옷 정보 삭제 */
     @DeleteMapping("/wishlist/{id}")
     public ResponseEntity<String> removeWishlist(@PathVariable("id") long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return weatherwearServicece.removeWishlist(userDetails,id);
+        return weatherwearService.removeWishlist(userDetails,id);
     }
 
     /*_________________________Recommend___________________*/
