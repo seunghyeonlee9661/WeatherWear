@@ -1,27 +1,27 @@
 package com.sparta.WeatherWear.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesRequestDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.NaverProductRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
 import com.sparta.WeatherWear.entity.User;
-import com.sparta.WeatherWear.enums.ClothesColor;
-import com.sparta.WeatherWear.enums.ClothesType;
-import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
-import com.sparta.WeatherWear.service.KakaoService;
+import com.sparta.WeatherWear.service.KakaoLoginService;
 import com.sparta.WeatherWear.service.WeatherwearService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 /*
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class WeatherwearRestController {
     private final WeatherwearService service;
-    private final KakaoService kakaoService;
+    private final KakaoLoginService kakaoLoginService;
 
     /*______________________User_______________________*/
 
@@ -55,17 +55,16 @@ public class WeatherwearRestController {
         return service.updateUserInfo(userDetails,requestDTO);
     }
 
-    /* 사용자 정보 수정 */
+    /* 사용자 비밀번호 수정 */
     @PutMapping("/user/password")
     public ResponseEntity<String>  updateUserPassword(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return service.updateUserPassword(userDetails,request.get("password"));
     }
 
-    // 추가 작업 필요한 부분
-    /* 사용자 정보 수정 */
+    /* 사용자 이미지 수정 */
     @PutMapping("/user/image")
-    public ResponseEntity<String>  updateUserImage(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return service.updateUserImage(userDetails,request.get("image"));
+    public ResponseEntity<String>  updateUserImage(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return service.updateUserImage(userDetails,file);
     }
 
     /* 사용자 정보 삭제 */
@@ -79,7 +78,7 @@ public class WeatherwearRestController {
 
     @GetMapping("/kakao/callback")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        return kakaoService.kakaoLogin(code,response);
+        return kakaoLoginService.kakaoLogin(code,response);
     }
 
     /*______________________Clothes_______________________*/
@@ -92,8 +91,8 @@ public class WeatherwearRestController {
 
     /* 옷 정보 추가 */
     @PostMapping("/clothes")
-    public ResponseEntity<String> createClothes(@RequestBody @Valid ClothesRequestDTO clothesRequestDTO,@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return service.createClothes(userDetails,clothesRequestDTO);
+    public ResponseEntity<String> createClothes(@RequestPart("clothesRequestDTO") @Validated ClothesRequestDTO clothesRequestDTO,@RequestPart(value = "file" , required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return service.createClothes(userDetails,clothesRequestDTO,file);
     }
 
     /* 옷 정보 삭제 */
@@ -130,4 +129,11 @@ public class WeatherwearRestController {
         return service.removeWishlist(userDetails,id);
     }
 
+    /*_________________________Recommend___________________*/
+    
+    /* 추천 아이템들 불러오기 */
+    @GetMapping("/recommend")
+    public ResponseEntity<List<List<ResponseDTO>>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam(value = "id") Long id) {
+        return service.getRecommend(userDetails,id);
+    }
 }

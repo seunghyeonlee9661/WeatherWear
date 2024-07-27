@@ -14,7 +14,10 @@ public class NaverProductRequestDTO {
     private long lprice;
     private long hprice;
     private String mallName;
-    private int productType;
     private String maker;
     private String brand;
+    private String category1;
+    private String category2;
+    private String category3;
+    private String category4;
 }

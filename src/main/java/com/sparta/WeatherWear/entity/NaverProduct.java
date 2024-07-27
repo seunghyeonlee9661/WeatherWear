@@ -35,14 +35,23 @@ public class NaverProduct {
     @Column(name = "mallName", columnDefinition = "MEDIUMTEXT")
     private String mallName;
 
-    @Column(name = "productType", columnDefinition = "MEDIUMTEXT")
-    private int productType;
-
     @Column(name = "maker", columnDefinition = "MEDIUMTEXT")
     private String maker;
 
     @Column(name = "brand", columnDefinition = "MEDIUMTEXT")
     private String brand;
+
+    @Column(name = "category1", columnDefinition = "MEDIUMTEXT")
+    private String category1;
+
+    @Column(name = "category2", columnDefinition = "MEDIUMTEXT")
+    private String category2;
+
+    @Column(name = "category3", columnDefinition = "MEDIUMTEXT")
+    private String category3;
+
+    @Column(name = "category4", columnDefinition = "MEDIUMTEXT")
+    private String category4;
 
     public NaverProduct(NaverProductRequestDTO productRequestDTO) {
         this.id = productRequestDTO.getProductId();
@@ -52,8 +61,11 @@ public class NaverProduct {
         this.lprice = productRequestDTO.getLprice();
         this.hprice = productRequestDTO.getHprice();
         this.mallName = productRequestDTO.getMallName();
-        this.productType = productRequestDTO.getProductType();
         this.maker = productRequestDTO.getMaker();
         this.brand = productRequestDTO.getBrand();
+        this.category1 = productRequestDTO.getCategory1();
+        this.category2 = productRequestDTO.getCategory2();
+        this.category3 = productRequestDTO.getCategory3();
+        this.category4 = productRequestDTO.getCategory4();
     }
 }

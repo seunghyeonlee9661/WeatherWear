@@ -1,33 +1,28 @@
 package com.sparta.WeatherWear.service;
 
+import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesRequestDTO;
 import com.sparta.WeatherWear.dto.clothes.ClothesResponseDTO;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.NaverProductRequestDTO;
 import com.sparta.WeatherWear.dto.wishlist.WishlistResponseDTO;
-import com.sparta.WeatherWear.entity.Clothes;
-import com.sparta.WeatherWear.entity.NaverProduct;
-import com.sparta.WeatherWear.entity.User;
-import com.sparta.WeatherWear.entity.Wishlist;
-import com.sparta.WeatherWear.enums.ClothesColor;
-import com.sparta.WeatherWear.enums.ClothesType;
-import com.sparta.WeatherWear.repository.ClothesRepository;
-import com.sparta.WeatherWear.repository.NaverProductRepository;
-import com.sparta.WeatherWear.repository.UserRepository;
-import com.sparta.WeatherWear.repository.WishlistRepository;
+import com.sparta.WeatherWear.entity.*;
+import com.sparta.WeatherWear.repository.*;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 /*
@@ -47,14 +42,23 @@ public class WeatherwearService {
     private final ClothesRepository clothesRepository;
     private final WishlistRepository wishlistRepository;
     private final NaverProductRepository naverProductRepository;
+    private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository) {
+    @Autowired
+    private final FTPService ftpService;
+    private final WeatherService weatherService;
+
+
+    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository, AddressRepository addressRepository, FTPService ftpService, WeatherService weatherService) {
         this.clothesRepository = clothesRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.wishlistRepository = wishlistRepository;
         this.naverProductRepository = naverProductRepository;
+        this.addressRepository = addressRepository;
+        this.ftpService = ftpService;
+        this.weatherService = weatherService;
     }
 
     /*______________________User_______________________*/
@@ -107,14 +111,19 @@ public class WeatherwearService {
 
     /* 회원 사진 수정 */
     @Transactional
-    public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, String Image) {
-        User user = userDetails.getUser();
-        user.updateImage(Image);
-        // 이미지 업로드 후 변경하는 기능 필요
-        userRepository.save(user);
-        return ResponseEntity.ok().body("User updated successfully");
+    public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, MultipartFile file) throws IOException {
+        User user = userDetails.getUser(); // 사용자 확인
+        String ftpFilename = "user/" + String.valueOf(user.getId()); // 파일 이름 선정
+        boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
+        if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
+            String imageURL = "http://119.56.220.32/images/" + ftpFilename;
+            user.updateImage(imageURL);
+            userRepository.save(user);
+            return ResponseEntity.ok().body("User image updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User image updated fail");
+        }
     }
-
 
     /*______________________Clothes_______________________*/
 
@@ -133,10 +142,25 @@ public class WeatherwearService {
 
     /* 옷 추가 */
     @Transactional
-    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO){
+    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) {
         Clothes clothes = new Clothes(clothesRequestDTO,userDetails.getUser());
-        clothesRepository.save(clothes);
-        return ResponseEntity.ok("Clothes created successfully");
+        Clothes savedClothes = clothesRepository.save(clothes);
+        if(file != null){
+            String ftpFilename = "clothes/" + String.valueOf(savedClothes.getId()); // 파일 이름 선정
+            try{
+                boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
+                if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
+                    String imageURL = "http://119.56.220.32/images/" + ftpFilename;
+                    clothes.updateImage(imageURL);
+                    clothesRepository.save(savedClothes);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Clothes create Failed");
+                }
+            }catch (IOException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+            }
+        }
+        return ResponseEntity.ok().body("Clothes created successfully");
     }
 
     /* 옷 삭제 */
@@ -189,5 +213,31 @@ public class WeatherwearService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 위시리스트 아이템이 아닙니다.");
         wishlistRepository.delete(wishlist);
         return ResponseEntity.ok("Wishlist delete successfully");
+    }
+
+    /*______________________Recommend_______________________*/
+
+    /* 추천 아이템 리스트 불러오는 기능 */
+    public ResponseEntity<List<List<ResponseDTO>>> getRecommend (UserDetailsImpl userDetails, long id){
+        // 날씨값 찾기
+        Weather weather = weatherService.getWeatherByAddress(id);
+        List<List<ResponseDTO>> dtoList = new ArrayList<>();
+        /* 날씨 기반 옷차림 추천 */
+        dtoList.add(getClothesByWeather());
+        /* 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
+        dtoList.add(getClothesByWeather());
+        /* 트랜드 옷차림 추천 */
+        dtoList.add(getClothesByWeather());
+        /* 트랜드 옷차림 추천 */
+        dtoList.add(getClothesByWeather());
+
+        return ResponseEntity.ok(dtoList);
+    }
+
+    /* 현재 날씨 정보 기반의 옷 정보를 선별하여 전달합니다. */
+    private List<ResponseDTO> getClothesByWeather(){
+        List<ResponseDTO> clothes = new ArrayList<>();
+//        clothes.add(new ClothesResponseDTO());
+        return clothes;
     }
 }

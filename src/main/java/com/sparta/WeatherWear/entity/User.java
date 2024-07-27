@@ -32,11 +32,8 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "stn", nullable = true)
-    private int stn;
-
     // 사용자 이미지 url
-    @Column(name = "image", length = 10, nullable = true)
+    @Column(name = "image", nullable = true)
     private String image;
 
     // 성별
@@ -83,7 +80,6 @@ public class User {
         this.nickname = userRequestDTO.getNickname();
         this.gender = UserGender.valueOf(userRequestDTO.getGender().toUpperCase());
         this.birthday = userRequestDTO.getBirthday();
-        this.stn = userRequestDTO.getStn();
     }
 
     /* 카카오 유저 생성*/
