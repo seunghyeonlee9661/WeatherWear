@@ -3,9 +3,11 @@ package com.sparta.WeatherWear.board.entity;
 import com.sparta.WeatherWear.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor // 기본 생성자 추가
 public class BoardLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

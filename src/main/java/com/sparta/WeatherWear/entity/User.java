@@ -2,7 +2,7 @@ package com.sparta.WeatherWear.entity;
 
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardLike;
-import com.sparta.WeatherWear.dto.UserRequestDTO;
+import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.enums.UserGender;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
-
+/*
+작성자 : 이승현
+ 사용자 Entity
+ */
 @Getter
 @Entity
 @NoArgsConstructor
@@ -19,52 +22,99 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", length = 255, nullable = false)
+    // 이메일
+    @Column(name = "email", length = 255, nullable = false, unique = true)
     private String email;
 
+    // 닉네임
+    @Column(name = "nickname", length = 255, nullable = false, unique = true)
+    private String nickname;
+
+    // 패스워드
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "stn", nullable = false)
-    private int stn;
+    // 사용자 이미지 url
+    @Column(name = "image", nullable = true)
+    private String image;
 
-    @Column(name = "gender", length = 10, nullable = false)
+    // 성별
+    @Enumerated(EnumType.STRING)
     private UserGender gender;
 
-    @Column(name = "birthday", nullable = false)
+    // 생일
+    @Column(name = "birthday", nullable = true)
     private Date birthday;
 
-    // Relationships
-//    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
-//    private List<Board> boards;
 
+    // 카카오 아이디
+    @Column(name = "kakao_id", nullable = true)
+    private Long kakaoId;
+
+    // 사용자의 게시물
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Board> boards;
+
+    // 사용자가 좋아요한 게시물
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardLike> boardLikes;
 
+    // 사용자의 댓글
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<Clothes> clothes;
-
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<Wishlist> wishlists;
-
+    // 사용자가 좋아요한 게시물
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<CommentLike> commentLikes;
 
+    // 사용자의 옷 목록
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Clothes> clothes;
+
+    // 사용자의 위시리스트 목록
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Wishlist> wishlists;
+
+
+    /* 기본 유저 회원가입 */
     public User(UserRequestDTO userRequestDTO, String password) {
         this.email = userRequestDTO.getEmail();
         this.password = password;
-        this.stn = userRequestDTO.getStn();
-        this.gender = userRequestDTO.getGender();
+        this.nickname = userRequestDTO.getNickname();
+        this.gender = UserGender.valueOf(userRequestDTO.getGender().toUpperCase());
         this.birthday = userRequestDTO.getBirthday();
     }
 
-    public void update(UserRequestDTO userRequestDTO){
+    /* 카카오 유저 생성*/
+    public User(String password, String email, String nickname, Long kakaoId, String image){
+        this.kakaoId = kakaoId;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.image = image;
+    }
+
+    /* 카카오 아이디 업데이트 */
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
+    }
+
+    /* 사용자 정보 변경*/
+    public void updateInfo(UserRequestDTO userRequestDTO){
         this.email = userRequestDTO.getEmail();
-        this.stn = userRequestDTO.getStn();
-        this.gender = userRequestDTO.getGender();
+        this.nickname = userRequestDTO.getNickname();
+        this.gender = UserGender.valueOf(userRequestDTO.getGender().toUpperCase());
         this.birthday = userRequestDTO.getBirthday();
+    }
+
+    /* 사용자 정보 변경*/
+    public void updatePassword(String password){
+        this.password = password;
+    }
+
+    /* 사용자 이미지 변경*/
+    public void updateImage(String image){
+        this.image = image;
     }
 }
