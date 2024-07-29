@@ -37,7 +37,7 @@ public class User {
     private String image;
 
     // 성별
-    @Column(name = "gender", length = 10, nullable = true)
+    @Enumerated(EnumType.STRING)
     private UserGender gender;
 
     // 생일
@@ -45,7 +45,7 @@ public class User {
     private Date birthday;
 
     // 카카오 아이디
-    @Column(name = "kakaoId", nullable = true)
+    @Column(name = "kakao_id", nullable = true)
     private Long kakaoId;
 
     // 사용자의 게시물

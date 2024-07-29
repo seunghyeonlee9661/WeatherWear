@@ -52,7 +52,7 @@ public class WeatherService {
         /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
         // Weather 데이터를 조회하고 반환합니다.
-        Weather weather =  weatherRepository.findByAddressAndDate(address,Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
+        return weatherRepository.findByAddressAndDate(address,Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
                 // Weather가 없는 경우 기상청 API에 날씨 정보를 요청합니다.
                 .orElseGet(() -> {
                     Weather newWeather = null;
@@ -66,7 +66,34 @@ public class WeatherService {
                     weatherRepository.save(newWeather);
                     return newWeather;
                 });
-        return weather;
+    }
+
+    /* 법정동 코드와 현재 시간으로 DB에서 날씨 정보를 찾아 반환합니다. */
+    /* 법정동 코드 -> 날씨 */
+    @Transactional
+    public String getWeatherByAddress(){
+        for (int i = 0; i< 10; i++){
+            long id = addressRepository.findRandomAddress().getId();
+            Address address = addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Address not found with the given city and county."));
+            /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
+            LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+            // Weather 데이터를 조회하고 반환합니다.
+            weatherRepository.findByAddressAndDate(address,Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
+                    // Weather가 없는 경우 기상청 API에 날씨 정보를 요청합니다.
+                    .orElseGet(() -> {
+                        Weather newWeather = null;
+                        try {
+                            // 기상청 API에 날씨 값을 요청합니다.
+                            newWeather = getWeatherByAPI(address, now);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        // 새로운 날씨 값을 서버에 저장합니다.
+                        weatherRepository.save(newWeather);
+                        return null;
+                    });
+        }
+        return ("done");
     }
 
     /* 위치와 날짜를 기반으로 API를 요청하고 날씨 정보를 받아옵니다. */
@@ -141,11 +168,11 @@ public class WeatherService {
             // Weather 객체에 저장하고 반환합니다.
             return new Weather(compareDateStr,compareTimeStr,address,
                     weatherData.getOrDefault("POP", null),
-                    weatherData.getOrDefault("PTY", null),
+                    (int)Math.round(weatherData.getOrDefault("PTY", null)),
                     weatherData.getOrDefault("PCP", null),
                     weatherData.getOrDefault("REH", null),
                     weatherData.getOrDefault("SNO", null),
-                    weatherData.getOrDefault("SKY", null),
+                    (int)Math.round(weatherData.getOrDefault("SKY", null)),
                     weatherData.getOrDefault("TMP", null),
                     weatherData.getOrDefault("TMN", null),
                     weatherData.getOrDefault("TMX", null),
