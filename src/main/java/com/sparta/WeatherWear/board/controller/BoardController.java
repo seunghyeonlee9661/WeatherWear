@@ -54,14 +54,14 @@ public class BoardController {
     public ResponseEntity<String> removeBoard(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.removeBoard(board_id, userDetails);
     }
-//    /*  */
-//    @DeleteMapping("/remove/{board_id}")
-//    public ResponseEntity<String> removeBoard(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return boardService.removeBoard(board_id, userDetails);
-//    }
-//    /*  */
-//    @DeleteMapping("/remove/{board_id}")
-//    public ResponseEntity<String> removeBoard(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return boardService.removeBoard(board_id, userDetails);
-//    }
+    /*  */
+    @DeleteMapping("/images/{user_id}")
+    public ResponseEntity<String> userBoardImages(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.removeBoard(board_id, userDetails);
+    }
+    /*  */
+    @DeleteMapping("/tags/{user_id}")
+    public ResponseEntity<String> userBoardTags(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.removeBoard(board_id, userDetails);
+    }
 }

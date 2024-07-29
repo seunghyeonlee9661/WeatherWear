@@ -199,9 +199,24 @@ public class BoardService {
         
     }
     public ResponseEntity<String> removeBoard(Long boardId, UserDetailsImpl userDetails) {
+
+        Board board = boardRepository.findById(boardId).orElseThrow(()->
+                new IllegalArgumentException("선택한 게시물을 찾을 수 없습니다.")
+        );
+
         // 사용자가 작성한 게시물인지 확인
-        
+        Long userId = userDetails.getUser().getId();
+        Long boardUserId = board.getUserId();
+
+        if(userId == null || boardUserId == null) {
+            log.info("User의 Id 값이 없습니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         // 삭제
+        if(boardUserId.equals(userId)) {
+            boardRepository.delete(board);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
 
