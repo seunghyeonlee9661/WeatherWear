@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /*
 작성자 : 이승현
-카카오 로그인 응답 확인을 위한 기능
+JWT 시큐리티 관련
  */
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함

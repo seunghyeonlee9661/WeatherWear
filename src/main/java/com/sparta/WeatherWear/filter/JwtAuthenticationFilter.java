@@ -16,8 +16,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 /*
 작성자 : 이승현
 로그인을 확인하고 JWT를 생성, 쿠키에 저장하는 필터
@@ -53,17 +52,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     /* 로그인 성공 */
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult){
         log.info("로그인 성공 및 JWT 생성");
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
-        String token = jwtUtil.createToken(user);
-        log.info(token);
-        jwtUtil.addJwtToCookie(token, response);
+        jwtUtil.addJwtToCookie( jwtUtil.createAccessToken(user),jwtUtil.createRefreshToken(user), response);
     }
 
     /* 로그인 실패 */
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed){
         log.info("로그인 실패");
         response.setStatus(401);
     }

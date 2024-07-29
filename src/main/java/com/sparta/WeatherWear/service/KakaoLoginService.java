@@ -54,8 +54,9 @@ public class KakaoLoginService {
         User kakaoUser = registerKakaoUser(kakaoUserInfo);
 
         // JWT 토큰 쿠키에 추가
-        String createToken =  jwtUtil.createToken(kakaoUser);
-        jwtUtil.addJwtToCookie(createToken, response);
+
+
+        jwtUtil.addJwtToCookie( jwtUtil.createAccessToken(kakaoUser),jwtUtil.createRefreshToken(kakaoUser), response);
         return ResponseEntity.ok("Kakao login successfully");
     }
 
