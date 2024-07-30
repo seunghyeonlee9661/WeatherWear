@@ -3,11 +3,14 @@ package com.sparta.WeatherWear.entity;
 import com.sparta.WeatherWear.board.entity.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor // 기본 생성자 추가
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

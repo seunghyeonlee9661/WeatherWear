@@ -1,15 +1,16 @@
-package com.sparta.WeatherWear.security;
+package com.sparta.WeatherWear.config;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.WeatherWear.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.filter.LoginRedirectFilter;
 import com.sparta.WeatherWear.handler.AccessDeniedHandler;
 import com.sparta.WeatherWear.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.handler.AuthenticationSuccessHandler;
+import com.sparta.WeatherWear.security.JwtUtil;
+import com.sparta.WeatherWear.security.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -21,6 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/*
+작성자 : 이승현
+카카오 로그인 응답 확인을 위한 기능
+ */
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
 @EnableGlobalMethodSecurity(securedEnabled = true)  // @Secured 애노테이션 활성화
@@ -64,25 +69,30 @@ public class WebSecurityConfig {
         // 접근 가능 범위 설정
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
-                        // resources 접근 허용 설정
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        // 로그인 없이 접근 가능한 경로
-                        .requestMatchers(
-                                "/api/login", // 로그인
-                                "/api/signup"
-                        ).permitAll()
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/teacher", // 강사 정보 불러오기
-                                "/api/teachers", // 강사 목록 불러오기
-                                "/api/lecture", // 강의 정보 불러오기
-                                "/api/lectures", // 강의 목록 불러오기
-                                "/api/products", // 제품 목록 불러오기
-                                "/api/product" // 제품 정보 불러오기
-                        ).permitAll() 
-                        // 그 외 모든 요청 인증처리
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
         );
+        // 로그인 관련 경로 설정
+//        http.authorizeHttpRequests((authorizeHttpRequests) ->
+//                authorizeHttpRequests
+//                        // resources 접근 허용 설정
+//                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+//                        // 로그인 없이 접근 가능한 경로
+//                        .requestMatchers(
+//                                "/api/login", // 로그인
+//                                "/api/signup"
+//                        ).permitAll()
+//                        .requestMatchers(
+//                                HttpMethod.GET,
+//                                "/api/teacher", // 강사 정보 불러오기
+//                                "/api/teachers", // 강사 목록 불러오기
+//                                "/api/lecture", // 강의 정보 불러오기
+//                                "/api/lectures", // 강의 목록 불러오기
+//                                "/api/products", // 제품 목록 불러오기
+//                                "/api/product" // 제품 정보 불러오기
+//                        ).permitAll()
+//                        // 그 외 모든 요청 인증처리
+//                        .anyRequest().authenticated()
+//        );
 
         // 에러 처리를 위한 핸들러 설정
         http.exceptionHandling((exceptionHandling) -> {
@@ -90,12 +100,14 @@ public class WebSecurityConfig {
             exceptionHandling.authenticationEntryPoint(authenticationEntryPoint);
         });
 
+        // 로그인 처리 진행
         http.formLogin((formLogin) -> formLogin.
                 loginPage("/login") // 로그인 페이지 url
                 .loginProcessingUrl("/api/login") // 로그인 요청 url
                 .successHandler(authenticationSuccessHandler) // 로그인 성공을 처리하는 핸들러
                 .permitAll()
         );
+
         // JWT 검증 및 인가 필터
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         // 로그인 및 JWT 생성 필터
@@ -110,5 +122,10 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

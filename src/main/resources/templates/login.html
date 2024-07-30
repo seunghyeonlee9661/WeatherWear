@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <title>로그인 페이지</title>
+</head>
+<body>
+<div id="login-form">
+    <div id="login-title">Log into Select Shop</div>
+    <button id="login-kakao-btn" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=58964ac977f1abb0693b2cb7121c1a5c&redirect_uri=http://localhost:8080/api/kakao/callback&response_type=code'">
+        카카오로 로그인하기
+    </button>
+    <button id="login-id-btn" onclick="location.href='/api/user/signup'">
+        회원 가입하기
+    </button>
+    <div>
+        <div class="login-id-label">아이디</div>
+        <input type="text" name="username" id="username" class="login-input-box">
+
+        <div class="login-id-label">비밀번호</div>
+        <input type="password" name="password" id="password" class="login-input-box">
+
+        <button id="login-id-submit" onclick="onLogin()">로그인</button>
+    </div>
+    <div id="login-failed" style="display:none" class="alert alert-danger" role="alert">로그인에 실패하였습니다.</div>
+</div>
+
+<div id="user-info" style="display:none">
+    <h2>사용자 정보</h2>
+    <p id="user-email"></p>
+    <p id="user-nickname"></p>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        const token = Cookies.get('Authorization');
+        if (token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const userInfo = JSON.parse(jsonPayload);
+            console.log(userInfo);
+            $('#user-email').text('Email: ' + userInfo.sub);
+            $('#user-nickname').text('Nickname: ' + userInfo.nickname);
+
+            // 로그인 폼 숨기기 및 사용자 정보 표시
+            $('#login-form').hide();
+            $('#user-info').show();
+        }
+
+        const href = location.href;
+        const queryString = href.substring(href.indexOf("?") + 1);
+        if (queryString === 'error') {
+            const errorDiv = document.getElementById('login-failed');
+            errorDiv.style.display = 'block';
+        }
+    });
+
+    const host = 'http://' + window.location.host;
+
+    function onLogin() {
+        let username = $('#username').val();
+        let password = $('#password').val();
+
+        $.ajax({
+            type: "POST",
+            url: `/api/login`,
+            contentType: "application/json",
+            data: JSON.stringify({username: username, password: password}),
+        })
+        .done(function (res, status, xhr) {
+            const token = xhr.getResponseHeader('Authorization');
+            console.log(token);
+        })
+        .fail(function (jqXHR, textStatus) {
+            alert("Login Fail");
+            window.location.href = host + '/api/user/login-page?error';
+        });
+    }
+</script>
+</html>

@@ -1,7 +1,8 @@
 package com.sparta.WeatherWear.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.WeatherWear.dto.UserLoginRequestDTO;
+import com.sparta.WeatherWear.dto.user.UserLoginRequestDTO;
+import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
@@ -15,7 +16,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-
+import java.util.HashMap;
+import java.util.Map;
+/*
+작성자 : 이승현
+로그인을 확인하고 JWT를 생성, 쿠키에 저장하는 필터
+*/
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
@@ -23,7 +29,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     /* 로그인 과정 진행 위치 */
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/login");
     }
 
     /* 로그인 진행 및 JWT 토큰 반환 */
@@ -49,9 +55,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
-        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-
-        String token = jwtUtil.createToken(username);
+        User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
+        String token = jwtUtil.createToken(user);
+        log.info(token);
         jwtUtil.addJwtToCookie(token, response);
     }
 

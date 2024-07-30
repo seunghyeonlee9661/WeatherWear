@@ -2,9 +2,7 @@ package com.sparta.WeatherWear.board.entity;
 
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
-import com.sparta.WeatherWear.dto.UserRequestDTO;
 import com.sparta.WeatherWear.entity.Comment;
-import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.entity.Weather;
 import com.sparta.WeatherWear.time.Timestamped;
 import jakarta.persistence.*;
@@ -12,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter

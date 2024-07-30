@@ -7,7 +7,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+/*
+작성자 : 이승현
+다양한 예외에 대해 처리하는 핸들러
+*/
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
