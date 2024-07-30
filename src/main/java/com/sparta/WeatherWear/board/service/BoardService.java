@@ -6,11 +6,10 @@ import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
+import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.repository.UserRepository;
 import com.sparta.WeatherWear.security.JwtUtil;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,7 @@ public class BoardService {
     private BoardImageService boardImageService;
 
     @Transactional
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, @Valid List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
         // 예외처리
         if (requestDto == null) {
             throw new IllegalArgumentException("게시판 생성에 필요한 정보가 없습니다");
@@ -44,11 +43,14 @@ public class BoardService {
         if (images == null) {
             throw new IllegalArgumentException("게시판 생성에 필요한 사진이 없습니다");
         }
+        // user 정보 가져오기 (id)
+        User user = userDetails.getUser();
+
         // request에서 받아온 값을 Board Entity로 만들기 
-        Board newBoard = new Board(requestDto);
+        Board newBoard = new Board(requestDto, user);
 
         // requestDto 확인
-        System.out.println("requestDto.getUserId() = " + requestDto.getUserId());
+        System.out.println("userDetails.getUser().getId() = " + userDetails.getUser().getId());
         System.out.println("requestDto.getTitle() = " + requestDto.getTitle());
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
         System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());

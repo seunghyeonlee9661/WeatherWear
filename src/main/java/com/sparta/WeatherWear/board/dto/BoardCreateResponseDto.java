@@ -32,7 +32,7 @@ public class BoardCreateResponseDto {
 
     public BoardCreateResponseDto(Board board) {
         this.id = board.getId();
-        this.userId = board.getUserId();
+        this.userId = board.getUser().getId();
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
