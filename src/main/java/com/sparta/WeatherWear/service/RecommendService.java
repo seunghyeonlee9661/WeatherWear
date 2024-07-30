@@ -15,10 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
-public class RecommandService {
+public class RecommendService {
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
@@ -40,7 +39,7 @@ public class RecommandService {
         temperatureClothesMap.put(Double.MIN_VALUE, Arrays.asList(ClothesType.PADDED_COAT, ClothesType.COAT, ClothesType.SCARF, ClothesType.LINED_CLOTHING));
     }
 
-    public RecommandService(WeatherService weatherService, NaverShoppingService naverShoppingService, ClothesRepository clothesRepository, BoardRepository boardRepository) {
+    public RecommendService(WeatherService weatherService, NaverShoppingService naverShoppingService, ClothesRepository clothesRepository, BoardRepository boardRepository) {
         this.weatherService = weatherService;
         this.naverShoppingService = naverShoppingService;
         this.clothesRepository = clothesRepository;

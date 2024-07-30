@@ -52,10 +52,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String refreshTokenValue = jwtUtil.substringToken(refreshToken);
                 if(jwtUtil.validateToken(refreshTokenValue, res)){
                     // 리프레시 토큰이 유효한 경우
-                    UserDetails userDetails = userDetailsService.loadUserByUsername( jwtUtil.getUserInfoFromToken(accessTokenValue).getSubject());
+                    UserDetails userDetails = userDetailsService.loadUserByUsername( jwtUtil.getUserInfoFromToken(refreshTokenValue).getSubject());
                     if (userDetails != null) {
                         User user = ((UserDetailsImpl) userDetails).getUser();
-                        String newAccessToken = jwtUtil.refreshAccessToken(accessTokenValue, user);
+                        String newAccessToken = jwtUtil.refreshAccessToken(refreshTokenValue, user);
                         if (newAccessToken != null) {
                             jwtUtil.addJwtToCookie(newAccessToken, refreshToken, res);// 새로운 액세스 토큰을 쿠키에 추가
                             setAuthentication(userDetails,req); // 사용자 인증 설정

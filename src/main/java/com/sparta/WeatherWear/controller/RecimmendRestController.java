@@ -2,7 +2,7 @@ package com.sparta.WeatherWear.controller;
 
 import com.sparta.WeatherWear.dto.ResponseDTO;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
-import com.sparta.WeatherWear.service.RecommandService;
+import com.sparta.WeatherWear.service.RecommendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,15 +16,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
-public class ResponseRestController {
+public class RecimmendRestController {
 
-    private final RecommandService recommandService;
+    private final RecommendService recommendService;
 
     /*_________________________Recommend___________________*/
 
     /* 추천 아이템들 불러오기 */
     @GetMapping("/recommends")
     public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
-        return ResponseEntity.ok(recommandService.getRecommends(userDetails,id));
+        return ResponseEntity.ok(recommendService.getRecommends(userDetails,id));
     }
 }
