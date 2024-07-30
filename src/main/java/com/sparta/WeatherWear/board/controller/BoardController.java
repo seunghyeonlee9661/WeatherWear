@@ -21,8 +21,8 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDto, @Valid @RequestParam("images") List<MultipartFile> images) {
-        return boardService.createBoard(requestDto, images);
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
+        return boardService.createBoard(requestDto,userDetails, images);
     }
 
     /* 게시물 id로 조회 */
