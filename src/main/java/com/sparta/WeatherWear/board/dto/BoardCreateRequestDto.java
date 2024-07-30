@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class BoardCreateRequestDto {
 
-    private String userId;
+    private Long userId;
     private String title;
     private String contents;
     private boolean isPrivate;

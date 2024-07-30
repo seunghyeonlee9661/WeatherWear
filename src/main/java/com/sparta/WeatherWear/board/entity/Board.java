@@ -9,6 +9,7 @@ import com.sparta.WeatherWear.entity.Weather;
 import com.sparta.WeatherWear.time.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,13 +17,14 @@ import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Board extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String title;
@@ -67,11 +69,9 @@ public class Board extends Timestamped {
         this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
         this.stn = requestDTO.getStn();
-        this.weather = requestDTO.getWeather();
         this.boardLikes = requestDTO.getBoardLikes();
         this.comments = requestDTO.getComments();
         this.boardTags = requestDTO.getBoardTags();
-        this.boardImages = requestDTO.getBoardImages();
         return this;
     }
 }

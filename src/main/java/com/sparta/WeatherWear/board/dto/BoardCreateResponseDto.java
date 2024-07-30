@@ -17,7 +17,7 @@ import java.util.List;
 public class BoardCreateResponseDto {
 
     private long id;
-    private String userId;
+    private Long userId;
     private String title;
     private String contents;
     private boolean isPrivate;
