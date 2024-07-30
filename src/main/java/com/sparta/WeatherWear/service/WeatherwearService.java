@@ -97,7 +97,7 @@ public class WeatherwearService {
     @Transactional
     public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, MultipartFile file) throws IOException {
         User user = userDetails.getUser(); // 사용자 확인
-        String imageUrl = imageService.uploadImagefile("user/" + user.getId(),file,220,200,0.7);
+        String imageUrl = imageService.uploadImagefile("user/", String.valueOf(user.getId()),file);
         user.updateImage(imageUrl);
         userRepository.save(user);
         return ResponseEntity.ok("User image updated successfully");
@@ -130,7 +130,7 @@ public class WeatherwearService {
     public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) throws IOException {
         Clothes savedClothes = clothesRepository.save( new Clothes(clothesRequestDTO,userDetails.getUser()));
         if(file != null){
-            String imageUrl = imageService.uploadImagefile("clothes/" + savedClothes.getId(),file,300,400,0.7);
+            String imageUrl = imageService.uploadImagefile("clothes/", String.valueOf(savedClothes.getId()),file);
             savedClothes.updateImage(imageUrl);
             clothesRepository.save(savedClothes);
         }
