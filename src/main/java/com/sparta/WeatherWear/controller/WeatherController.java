@@ -33,9 +33,9 @@ public class WeatherController {
         return ResponseEntity.ok(weatherService.getWeatherByAddress(id));
     }
 
-    /* 추천 아이템들 불러오기 */
-    @GetMapping("/weathers/random")
-    public ResponseEntity<String> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(weatherService.getWeatherByAddress());
-    }
+//    /* 추천 아이템들 불러오기 */
+//    @GetMapping("/weathers/random")
+//    public ResponseEntity<String> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return ResponseEntity.ok(weatherService.getWeatherByAddress());
+//    }
 }

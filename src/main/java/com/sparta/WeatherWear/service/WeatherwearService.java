@@ -9,6 +9,7 @@ import com.sparta.WeatherWear.entity.*;
 import com.sparta.WeatherWear.repository.*;
 import com.sparta.WeatherWear.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 /*
@@ -33,18 +38,16 @@ public class WeatherwearService {
     private final WishlistRepository wishlistRepository;
     private final NaverProductRepository naverProductRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private final FTPService ftpService;
+    private final ImageService imageService;
 
 
-    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository, AddressRepository addressRepository, FTPService ftpService, WeatherService weatherService) {
+    public WeatherwearService(ClothesRepository clothesRepository, PasswordEncoder passwordEncoder, UserRepository userRepository, WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository, AddressRepository addressRepository, WeatherService weatherService, ImageService imageService) {
         this.clothesRepository = clothesRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.wishlistRepository = wishlistRepository;
         this.naverProductRepository = naverProductRepository;
-        this.ftpService = ftpService;
+        this.imageService = imageService;
     }
 
     /*______________________User_______________________*/
@@ -94,16 +97,10 @@ public class WeatherwearService {
     @Transactional
     public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, MultipartFile file) throws IOException {
         User user = userDetails.getUser(); // 사용자 확인
-        String ftpFilename = "user/" + String.valueOf(user.getId()); // 파일 이름 선정
-        boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
-        if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
-            String imageURL = "http://119.56.220.32/images/" + ftpFilename;
-            user.updateImage(imageURL);
-            userRepository.save(user);
-            return ResponseEntity.ok().body("User image updated successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User image updated fail");
-        }
+        String imageUrl = imageService.uploadImagefile("user/" + user.getId(),file);
+        user.updateImage(imageUrl);
+        userRepository.save(user);
+        return ResponseEntity.ok("User image updated successfully");
     }
 
     /*______________________Clothes_______________________*/
@@ -130,23 +127,12 @@ public class WeatherwearService {
 
     /* 옷 추가 */
     @Transactional
-    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) {
-        Clothes clothes = new Clothes(clothesRequestDTO,userDetails.getUser());
-        Clothes savedClothes = clothesRepository.save(clothes);
+    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) throws IOException {
+        Clothes savedClothes = clothesRepository.save( new Clothes(clothesRequestDTO,userDetails.getUser()));
         if(file != null){
-            String ftpFilename = "clothes/" + String.valueOf(savedClothes.getId()); // 파일 이름 선정
-            try{
-                boolean uploaded = ftpService.uploadImageToFtp(ftpFilename,file); // 이미지 업로드 진행
-                if (uploaded) { // 업로드 성공시 - URL 값을 user에 갱신
-                    String imageURL = "http://119.56.220.32/images/" + ftpFilename;
-                    clothes.updateImage(imageURL);
-                    clothesRepository.save(savedClothes);
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Clothes create Failed");
-                }
-            }catch (IOException ex) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-            }
+            String imageUrl = imageService.uploadImagefile("clothes/" + savedClothes.getId(),file);
+            savedClothes.updateImage(imageUrl);
+            clothesRepository.save(savedClothes);
         }
         return ResponseEntity.ok().body("Clothes created successfully");
     }

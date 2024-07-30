@@ -1,4 +1,4 @@
-package com.sparta.WeatherWear.board.entity;
+package com.sparta.WeatherWear.entity;
 
 import com.sparta.WeatherWear.enums.ClothesColor;
 import com.sparta.WeatherWear.enums.ClothesType;
@@ -18,9 +18,9 @@ public class BoardTag {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(name = "color", length = 50, nullable = false)
+    @Enumerated(EnumType.STRING)
     private ClothesColor color;
 
-    @Column(name = "type", length = 50, nullable = false)
+    @Enumerated(EnumType.STRING)
     private ClothesType type;
 }

@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -17,10 +18,13 @@ import java.util.List;
 @Configuration
 public class MVCConfiguration implements WebMvcConfigurer {
 
+    @Value("${image.upload.dir}")
+    private String uploadDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/templates/", "classpath:/static/");
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + uploadDir + "/");
     }
 
     @Override
@@ -28,4 +32,6 @@ public class MVCConfiguration implements WebMvcConfigurer {
         StringHttpMessageConverter stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
         converters.add(0, stringConverter);
     }
+
+
 }

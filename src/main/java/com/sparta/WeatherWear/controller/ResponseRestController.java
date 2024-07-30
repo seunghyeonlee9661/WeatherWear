@@ -23,7 +23,7 @@ public class ResponseRestController {
     /*_________________________Recommend___________________*/
 
     /* 추천 아이템들 불러오기 */
-    @GetMapping("/recommend")
+    @GetMapping("/recommends")
     public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
         return ResponseEntity.ok(recommandService.getRecommends(userDetails,id));
     }

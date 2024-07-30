@@ -40,31 +40,31 @@ public class WeatherwearRestController {
     /*______________________User_______________________*/
 
     /* 사용자 정보 추가 */
-    @PostMapping("/user")
+    @PostMapping("/users")
     public ResponseEntity<String> createUser(@RequestBody @Valid UserRequestDTO requestDTO) {
         return weatherwearService.createUser(requestDTO);
     }
 
     /* 사용자 정보 수정 */
-    @PutMapping("/user")
+    @PutMapping("/users")
     public ResponseEntity<String>  updateUserInfo(@RequestBody @Valid UserRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return weatherwearService.updateUserInfo(userDetails,requestDTO);
     }
 
     /* 사용자 비밀번호 수정 */
-    @PutMapping("/user/password")
+    @PutMapping("/users/password")
     public ResponseEntity<String>  updateUserPassword(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return weatherwearService.updateUserPassword(userDetails,request.get("password"));
     }
 
     /* 사용자 이미지 수정 */
-    @PutMapping("/user/image")
+    @PutMapping("/users/image")
     public ResponseEntity<String>  updateUserImage(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return weatherwearService.updateUserImage(userDetails,file);
     }
 
     /* 사용자 정보 삭제 */
-    @DeleteMapping("/user")
+    @DeleteMapping("/users")
     public ResponseEntity<String>  removeUser(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return weatherwearService.removeUser(userDetails,request.get("password"));
     }
