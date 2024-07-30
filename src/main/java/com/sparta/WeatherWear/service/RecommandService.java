@@ -66,7 +66,7 @@ public class RecommandService {
         /* 3. 트랜드 옷차림 추천 */
         recommendResponseDTOS.add(getBoardsByTrends(user, weather));
 
-        /* 3. 트랜드 옷차림 추천 */
+        /* 4. 네이버 아이템 추천 */
         recommendResponseDTOS.add(getNaverProductsByNaver(user, weather));
 
 

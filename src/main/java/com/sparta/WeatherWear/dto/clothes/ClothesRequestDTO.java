@@ -16,3 +16,4 @@ public class ClothesRequestDTO {
     private ClothesColor color;
     private ClothesType type;
 }
+

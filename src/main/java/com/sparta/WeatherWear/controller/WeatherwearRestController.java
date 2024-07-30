@@ -131,7 +131,4 @@ public class WeatherwearRestController {
         return weatherwearService.removeWishlist(userDetails,id);
     }
 
-    /*_________________________Recommend___________________*/
-    
-
 }

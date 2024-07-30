@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -30,10 +31,9 @@ JWT 생성, 검증을 맡은 클래스
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
     public static final String REFRESH_HEADER = "Refresh"; // Refresh Token Header KEY 값
-    public static final String AUTHORIZATION_KEY = "auth"; // 사용자 권한 값의 KEY
+//    public static final String AUTHORIZATION_KEY = "auth"; // 사용자 권한 값의 KEY
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
-    //private final long ACCESS_TOKEN_VALIDITY = 60 * 60 * 1000L; // Access Token 만료시간 : 1시간
-    private final long ACCESS_TOKEN_VALIDITY = 1 * 1 * 1000L; // Access Token 만료시간 : 1시간
+    private final long ACCESS_TOKEN_VALIDITY = 60 * 60 * 1000L; // Access Token 만료시간 : 1시간
     private final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000L; // Refresh Token 만료시간 : 7일
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
@@ -48,14 +48,13 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // 토큰 생성
+    // Access 토큰 생성
     public String createAccessToken(User user) {
         Map<String, Object> additionalClaims = new HashMap<>();
         /* 클레임으로정보 추가 가능*/
         additionalClaims.put("nickname", user.getNickname());
         Date date = new Date();
-        return BEARER_PREFIX +
-                Jwts.builder()
+        return BEARER_PREFIX + Jwts.builder()
                         .setSubject(String.valueOf(user.getEmail())) // 사용자 식별자값(ID)
                         .addClaims(additionalClaims) // 추가 클레임
                         .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_VALIDITY)) // 만료 시간
@@ -64,11 +63,10 @@ public class JwtUtil {
                         .compact();
     }
 
-    // 토큰 생성
+    // Refresh 토큰 생성
     public String createRefreshToken(User user) {
         Date date = new Date();
-        return BEARER_PREFIX +
-                Jwts.builder()
+        return BEARER_PREFIX + Jwts.builder()
                         .setSubject(String.valueOf(user.getEmail())) // 사용자 식별자값(ID)
                         .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_VALIDITY)) // 만료 시간
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
@@ -110,7 +108,7 @@ public class JwtUtil {
         res.addCookie(refreshTokenCookie);
     }
 
-    // JWT 토큰 substring
+    // JWT 토큰 substring : BEARER 제거해주는 코드
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
@@ -150,13 +148,7 @@ public class JwtUtil {
         Cookie[] cookies = req.getCookies();
         if(cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(tokenType)) {
-                    try {
-                        return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-                    } catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
-                }
+                if (cookie.getName().equals(tokenType)) return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8); // Encode 되어 넘어간 Value 다시 Decode
             }
         }
         return null;
