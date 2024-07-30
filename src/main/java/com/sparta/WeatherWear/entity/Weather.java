@@ -1,9 +1,12 @@
 package com.sparta.WeatherWear.entity;
 
+import com.sparta.WeatherWear.board.entity.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +28,9 @@ public class Weather {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "board")
+    private List<Board> boards = new ArrayList<Board>();
 
     @Column(name = "date", nullable = false)
     private Date date;

@@ -1,5 +1,7 @@
 package com.sparta.WeatherWear.entity;
 
+import com.sparta.WeatherWear.board.entity.Board;
+import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.dto.user.UserRequestDTO;
 import com.sparta.WeatherWear.enums.UserGender;
 import jakarta.persistence.*;
@@ -43,6 +45,7 @@ public class User {
     // 생일
     @Column(name = "birthday", nullable = true)
     private Date birthday;
+
 
     // 카카오 아이디
     @Column(name = "kakao_id", nullable = true)

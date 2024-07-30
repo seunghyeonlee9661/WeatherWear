@@ -1,4 +1,4 @@
-package com.sparta.WeatherWear.entity;
+package com.sparta.WeatherWear.board.entity;
 
 import com.sparta.WeatherWear.enums.ClothesColor;
 import com.sparta.WeatherWear.enums.ClothesType;
