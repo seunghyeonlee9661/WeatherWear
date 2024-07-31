@@ -18,6 +18,8 @@ import com.sparta.WeatherWear.wishlist.repository.WishlistRepository;
 import com.sparta.WeatherWear.wishlist.service.NaverShoppingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -179,5 +181,16 @@ public class RecommendService {
         }
         logger.info("response : {}", response.toString());
         return response;
+    }
+
+    /* 위시리스트 삭제 */
+    @Transactional
+    public ResponseEntity<String> removeWishlistByProductId(UserDetailsImpl userDetails, long product_id){
+        Long userId = userDetails.getUser().getId();
+        Wishlist wishlist = wishlistRepository.findByUserIdAndProductId(userId,product_id).orElseThrow(() -> new IllegalArgumentException("No Wishlist"));
+        if(!wishlist.getUser().getId().equals(userId))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 위시리스트 아이템이 아닙니다.");
+        wishlistRepository.delete(wishlist);
+        return ResponseEntity.ok("Wishlist delete successfully");
     }
 }

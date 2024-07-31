@@ -10,6 +10,8 @@ import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
+import com.sparta.WeatherWear.weather.entity.Weather;
+import com.sparta.WeatherWear.weather.service.WeatherService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ public class BoardService {
     private UserRepository userRepository;
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
+    private WeatherService weatherService;
 
     @Transactional
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {

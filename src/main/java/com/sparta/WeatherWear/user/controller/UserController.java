@@ -33,8 +33,6 @@ public class UserController {
     private final RecommendService recommendService;
     private final KakaoLoginService kakaoLoginService;
 
-    /*______________________User_______________________*/
-
     /* 사용자 정보 추가 */
     @PostMapping("/users")
     public ResponseEntity<String> createUser(@RequestBody @Valid UserCreateRequestDTO requestDTO) {
@@ -68,5 +66,11 @@ public class UserController {
     @GetMapping("/recommends")
     public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
         return ResponseEntity.ok(recommendService.getRecommends(userDetails,id));
+    }
+
+    /* 추천 아이템 중 위시리스트 삭제하기 */
+    @DeleteMapping("/recommends/wishlist/{product_id}")
+    public ResponseEntity<String> removeWishlistAtRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("product_id") Long product_id) {
+        return recommendService.removeWishlistByProductId(userDetails,product_id);
     }
 }

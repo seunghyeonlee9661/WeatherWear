@@ -8,6 +8,7 @@ import com.sparta.WeatherWear.wishlist.service.NaverShoppingService;
 import com.sparta.WeatherWear.wishlist.service.WishlistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +30,8 @@ public class WishlistController {
 
     /* 위시리스트 불러오기 */
     @GetMapping("/wishlist")
-    public ResponseEntity<List<WishlistResponseDTO>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "page", defaultValue = "0") int page) {
-        return wishlistService.getWishlist(userDetails,page);
+    public ResponseEntity<Page<WishlistResponseDTO>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "type", required = false, defaultValue = "") String type) {
+        return wishlistService.getWishlist(userDetails,page,type);
     }
 
     /* 위시리스트 추가하기 */
@@ -52,6 +53,4 @@ public class WishlistController {
     public ResponseEntity<List<NaverProductResponseDTO>> findNaverProduct(@RequestParam(value = "query", required = true) String query, @RequestParam(value = "display", defaultValue = "10") int display,@RequestParam(value = "display", defaultValue = "1") int start) {
         return ResponseEntity.ok(naverShoppingService.searchProducts(query,display,start));
     }
-
-
 }
