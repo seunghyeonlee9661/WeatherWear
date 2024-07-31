@@ -53,6 +53,10 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardImage> boardImages = new ArrayList<>();
 
+    // 이승현 : 조회수
+    @Column(name = "views", nullable = true)
+    private int views;
+
     public Board(BoardCreateRequestDto requestDto, User user, Weather weather) {
         this.user = user;
         this.title = requestDto.getTitle();
