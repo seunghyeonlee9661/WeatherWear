@@ -2,7 +2,7 @@ package com.sparta.WeatherWear.wishlist.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.WeatherWear.wishlist.dto.NaverProductRequestDTO;
+import com.sparta.WeatherWear.wishlist.dto.WishlistRequestDTO;
 import com.sparta.WeatherWear.wishlist.dto.NaverProductResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +24,13 @@ public class NaverShoppingService {
     private String clientSecret;
 
     // 네이버로부터 입력에 대한 검색 결과를 받아오는 기능
-    public List<NaverProductResponseDTO> searchProducts(String query, int display){
+    public List<NaverProductResponseDTO> searchProducts(String query, int display, int start){
         /* 헤더 정의 */
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Naver-Client-Id", clientId);
         headers.set("X-Naver-Client-Secret", clientSecret);
         /* url 정의 */
-        String apiUrl = "https://openapi.naver.com/v1/search/shop.json?query=" + query+ "&display=" + display + "&start=" + 1 + "&sort=" + "sim";
+        String apiUrl = "https://openapi.naver.com/v1/search/shop.json?query=" + query+ "&display=" + display + "&start=" + start + "&sort=" + "sim";
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         // API 호출
@@ -45,7 +45,7 @@ public class NaverShoppingService {
                 log.info(itemsJson);
 
                 // JSON 배열을 List<NaverProductRequestDTO>로 변환
-                return objectMapper.readValue(itemsJson, new TypeReference<List<NaverProductRequestDTO>>() {})
+                return objectMapper.readValue(itemsJson, new TypeReference<List<WishlistRequestDTO>>() {})
                         .stream()
                         .map(NaverProductResponseDTO::new)
                         .collect(Collectors.toList());

@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.wishlist.service;
 
-import com.sparta.WeatherWear.wishlist.dto.NaverProductRequestDTO;
+import com.sparta.WeatherWear.wishlist.dto.WishlistRequestDTO;
 import com.sparta.WeatherWear.wishlist.dto.WishlistResponseDTO;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.wishlist.entity.NaverProduct;
@@ -41,9 +41,9 @@ public class WishlistService {
 
     /* 위시리스트 추가 */
     @Transactional
-    public ResponseEntity<String> createWishlist(NaverProductRequestDTO productRequestDTO,UserDetailsImpl userDetails){
+    public ResponseEntity<String> createWishlist(WishlistRequestDTO productRequestDTO, UserDetailsImpl userDetails){
         NaverProduct product = naverProductRepository.findById(productRequestDTO.getProductId()).orElseGet(() -> naverProductRepository.save(new NaverProduct(productRequestDTO)));
-        wishlistRepository.save(new Wishlist(userDetails.getUser(), product));
+        wishlistRepository.save(new Wishlist(userDetails.getUser(), product,productRequestDTO.getType()));
         return ResponseEntity.ok("Wishlist created successfully");
     }
 

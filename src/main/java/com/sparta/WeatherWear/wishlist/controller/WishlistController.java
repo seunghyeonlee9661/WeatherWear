@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.wishlist.controller;
 
-import com.sparta.WeatherWear.wishlist.dto.NaverProductRequestDTO;
+import com.sparta.WeatherWear.wishlist.dto.WishlistRequestDTO;
 import com.sparta.WeatherWear.wishlist.dto.NaverProductResponseDTO;
 import com.sparta.WeatherWear.wishlist.dto.WishlistResponseDTO;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
@@ -35,7 +35,7 @@ public class WishlistController {
 
     /* 위시리스트 추가하기 */
     @PostMapping("/wishlist")
-    public ResponseEntity<String> createWishlist(@RequestBody @Valid NaverProductRequestDTO productRequestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<String> createWishlist(@RequestBody @Valid WishlistRequestDTO productRequestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return wishlistService.createWishlist(productRequestDTO,userDetails);
     }
 
@@ -49,8 +49,8 @@ public class WishlistController {
 
     /* 네이버 쇼핑 불러오기 */
     @GetMapping("/naver/shopping")
-    public ResponseEntity<List<NaverProductResponseDTO>> findNaverProduct(@RequestParam(value = "query", required = true) String query, @RequestParam(value = "display", defaultValue = "10") int display) {
-        return ResponseEntity.ok(naverShoppingService.searchProducts(query,display));
+    public ResponseEntity<List<NaverProductResponseDTO>> findNaverProduct(@RequestParam(value = "query", required = true) String query, @RequestParam(value = "display", defaultValue = "10") int display,@RequestParam(value = "display", defaultValue = "1") int start) {
+        return ResponseEntity.ok(naverShoppingService.searchProducts(query,display,start));
     }
 
 

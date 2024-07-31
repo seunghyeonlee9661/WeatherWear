@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.wishlist.entity;
 
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,8 +25,12 @@ public class Wishlist {
     @JoinColumn(name = "product_id", nullable = false)
     private NaverProduct product;
 
-    public Wishlist(User user, NaverProduct product){
+    @Enumerated(EnumType.STRING)
+    private ClothesType type;
+
+    public Wishlist(User user, NaverProduct product,ClothesType type){
         this.user = user;
         this.product = product;
+        this.type = type;
     }
 }

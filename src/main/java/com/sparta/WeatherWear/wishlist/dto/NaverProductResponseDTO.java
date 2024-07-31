@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.wishlist.dto;
 
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import lombok.Getter;
+import lombok.Setter;
 
 /*
 작성자 : 이승현
@@ -22,8 +23,10 @@ public class NaverProductResponseDTO implements ResponseDTO {
     private String category2;
     private String category3;
     private String category4;
+    @Setter
+    private String type;
 
-    public NaverProductResponseDTO(NaverProductRequestDTO productRequestDTO) {
+    public NaverProductResponseDTO(WishlistRequestDTO productRequestDTO) {
         this.productId = productRequestDTO.getProductId();
         this.title = productRequestDTO.getTitle();
         this.link = productRequestDTO.getLink();
@@ -38,4 +41,5 @@ public class NaverProductResponseDTO implements ResponseDTO {
         this.category3 = productRequestDTO.getCategory3();
         this.category4 = productRequestDTO.getCategory4();
     }
+
 }
