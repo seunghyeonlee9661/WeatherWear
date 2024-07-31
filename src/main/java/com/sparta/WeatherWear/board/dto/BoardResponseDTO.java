@@ -19,10 +19,7 @@ public class BoardResponseDTO implements ResponseDTO {
     private String title;
     private String content;
     private boolean isPrivate;
-    private Date registDate;
-    private Date updateDate;
     private Weather weather;
-    private String image;
     private int likeCount;
 
     public BoardResponseDTO(Board board) {
@@ -31,10 +28,7 @@ public class BoardResponseDTO implements ResponseDTO {
         this.title = board.getTitle();
         this.content = board.getTitle();
         this.isPrivate = board.isPrivate();
-        this.registDate = board.getRegistDate();
-        this.updateDate = board.getUpdateDate();
         this.weather = board.getWeather();
-        this.image = board.getImage();
         this.likeCount =  board.getBoardLikes().size();
     }
 }
