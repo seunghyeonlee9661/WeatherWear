@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
@@ -23,4 +25,10 @@ public class BoardTag {
 
     @Column(name = "type", length = 50, nullable = false)
     private ClothesType type;
+
+    public BoardTag(Board board, ClothesColor color, ClothesType type) {
+        this.board = board;
+        this.color = color;
+        this.type = type;
+    }
 }

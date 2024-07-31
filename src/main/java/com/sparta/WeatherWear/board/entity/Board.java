@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.board.entity;
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
 import com.sparta.WeatherWear.entity.Comment;
+import com.sparta.WeatherWear.entity.User;
 import com.sparta.WeatherWear.entity.Weather;
 import com.sparta.WeatherWear.time.Timestamped;
 import jakarta.persistence.*;
@@ -33,8 +34,8 @@ public class Board extends Timestamped {
     @Column(name = "isPrivate", nullable = false)
     private boolean isPrivate;
 
-    @Column(name = "stn", nullable = false)
-    private int stn;
+//    @Column(name = "stn", nullable = false)
+//    private int stn;
 
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
@@ -53,23 +54,30 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardImage> boardImages = new ArrayList<>();
 
-    public Board(BoardCreateRequestDto requestDto, User user) {
+    public Board(BoardCreateRequestDto requestDto, User user, Weather weather) {
         this.user = user;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
         this.isPrivate = requestDto.isPrivate();
-        this.stn = requestDto.getStn();
-        this.boardTags =requestDto.getBoardTags();
+        this.weather = weather;
     }
 
     public Board update(BoardUpdateRequestDto requestDTO){
         this.title = requestDTO.getTitle();
         this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
-        this.stn = requestDTO.getStn();
+//        this.stn = requestDTO.getStn();
         this.boardLikes = requestDTO.getBoardLikes();
         this.comments = requestDTO.getComments();
         this.boardTags = requestDTO.getBoardTags();
         return this;
+    }
+
+    public int getLikesSize(){
+        return this.boardLikes.size();
+    }
+
+    public int getCommentsSize(){
+        return this.comments.size();
     }
 }
