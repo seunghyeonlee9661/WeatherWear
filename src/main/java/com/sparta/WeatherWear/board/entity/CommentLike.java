@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
-public class BoardLike {
+public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,11 +18,6 @@ public class BoardLike {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
-
-    public BoardLike(User user, Board board) {
-        this.user = user;
-        this.board = board;
-    }
+    @JoinColumn(name = "comment_id", nullable = false)
+    private Comment comment;
 }

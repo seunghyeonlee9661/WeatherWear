@@ -1,14 +1,17 @@
-package com.sparta.WeatherWear.board.entity;
+package com.sparta.WeatherWear.wishlist.entity;
 
 import com.sparta.WeatherWear.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+/*
+작성자 : 이승현
+위시리스트 Entity
+ */
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
-public class BoardLike {
+public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,11 +21,11 @@ public class BoardLike {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    @JoinColumn(name = "product_id", nullable = false)
+    private NaverProduct product;
 
-    public BoardLike(User user, Board board) {
+    public Wishlist(User user, NaverProduct product){
         this.user = user;
-        this.board = board;
+        this.product = product;
     }
 }

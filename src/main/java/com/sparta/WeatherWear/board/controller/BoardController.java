@@ -2,7 +2,7 @@ package com.sparta.WeatherWear.board.controller;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
-import com.sparta.WeatherWear.security.UserDetailsImpl;
+import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDto,@RequestParam(value = "id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDto, @RequestParam(value = "id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
         return boardService.createBoard(requestDto, id, userDetails, images);
     }
 

@@ -1,10 +1,7 @@
 package com.sparta.WeatherWear.board.dto;
 
-import com.sparta.WeatherWear.board.entity.BoardImage;
-import com.sparta.WeatherWear.board.entity.BoardTag;
-import com.sparta.WeatherWear.entity.Weather;
-import com.sparta.WeatherWear.enums.ClothesColor;
-import com.sparta.WeatherWear.enums.ClothesType;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import lombok.Getter;
 import lombok.Setter;
 

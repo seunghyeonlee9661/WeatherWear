@@ -5,10 +5,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
-public class BoardLike {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,8 +24,15 @@ public class BoardLike {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    public BoardLike(User user, Board board) {
-        this.user = user;
-        this.board = board;
-    }
+    @Column(name = "regist_date", nullable = false)
+    private Date registDate;
+
+    @Column(name = "update_date", nullable = false)
+    private Date updateDate;
+
+    @Column(name = "contents", columnDefinition = "MEDIUMTEXT", nullable = false)
+    private String contents;
+
+    @OneToMany(mappedBy = "comment")
+    private List<CommentLike> commentLikes;
 }

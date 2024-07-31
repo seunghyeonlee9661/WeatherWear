@@ -1,7 +1,7 @@
 package com.sparta.WeatherWear.board.entity;
 
-import com.sparta.WeatherWear.enums.ClothesColor;
-import com.sparta.WeatherWear.enums.ClothesType;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
