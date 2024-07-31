@@ -8,6 +8,7 @@ import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.global.handler.AuthenticationSuccessHandler;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
+import com.sparta.WeatherWear.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final UserRepository userRepository;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final LoginRedirectFilter loginRedirectFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;

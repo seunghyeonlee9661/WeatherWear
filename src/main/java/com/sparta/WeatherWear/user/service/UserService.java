@@ -64,17 +64,15 @@ public class UserService {
         User user = userDetails.getUser();
         // 사용자의 기존 nickname과 다르면서 현재 다른 사람이 nickname을 쓰고 있는 경우 : nickname 중복
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
-
-        if(url == null){ // imageUrl: null
-            if(file.isEmpty()){ // 사용자가 기존 사진 삭제한 경우
-                if (user.getKakaoId() == null && user.getImage() != null) {
-                    imageService.deleteImage(user.getImage()); // 삭제
-                }
-            }else{ // 사용자가 새롭게 사진을 올리는 경우
-                url = imageService.uploadImagefile("user/", String.valueOf(user.getId()),file); // 사진 추가
+        if (url.isEmpty()) {
+            if (file.isEmpty()) { // 사용자가 기존 사진 삭제한 경우
+                if (user.getKakaoId() == null && user.getImage() != null) imageService.deleteImage(user.getImage());
+                url = null;
+            } else { // 사용자가 새롭게 사진을 올리는 경우
+                url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);
             }
-        }else{ // imageUrl: prevImageUrl
-            if(!file.isEmpty()) url = imageService.uploadImagefile("user/", String.valueOf(user.getId()),file); // 사진을 추가하는 경우
+        } else { // imageUrl: prevImageUrl
+            if (!file.isEmpty()) url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);// 사용자가 이미지를 수정하는 경우
         }
         user.updateInfo(nickname,url);
         userRepository.save(user);

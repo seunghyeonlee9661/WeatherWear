@@ -1,9 +1,9 @@
 package com.sparta.WeatherWear.global.filter;
 
-import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.global.security.JwtUtil;
-import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
+import com.sparta.WeatherWear.user.entity.User;
+import com.sparta.WeatherWear.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -37,26 +38,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         log.info("검증 시작 : " + req.getRequestURI());
         // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER);
-        String refreshToken = jwtUtil.getTokenFromRequest(req, JwtUtil.REFRESH_HEADER);
-
         if (accessToken != null) { // accessToken 확인
             String accessTokenValue = jwtUtil.substringToken(accessToken); // accessToken 검증
-            if (jwtUtil.validateToken(accessTokenValue, res)) { // 토큰이 올바르면 사용자 정보 확인
+            if (jwtUtil.validateToken(accessTokenValue)) { // 토큰이 올바르면 사용자 정보 확인
                 UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(accessTokenValue).getSubject()); // 토큰에서 사용자 정보를 추출
-                setAuthentication(userDetails,req);  // 사용자 인증 설정
-            } else if (refreshToken != null) { // refreshToken으로 재발급 진행
-                String refreshTokenValue = jwtUtil.substringToken(refreshToken);
-                if(jwtUtil.validateToken(refreshTokenValue, res)){
-                    // 리프레시 토큰이 유효한 경우
-                    UserDetails userDetails = userDetailsService.loadUserByUsername( jwtUtil.getUserInfoFromToken(refreshTokenValue).getSubject());
-                    if (userDetails != null) {
-                        User user = ((UserDetailsImpl) userDetails).getUser();
-                        String newAccessToken = jwtUtil.refreshAccessToken(refreshTokenValue, user);
-                        if (newAccessToken != null) {
-                            jwtUtil.addJwtToCookie(newAccessToken, refreshToken, res);// 새로운 액세스 토큰을 쿠키에 추가
-                            setAuthentication(userDetails,req); // 사용자 인증 설정
-                        }
-                    }
+                setAuthentication(userDetails, req);  // 사용자 인증 설정
+            } else { // accessToken이 유효하지 않은 경우
+                String newAccessToken = jwtUtil.refreshAccessToken(accessToken);
+                if (newAccessToken != null) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(newAccessToken)).getSubject()); // 새 토큰에서 사용자 정보를 추출
+                    jwtUtil.addTokenToCookie(newAccessToken, res); // 새로운 액세스 토큰을 쿠키에 추가
+                    setAuthentication(userDetails, req); // 사용자 인증 설정
                 }
             }
         }
