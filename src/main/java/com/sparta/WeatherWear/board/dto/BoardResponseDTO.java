@@ -21,6 +21,7 @@ public class BoardResponseDTO implements ResponseDTO {
     private boolean isPrivate;
     private Weather weather;
     private int likeCount;
+    private int views;
 
     public BoardResponseDTO(Board board) {
         this.id = board.getId();
@@ -30,5 +31,6 @@ public class BoardResponseDTO implements ResponseDTO {
         this.isPrivate = board.isPrivate();
         this.weather = board.getWeather();
         this.likeCount =  board.getBoardLikes().size();
+        this.views = board.getViews();
     }
 }

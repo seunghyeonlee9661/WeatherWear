@@ -47,6 +47,7 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
+    // enum 변경 예정
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> boardTags;
 
