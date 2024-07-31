@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -71,12 +72,12 @@ public class Board extends Timestamped {
         this.boardTags = requestDTO.getBoardTags();
         return this;
     }
-    
+
     // 이승현 : 좋아요 수 확인
     public int getLikesSize(){
         return this.boardLikes.size();
     }
-    
+
     // 이승현 : 댓글 수 확인
     public int getCommentsSize(){
         return this.comments.size();

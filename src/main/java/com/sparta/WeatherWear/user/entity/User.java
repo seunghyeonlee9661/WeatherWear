@@ -51,7 +51,6 @@ public class User {
     @Column(name = "birthday", nullable = true)
     private Date birthday;
 
-
     // 카카오 아이디
     @Column(name = "kakao_id", nullable = true)
     private Long kakaoId;
