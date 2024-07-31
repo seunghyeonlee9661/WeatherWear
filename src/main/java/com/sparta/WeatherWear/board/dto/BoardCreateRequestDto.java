@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.board.dto;
 
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
+
 import lombok.Getter;
 import lombok.Setter;
 

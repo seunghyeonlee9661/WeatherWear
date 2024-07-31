@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.board.entity;
 
-import com.sparta.WeatherWear.time.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

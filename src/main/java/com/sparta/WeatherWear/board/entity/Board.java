@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.board.entity;
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
 import com.sparta.WeatherWear.time.Timestamped;
+
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
@@ -58,6 +59,7 @@ public class Board extends Timestamped {
     private int views;
 
     public Board(BoardCreateRequestDto requestDto, User user, Weather weather) {
+
         this.user = user;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
@@ -76,10 +78,12 @@ public class Board extends Timestamped {
         return this;
     }
 
+    // 이승현 : 좋아요 수 확인
     public int getLikesSize(){
         return this.boardLikes.size();
     }
-
+    
+    // 이승현 : 댓글 수 확인
     public int getCommentsSize(){
         return this.comments.size();
     }

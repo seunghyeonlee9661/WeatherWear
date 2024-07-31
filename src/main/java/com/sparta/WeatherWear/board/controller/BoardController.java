@@ -23,6 +23,7 @@ public class BoardController {
     @PostMapping("/")
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDto, @RequestParam(value = "id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
         return boardService.createBoard(requestDto, id, userDetails, images);
+
     }
 
     /* 게시물 id로 조회 */
@@ -77,4 +78,6 @@ public class BoardController {
 //    public ResponseEntity<String> userBoardTagsById(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        return boardService.removeBoard(board_id, userDetails);
 //    }
+}
+
 }

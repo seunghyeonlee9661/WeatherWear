@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.board.dto;
 
-import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.entity.Comment;
