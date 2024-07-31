@@ -1,7 +1,7 @@
 package com.sparta.WeatherWear.board.entity;
 
-import com.sparta.WeatherWear.clothes.enums.ClothesColor;
-import com.sparta.WeatherWear.clothes.enums.ClothesType;
+import com.sparta.WeatherWear.enums.ClothesColor;
+import com.sparta.WeatherWear.enums.ClothesType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +18,9 @@ public class BoardTag {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "color", length = 50, nullable = false)
     private ClothesColor color;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "type", length = 50, nullable = false)
     private ClothesType type;
 }

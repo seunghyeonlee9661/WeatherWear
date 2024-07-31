@@ -1,20 +1,21 @@
 package com.sparta.WeatherWear.board.entity;
 
+import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
+import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
+import com.sparta.WeatherWear.board.time.Timestamped;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
-@NoArgsConstructor // 기본 생성자 추가
-public class Board {
+@NoArgsConstructor
+public class Board extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,20 +33,6 @@ public class Board {
     @Column(name = "isPrivate", nullable = false)
     private boolean isPrivate;
 
-    @CreatedDate
-    @Column(name = "regist_date", nullable = false)
-    private Date registDate;
-
-    @LastModifiedDate
-    @Column(name = "update_date", nullable = true)
-    private Date updateDate;
-
-    @Column(name = "image", nullable = true)
-    private String image;
-
-    @Column(name = "views", nullable = true)
-    private int views;
-
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
     private Weather weather;
@@ -59,14 +46,25 @@ public class Board {
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> boardTags;
 
-    @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<BoardImage> boardImages;
+    // Board 엔티티에 image 리스트 필드 추가
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardImage> boardImages = new ArrayList<>();
 
-    public int getLikesSize(){
-        return this.boardLikes.size();
+    public Board(BoardCreateRequestDto requestDto, User user) {
+        this.user = user;
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContents();
+        this.isPrivate = requestDto.isPrivate();
+        this.boardTags =requestDto.getBoardTags();
     }
 
-    public int getCommentsSize(){
-        return this.comments.size();
+    public Board update(BoardUpdateRequestDto requestDTO){
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContents();
+        this.isPrivate = requestDTO.isPrivate();
+        this.boardLikes = requestDTO.getBoardLikes();
+        this.comments = requestDTO.getComments();
+        this.boardTags = requestDTO.getBoardTags();
+        return this;
     }
 }

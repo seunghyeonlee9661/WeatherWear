@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.board.entity;
 
-import com.sparta.WeatherWear.user.entity.User;
+import com.sparta.WeatherWear.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
