@@ -31,6 +31,7 @@ public class CommentService {
         );
         Comment newComment = new Comment(user,board,requestDto.getContents());
         commentRepository.save(newComment);
+        board.addComment(newComment);
 
         // newBoard -> responseDto로 반환
         CommentCreateResponseDto responseDto = new CommentCreateResponseDto(newComment);

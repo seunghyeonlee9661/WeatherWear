@@ -72,11 +72,14 @@ public class Board extends Timestamped {
         this.title = requestDTO.getTitle();
         this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
-//        this.stn = requestDTO.getStn();
         this.boardLikes = requestDTO.getBoardLikes();
         this.comments = requestDTO.getComments();
         this.boardTags = requestDTO.getBoardTags();
         return this;
+    }
+
+    public void addComment(Comment comment){
+        this.comments.add(comment);
     }
 
     // 이승현 : 좋아요 수 확인
