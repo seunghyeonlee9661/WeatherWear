@@ -2,9 +2,9 @@ package com.sparta.WeatherWear.board.entity;
 
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
-import com.sparta.WeatherWear.entity.Comment;
-import com.sparta.WeatherWear.entity.Weather;
-import com.sparta.WeatherWear.time.Timestamped;
+import com.sparta.WeatherWear.board.time.Timestamped;
+import com.sparta.WeatherWear.user.entity.User;
+import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,9 +33,6 @@ public class Board extends Timestamped {
     @Column(name = "isPrivate", nullable = false)
     private boolean isPrivate;
 
-    @Column(name = "stn", nullable = false)
-    private int stn;
-
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
     private Weather weather;
@@ -53,12 +50,15 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardImage> boardImages = new ArrayList<>();
 
+    // 이승현 : 조회수
+    @Column(name = "views", nullable = true)
+    private int views;
+
     public Board(BoardCreateRequestDto requestDto, User user) {
         this.user = user;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
         this.isPrivate = requestDto.isPrivate();
-        this.stn = requestDto.getStn();
         this.boardTags =requestDto.getBoardTags();
     }
 
@@ -66,10 +66,19 @@ public class Board extends Timestamped {
         this.title = requestDTO.getTitle();
         this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
-        this.stn = requestDTO.getStn();
         this.boardLikes = requestDTO.getBoardLikes();
         this.comments = requestDTO.getComments();
         this.boardTags = requestDTO.getBoardTags();
         return this;
+    }
+    
+    // 이승현 : 좋아요 수 확인
+    public int getLikesSize(){
+        return this.boardLikes.size();
+    }
+    
+    // 이승현 : 댓글 수 확인
+    public int getCommentsSize(){
+        return this.comments.size();
     }
 }

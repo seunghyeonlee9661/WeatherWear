@@ -1,11 +1,7 @@
 package com.sparta.WeatherWear.board.dto;
 
-import com.sparta.WeatherWear.board.entity.Board;
-import com.sparta.WeatherWear.board.entity.BoardImage;
-import com.sparta.WeatherWear.board.entity.BoardLike;
-import com.sparta.WeatherWear.board.entity.BoardTag;
-import com.sparta.WeatherWear.entity.Comment;
-import com.sparta.WeatherWear.entity.Weather;
+import com.sparta.WeatherWear.board.entity.*;
+import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,7 +32,6 @@ public class BoardCreateResponseDto {
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-        this.stn = board.getStn();
         this.createTime = board.getCreatedAt();
         this.modifiedTime = board.getModifiedAt();
         this.weather = board.getWeather();

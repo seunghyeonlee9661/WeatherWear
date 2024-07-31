@@ -6,10 +6,10 @@ import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
-import com.sparta.WeatherWear.entity.User;
-import com.sparta.WeatherWear.repository.UserRepository;
-import com.sparta.WeatherWear.security.JwtUtil;
-import com.sparta.WeatherWear.security.UserDetailsImpl;
+import com.sparta.WeatherWear.global.security.JwtUtil;
+import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import com.sparta.WeatherWear.user.entity.User;
+import com.sparta.WeatherWear.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -208,7 +208,7 @@ public class BoardService {
 
         // 사용자가 작성한 게시물인지 확인
         Long userId = userDetails.getUser().getId();
-        Long boardUserId = board.getUserId();
+        Long boardUserId = board.getUser().getId();
 
         if(userId == null || boardUserId == null) {
             log.info("User의 Id 값이 없습니다.");
