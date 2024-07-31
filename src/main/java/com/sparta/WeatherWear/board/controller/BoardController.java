@@ -21,7 +21,7 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody BoardCreateRequestDto requestDto, @RequestParam(value = "id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody @Valid BoardCreateRequestDto requestDto, @RequestParam(value = "id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
         return boardService.createBoard(requestDto, id, userDetails, images);
 
     }
@@ -46,7 +46,7 @@ public class BoardController {
 
     /* 게시물 수정 */
     @PutMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@RequestBody BoardUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@RequestBody @Valid BoardUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("images") List<MultipartFile> images) {
         return boardService.updateBoard(requestDto, userDetails, images);
     }
 

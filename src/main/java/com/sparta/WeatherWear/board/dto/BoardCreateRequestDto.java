@@ -19,4 +19,5 @@ public class BoardCreateRequestDto {
     private int stn;
     private ClothesColor color;
     private ClothesType type;
+    private int views;
 }

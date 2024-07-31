@@ -29,6 +29,7 @@ public class BoardCreateResponseDto {
     private ClothesColor clothesColor;
     private ClothesType clothesType;
     private List<String> boardImages;
+    private int views;
 
     // 게시물 찾을 때
     public BoardCreateResponseDto(Board board) {
@@ -43,6 +44,7 @@ public class BoardCreateResponseDto {
         this.boardLikes = board.getLikesSize();
         this.comments = board.getCommentsSize();
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
+        this.views = board.getViews();
     }
     // 처음 생성할 때
     public BoardCreateResponseDto(Board board, ClothesColor clothesColor, ClothesType clothesType) {
@@ -59,6 +61,7 @@ public class BoardCreateResponseDto {
         this.clothesColor = clothesColor;
         this.clothesType = clothesType;
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
+        this.views = board.getViews();
     }
 
 }
