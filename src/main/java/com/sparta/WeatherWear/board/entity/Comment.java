@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.board.entity;
 
-import com.sparta.WeatherWear.time.Timestamped;
+import com.sparta.WeatherWear.board.time.Timestamped;
 import com.sparta.WeatherWear.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;

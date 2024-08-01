@@ -2,8 +2,8 @@ package com.sparta.WeatherWear.board.entity;
 
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
-import com.sparta.WeatherWear.time.Timestamped;
 
+import com.sparta.WeatherWear.board.time.Timestamped;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
