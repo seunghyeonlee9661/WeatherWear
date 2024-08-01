@@ -27,15 +27,15 @@ public class BoardController {
     }
 
     /* 게시물 id로 조회 */
-    @GetMapping("/board-id/{board_id}")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long board_id) {
-        return boardService.findBoardById(board_id);
+    @GetMapping("/board-id/{boardId}")
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long boardId) {
+        return boardService.findBoardById(boardId);
     }
 
     /* 게시물 user_id 전체 목록 조회 (페이징) */
-    @GetMapping("/user-id/{user_id}")
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(@PathVariable Long user_id) {
-        return boardService.findBoardByUserId(user_id);
+    @GetMapping("/user-id/{userId}")
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(@PathVariable Long userId) {
+        return boardService.findBoardByUserId(userId);
     }
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
@@ -51,15 +51,15 @@ public class BoardController {
     }
 
     /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
-    @DeleteMapping("/{board_id}")
-    public ResponseEntity<String> removeBoard(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return boardService.removeBoard(board_id, userDetails);
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<String> removeBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.removeBoard(boardId, userDetails);
     }
 
     /* 게시물 이미지 전체 불러오기 */
-    @GetMapping("/images/")
-    public ResponseEntity<String> userBoardImages(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return boardService.removeBoard(board_id, userDetails);
+    @GetMapping("/images/{boardId}")
+    public ResponseEntity<String> userBoardImages(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.removeBoard(boardId, userDetails);
     }
 
 //    /* 특정 회원의 게시물 이미지 전체 불러오기 */
