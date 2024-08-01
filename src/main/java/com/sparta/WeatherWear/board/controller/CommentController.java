@@ -19,8 +19,8 @@ public class CommentController {
     private final CommentService commentService;
 
     /* 댓글 생성 */
-    @PostMapping("/comments/{board_id}")
-    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.addComments(requestDto, board_id, userDetails);
+    @PostMapping("/comments/{boardId}")
+    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.addComments(requestDto, boardId, userDetails);
     }
 }
