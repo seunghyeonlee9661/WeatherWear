@@ -98,7 +98,7 @@ public class RecommendService {
 
     /* 2. 나의 Best OOTD 추천 : 높은 좋아요의 게시물 추천 */
     @Transactional(readOnly = true)
-    private List<? extends ResponseDTO>  getBoardsByMyBoards(User user,Weather weather) {
+    protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
         // 온도 차이
         int tmpGap = 3;
         // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
@@ -109,7 +109,7 @@ public class RecommendService {
 
     /* 3. 트랜드 OOTD : 높은 좋아요의 게시물 추천 */
     @Transactional(readOnly = true)
-    private List<? extends ResponseDTO>  getBoardsByTrends(User user,Weather weather){
+    protected List<? extends ResponseDTO>  getBoardsByTrends(User user, Weather weather){
         int tmpGap = 3;
         // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
         List<Board> boards = boardRepository.findByWeather_SKYAndWeather_PTYAndWeather_TMPBetween(weather.getSKY(),weather.getPTY(),weather.getTMP()-tmpGap,weather.getTMP()+tmpGap).stream().filter(board -> !board.getUser().equals(user)).toList();

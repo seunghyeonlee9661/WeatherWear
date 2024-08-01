@@ -3,10 +3,12 @@ package com.sparta.WeatherWear.board.service;
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardImage;
+import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.repository.BoardImageRepository;
+import com.sparta.WeatherWear.board.repository.BoardLikeRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
-import com.sparta.WeatherWear.global.security.JwtUtil;
+import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
@@ -29,15 +31,16 @@ import java.util.List;
 @Slf4j
 public class BoardService {
 
-    private final JwtUtil jwtUtil;
+    private WeatherService weatherService;
+    private BoardTagRepository boardTagRepository;
+    private BoardLikeRepository boardLikeRepository;
     private final BoardImageRepository boardImageRepository;
-    private UserRepository userRepository;
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
     private WeatherService weatherService;
 
     @Transactional
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, Long id, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
         // 예외처리
         if (requestDto == null) {
             throw new IllegalArgumentException("게시판 생성에 필요한 정보가 없습니다");
@@ -49,8 +52,11 @@ public class BoardService {
         // user 정보 가져오기 (id)
         User user = userDetails.getUser();
 
+        // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
+        Weather weather = weatherService.getWeatherByAddress(id);
+
         // request에서 받아온 값을 Board Entity로 만들기 
-        Board newBoard = new Board(requestDto, user);
+        Board newBoard = new Board(requestDto, user, weather); // Weather 추가하기
 
         // requestDto 확인
         System.out.println("userDetails.getUser().getId() = " + userDetails.getUser().getId());
@@ -58,10 +64,8 @@ public class BoardService {
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
         System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
         System.out.println("requestDto.getStn() = " + requestDto.getStn());
-        List<BoardTag> boardTags =  requestDto.getBoardTags();
-        for (BoardTag boardTag : boardTags) {
-            System.out.println("boardTag = " + boardTag);
-        }
+        System.out.println("requestDto.getColor() = " + requestDto.getColor());
+        System.out.println("requestDto.getType() = " + requestDto.getType());
 
         // Board Entity -> db에 저장
         boardRepository.save(newBoard);
@@ -74,16 +78,15 @@ public class BoardService {
         for (BoardImage boardImage : boardImages) {
             System.out.println("boardImage_path = " + boardImage.getImagePath());
         }
+        
+        // 추가 - 태그 저장 메서드 실행
+        boardTagRepository.save(new BoardTag(newBoard, requestDto.getColor(), requestDto.getType()));
 
-        // 이때, 날씨 정보 & 가져와서 넣기 -> newBoard에
-        int stn = requestDto.getStn();
-        // stn 값 통해서 날씨 정보 가져오기
-
-        // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
-
+        // 추가 - 좋아요 저장 메서드 실행
+        boardLikeRepository.save(new BoardLike(user,newBoard));
 
         // newBoard -> responseDto로 반환
-        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard);
+        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getColor(), requestDto.getType());
         // Creating the ApiResponse object
         ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(201, "Board created successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status

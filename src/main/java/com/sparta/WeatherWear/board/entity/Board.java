@@ -2,7 +2,8 @@ package com.sparta.WeatherWear.board.entity;
 
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
-import com.sparta.WeatherWear.board.time.Timestamped;
+import com.sparta.WeatherWear.time.Timestamped;
+
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
@@ -34,6 +35,9 @@ public class Board extends Timestamped {
     @Column(name = "isPrivate", nullable = false)
     private boolean isPrivate;
 
+//    @Column(name = "stn", nullable = false)
+//    private int stn;
+
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
     private Weather weather;
@@ -44,6 +48,7 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
+    // enum 변경 예정
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> boardTags;
 
@@ -55,12 +60,13 @@ public class Board extends Timestamped {
     @Column(name = "views", nullable = true)
     private int views;
 
-    public Board(BoardCreateRequestDto requestDto, User user) {
+    public Board(BoardCreateRequestDto requestDto, User user, Weather weather) {
+
         this.user = user;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
         this.isPrivate = requestDto.isPrivate();
-        this.boardTags =requestDto.getBoardTags();
+        this.weather = weather;
     }
 
     public Board update(BoardUpdateRequestDto requestDTO){
@@ -71,6 +77,9 @@ public class Board extends Timestamped {
         this.comments = requestDTO.getComments();
         this.boardTags = requestDTO.getBoardTags();
         return this;
+    }
+    public void addComment(Comment comment){
+        this.comments.add(comment);
     }
 
     // 이승현 : 좋아요 수 확인

@@ -20,4 +20,9 @@ public class BoardLike {
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
+
+    public BoardLike(User user, Board board) {
+        this.user = user;
+        this.board = board;
+    }
 }
