@@ -37,7 +37,6 @@ public class BoardService {
     private final BoardImageRepository boardImageRepository;
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
-    private WeatherService weatherService;
 
     @Transactional
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, Long id, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
@@ -53,6 +52,7 @@ public class BoardService {
         User user = userDetails.getUser();
 
         // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
+        // 법정동 코드 띄어쓰기 제거 필요
         Weather weather = weatherService.getWeatherByAddress(id);
 
         // request에서 받아온 값을 Board Entity로 만들기 
@@ -63,7 +63,7 @@ public class BoardService {
         System.out.println("requestDto.getTitle() = " + requestDto.getTitle());
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
         System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
-        System.out.println("requestDto.getStn() = " + requestDto.getStn());
+        System.out.println("requestDto.getBCode() = " + requestDto.getBCode());
         System.out.println("requestDto.getColor() = " + requestDto.getColor());
         System.out.println("requestDto.getType() = " + requestDto.getType());
 

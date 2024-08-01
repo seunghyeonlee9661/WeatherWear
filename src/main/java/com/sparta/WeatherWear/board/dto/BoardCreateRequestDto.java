@@ -16,7 +16,7 @@ public class BoardCreateRequestDto {
     private String title;
     private String contents;
     private boolean isPrivate;
-    private int stn;
+    private String bCode;
     private ClothesColor color;
     private ClothesType type;
     private int views;

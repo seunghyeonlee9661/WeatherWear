@@ -15,8 +15,8 @@ public class CommentCreateResponseDto {
     private Long BoardId;
     private String contents;
     private int commentCount;
-    private LocalDateTime createTime;
-    private LocalDateTime modifiedTime;
+    private LocalDateTime registDate;
+    private LocalDateTime updateDate;
 
     public CommentCreateResponseDto(Comment comment) {
         this.id = comment.getId();
@@ -24,8 +24,8 @@ public class CommentCreateResponseDto {
         this.BoardId = comment.getBoard().getId();
         this.contents = comment.getContents();
         this.commentCount = comment.getCommentLikes().size();
-        this.createTime = comment.getCreatedAt();
-        this.modifiedTime = comment.getModifiedAt();
+        this.registDate = comment.getRegistDate();
+        this.updateDate = comment.getUpdateDate();
     }
 
 }

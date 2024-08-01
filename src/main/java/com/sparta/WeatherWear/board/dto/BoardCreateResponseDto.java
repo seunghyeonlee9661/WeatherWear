@@ -18,11 +18,12 @@ public class BoardCreateResponseDto {
 
     private long id;
     private Long userId;
+    private String nickname;
     private String title;
     private String contents;
     private boolean isPrivate;
-    private LocalDateTime createTime;
-    private LocalDateTime modifiedTime;
+    private LocalDateTime registDate;
+    private LocalDateTime updateDate;
     private Weather weather;
     private int boardLikes;
     private int comments;
@@ -35,11 +36,12 @@ public class BoardCreateResponseDto {
     public BoardCreateResponseDto(Board board) {
         this.id = board.getId();
         this.userId = board.getUser().getId();
+        this.nickname = board.getUser().getNickname();
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-        this.createTime = board.getCreatedAt();
-        this.modifiedTime = board.getModifiedAt();
+        this.registDate = board.getRegistDate();
+        this.updateDate = board.getUpdateDate();
         this.weather = board.getWeather();
         this.boardLikes = board.getLikesSize();
         this.comments = board.getCommentsSize();
@@ -50,11 +52,12 @@ public class BoardCreateResponseDto {
     public BoardCreateResponseDto(Board board, ClothesColor clothesColor, ClothesType clothesType) {
         this.id = board.getId();
         this.userId = board.getUser().getId();
+        this.nickname = board.getUser().getNickname();
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-        this.createTime = board.getCreatedAt();
-        this.modifiedTime = board.getModifiedAt();
+        this.registDate = board.getRegistDate();
+        this.updateDate = board.getUpdateDate();
         this.weather = board.getWeather();
         this.boardLikes = board.getLikesSize();
         this.comments = board.getCommentsSize();
