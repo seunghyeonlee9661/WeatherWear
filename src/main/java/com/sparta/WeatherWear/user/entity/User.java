@@ -6,7 +6,6 @@ import com.sparta.WeatherWear.board.entity.Comment;
 import com.sparta.WeatherWear.board.entity.CommentLike;
 import com.sparta.WeatherWear.clothes.entity.Clothes;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
-import com.sparta.WeatherWear.user.dto.UserUpdateRequestDTO;
 import com.sparta.WeatherWear.user.enums.UserGender;
 import com.sparta.WeatherWear.wishlist.entity.Wishlist;
 import jakarta.persistence.*;
@@ -105,7 +104,7 @@ public class User {
     }
 
     /* 사용자 정보 변경*/
-    public void updateInfo(String nickname,String imageUrl ){
+    public void updateInfo(String nickname,String imageUrl){
         this.nickname = nickname;
         this.image = imageUrl;
     }

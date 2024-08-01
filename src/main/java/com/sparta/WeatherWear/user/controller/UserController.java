@@ -3,7 +3,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
-import com.sparta.WeatherWear.user.dto.UserUpdateRequestDTO;
 import com.sparta.WeatherWear.user.service.RecommendService;
 import com.sparta.WeatherWear.user.service.UserService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;

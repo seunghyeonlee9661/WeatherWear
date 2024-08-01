@@ -18,7 +18,7 @@ import java.io.IOException;
 
 /*
 작성자 : 이승현
-로그인을 확인하고 JWT를 생성, 쿠키에 저장하는 필터
+로그인을 확인하고 JWT를 생성, 쿠키와 Redis에 토큰을 저장하는 필터
 */
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -54,10 +54,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult){
         log.info("로그인 성공 및 JWT 생성");
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
+        // accessToken 생성 및 쿠키 추가
         String accessToken = jwtUtil.createAccessToken(user);
-        jwtUtil.addTokenToCookie(accessToken,response);
+        // RefreshToken 생성 및 Redis 추가
         String refreshToken = jwtUtil.createRefreshToken(user);
         jwtUtil.addTokenToRedis(accessToken,refreshToken);
+        jwtUtil.addTokenToCookie(accessToken,response);
     }
 
     /* 로그인 실패 */

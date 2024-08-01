@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 /*
 작성자 : 이승현
-필요에 따라 JWT를 검증
+JWT를 검증하고 사용자가 로그인한 상태인지 확인하는 필터
 */
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
@@ -38,17 +38,26 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         log.info("검증 시작 : " + req.getRequestURI());
         // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER);
-        if (accessToken != null) { // accessToken 확인
-            String accessTokenValue = jwtUtil.substringToken(accessToken); // accessToken 검증
-            if (jwtUtil.validateToken(accessTokenValue)) { // 토큰이 올바르면 사용자 정보 확인
-                UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(accessTokenValue).getSubject()); // 토큰에서 사용자 정보를 추출
-                setAuthentication(userDetails, req);  // 사용자 인증 설정
-            } else { // accessToken이 유효하지 않은 경우
+        // accessToken 확인
+        if (accessToken != null) {
+            // accessToken 검증
+            String accessTokenValue = jwtUtil.substringToken(accessToken); 
+            if (jwtUtil.validateToken(accessTokenValue)) {
+                // 토큰이 올바르면 사용자 정보 확인
+                UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(accessTokenValue).getSubject());
+                // 사용자 인증 및 정보 저장
+                setAuthentication(userDetails, req);
+            // accessToken이 유효하지 않은 경우
+            } else {
+                // accessToken 기반으로 RefreshToken을 찾아 재발급을 진행
                 String newAccessToken = jwtUtil.refreshAccessToken(accessToken);
                 if (newAccessToken != null) {
+                    // 새 토큰을 기반으로 사용자 정보 확인
                     UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(newAccessToken)).getSubject()); // 새 토큰에서 사용자 정보를 추출
-                    jwtUtil.addTokenToCookie(newAccessToken, res); // 새로운 액세스 토큰을 쿠키에 추가
-                    setAuthentication(userDetails, req); // 사용자 인증 설정
+                    // 새로운 액세스 토큰을 쿠키에 추가
+                    jwtUtil.addTokenToCookie(newAccessToken, res);
+                    // 사용자 인증 설정
+                    setAuthentication(userDetails, req);
                 }
             }
         }

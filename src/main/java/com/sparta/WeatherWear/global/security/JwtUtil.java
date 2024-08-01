@@ -33,11 +33,10 @@ JWT 생성, 검증을 맡은 클래스
 @Component
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
-//    public static final String AUTHORIZATION_KEY = "auth"; // 사용자 권한 값의 KEY
+    //public static final String AUTHORIZATION_KEY = "auth"; // 사용자 권한 값의 KEY
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
-    private final long ACCESS_TOKEN_VALIDITY = 1 * 3 * 1000L; // Access Token 만료시간 : 1시간
+    private final long ACCESS_TOKEN_VALIDITY = 60 * 60 * 1000L; // Access Token 만료시간 : 1시간
     private final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000L; // Refresh Token 만료시간 : 7일
-    private final UserRepository userRepository;
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -48,6 +47,7 @@ public class JwtUtil {
     @Autowired
     private RedisService redisService; // RedisService 주입
 
+    private final UserRepository userRepository;
     public JwtUtil(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -102,7 +102,7 @@ public class JwtUtil {
     }
 
 
-    // JWT Cookie 삭제
+    // JWT Cookie 삭제 : 이후 로그아웃과 같은 과정에서 필요!
     public void removeJwtCookie(HttpServletResponse res) {
         Cookie accessTokenCookie = new Cookie(AUTHORIZATION_HEADER, null);
         accessTokenCookie.setPath("/");
@@ -137,15 +137,17 @@ public class JwtUtil {
         return false;
     }
 
+    // Access Token 만료시 Refresh Token을 찾아 새로운 Access Token을 발급 하는 기능
     public String refreshAccessToken(String accessToken) {
-        logger.info("accessToken 재발급");
+        // 기존 토큰의 값 추출
         String strippedAccessToken = substringToken(accessToken); // BEARER_PREFIX 제거
+        // 기존 토큰 값으로부터 Refresh Token을 Redis로부터 찾아옴
         String storedRefreshToken = redisService.getRefreshToken(strippedAccessToken);
-        logger.info("저장된 키 : {}", storedRefreshToken);
+        // Refresh Token이 올바른지 확인
         if (storedRefreshToken != null && validateToken(storedRefreshToken)) {
+            // Refresh Token으로부터 사용자의 정보 추출
             String email = getUserInfoFromToken(storedRefreshToken).getSubject();
             User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
-
             // 기존 refreshToken 삭제
             redisService.deleteRefreshToken(strippedAccessToken);
             // 새로운 Access Token 생성
@@ -156,7 +158,6 @@ public class JwtUtil {
             redisService.saveRefreshToken(substringToken(newAccessToken), newRefreshToken, REFRESH_TOKEN_VALIDITY);
             return newAccessToken;
         }
-        logger.info("값을 찾지 못함");
         return null;
     }
 

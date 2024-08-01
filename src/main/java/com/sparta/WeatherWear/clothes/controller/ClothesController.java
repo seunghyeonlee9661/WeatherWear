@@ -40,8 +40,8 @@ public class ClothesController {
 
     /* 옷 아이템 불러오기 */
     @GetMapping("/clothes/{id}")
-    public ResponseEntity<ClothesResponseDTO> createClothes(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable("id") long id) {
-        return clothesService.getClothe(userDetails,id);
+    public ResponseEntity<ClothesResponseDTO> createClothes(@PathVariable("id") long id) {
+        return clothesService.getClothe(id);
     }
 
     /* 옷 정보 추가 */

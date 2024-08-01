@@ -9,6 +9,7 @@ import com.sparta.WeatherWear.wishlist.entity.NaverProduct;
 import com.sparta.WeatherWear.wishlist.entity.Wishlist;
 import com.sparta.WeatherWear.wishlist.repository.NaverProductRepository;
 import com.sparta.WeatherWear.wishlist.repository.WishlistRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,15 +25,11 @@ import java.util.stream.Collectors;
 사용자 관련 서비스 처리
 */
 @Service
+@RequiredArgsConstructor
 public class WishlistService {
 
     private final WishlistRepository wishlistRepository;
     private final NaverProductRepository naverProductRepository;
-
-    public WishlistService(WishlistRepository wishlistRepository, NaverProductRepository naverProductRepository) {
-        this.wishlistRepository = wishlistRepository;
-        this.naverProductRepository = naverProductRepository;
-    }
 
     /* 위시리스트 불러오기 */
     public ResponseEntity<Page<WishlistResponseDTO>> getWishlist(UserDetailsImpl userDetails, int page, String type){
