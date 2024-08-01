@@ -14,9 +14,6 @@ import java.util.Date;
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
-/* 현재 기존의 Weather 작업에 방해가 되지 않도록 테이블 이름을 변경했습니다. */
-/* 해당 코드를 따라간다면 기존 Weather를 제거하고 Table 어노테이션을 삭제하시면 됩니다. */
-/* 또한 DB에 날씨 데이터 테이블을 물리적으로 삭제하고 하이버네이트로 생성될 수 있도록 해주시면 됩니다. */
 @Table(name="weather")
 public class Weather {
 

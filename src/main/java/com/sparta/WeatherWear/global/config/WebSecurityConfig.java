@@ -26,6 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /*
 작성자 : 이승현
 JWT 시큐리티 관련
+!!!!!!!!!주의!!!!!!!!!!!!!!
+이후에 로그인 사용자에 대한 경로 지정 필요!
  */
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
@@ -61,7 +63,7 @@ public class WebSecurityConfig {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 
-    /* 보안 필터의 범위와 */
+    /* 보안 필터의 범위 설정 */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
@@ -126,6 +128,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // ObjectMapper - 카카오 로그인에 활용
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();

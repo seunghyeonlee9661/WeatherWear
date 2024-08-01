@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 /*
 작성자 : 이승현
-로그인한 사용자가 로그인 페이지에 접근한 경우 대처하는 필터
+로그인한 사용자가 로그인 페이지에 접근한 경우 대처하는 필터 : 이후에 삭제 가능
 */
 @Component
 public class LoginRedirectFilter extends OncePerRequestFilter {

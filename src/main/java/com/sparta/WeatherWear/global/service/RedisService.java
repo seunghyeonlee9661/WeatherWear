@@ -6,6 +6,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
+/*
+* Redis Server에 값을 저장, 조회, 삭제하는 기능
+*/
 
 @Service
 public class RedisService {

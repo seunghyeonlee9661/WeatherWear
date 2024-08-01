@@ -8,7 +8,10 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
+/*
+* 작성자 : 이승현
+* Redis 설정
+*/
 @Configuration
 public class RedisConfig {
 
