@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -77,7 +78,6 @@ public class Board extends Timestamped {
         this.boardTags = requestDTO.getBoardTags();
         return this;
     }
-
     public void addComment(Comment comment){
         this.comments.add(comment);
     }
@@ -86,7 +86,7 @@ public class Board extends Timestamped {
     public int getLikesSize(){
         return this.boardLikes.size();
     }
-    
+
     // 이승현 : 댓글 수 확인
     public int getCommentsSize(){
         return this.comments.size();

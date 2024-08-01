@@ -54,7 +54,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult){
         log.info("로그인 성공 및 JWT 생성");
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
-        jwtUtil.addJwtToCookie( jwtUtil.createAccessToken(user),jwtUtil.createRefreshToken(user), response);
+        String accessToken = jwtUtil.createAccessToken(user);
+        jwtUtil.addTokenToCookie(accessToken,response);
+        String refreshToken = jwtUtil.createRefreshToken(user);
+        jwtUtil.addTokenToRedis(accessToken,refreshToken);
     }
 
     /* 로그인 실패 */

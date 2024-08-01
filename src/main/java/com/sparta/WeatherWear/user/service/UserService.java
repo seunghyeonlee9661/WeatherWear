@@ -1,27 +1,11 @@
 package com.sparta.WeatherWear.user.service;
 
-import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
-import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
-import com.sparta.WeatherWear.clothes.entity.Clothes;
-import com.sparta.WeatherWear.clothes.repository.ClothesRepository;
 import com.sparta.WeatherWear.global.service.ImageService;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
-import com.sparta.WeatherWear.user.dto.UserUpdateRequestDTO;
-import com.sparta.WeatherWear.weather.service.WeatherService;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
-import com.sparta.WeatherWear.weather.repository.AddressRepository;
-import com.sparta.WeatherWear.wishlist.dto.NaverProductRequestDTO;
-import com.sparta.WeatherWear.wishlist.dto.WishlistResponseDTO;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
-import com.sparta.WeatherWear.wishlist.entity.NaverProduct;
-import com.sparta.WeatherWear.wishlist.entity.Wishlist;
-import com.sparta.WeatherWear.wishlist.repository.NaverProductRepository;
-import com.sparta.WeatherWear.wishlist.repository.WishlistRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+
 /*
 작성자 : 이승현
 사용자 관련 서비스 처리
@@ -64,9 +47,12 @@ public class UserService {
     @Transactional
     public ResponseEntity<String> removeUser(UserDetailsImpl userDetails, String password) throws IOException {
         User user = userDetails.getUser();
-        if(!passwordEncoder.matches(password,user.getPassword())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
-        if(!user.getImage().isEmpty()){
-            imageService.deleteImage(user.getImage()); // 이미지가 있으면 삭제 ** 카카오 계정일 경우 이미지 삭제 거절!
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
+        }
+        // 카카오 계정이 아니고, 이미지가 있는 경우에만 이미지 삭제
+        if (user.getKakaoId() == null && user.getImage() != null) {
+            imageService.deleteImage(user.getImage());
         }
         userRepository.delete(user);
         return ResponseEntity.ok().body("User deleted successfully");
@@ -74,12 +60,22 @@ public class UserService {
 
     /* 회원 수정 */
     @Transactional
-    public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, UserUpdateRequestDTO userUpdateRequestDTO) {
+    public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,String url, MultipartFile file) throws IOException {
         User user = userDetails.getUser();
-        if(!passwordEncoder.matches(userUpdateRequestDTO.getPassword(),user.getPassword()))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
-        user.updateInfo(userUpdateRequestDTO);
-        userRepository.save(user); // 트랜잭셔널 작동안함 고쳐야됨 ㅠㅠ
+        // 사용자의 기존 nickname과 다르면서 현재 다른 사람이 nickname을 쓰고 있는 경우 : nickname 중복
+        if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
+        if (url.isEmpty()) {
+            if (file.isEmpty()) { // 사용자가 기존 사진 삭제한 경우
+                if (user.getKakaoId() == null && user.getImage() != null) imageService.deleteImage(user.getImage());
+                url = null;
+            } else { // 사용자가 새롭게 사진을 올리는 경우
+                url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);
+            }
+        } else { // imageUrl: prevImageUrl
+            if (!file.isEmpty()) url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);// 사용자가 이미지를 수정하는 경우
+        }
+        user.updateInfo(nickname,url);
+        userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");
     }
 
@@ -94,15 +90,5 @@ public class UserService {
         user.updatePassword(passwordEncoder.encode(userPasswordUpdateRequestDTO.getNewPassword()));
         userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");
-    }
-
-    /* 회원 사진 수정 */
-    @Transactional
-    public ResponseEntity<String> updateUserImage(UserDetailsImpl userDetails, MultipartFile file) throws IOException {
-        User user = userDetails.getUser(); // 사용자 확인
-        String imageUrl = imageService.uploadImagefile("user/", String.valueOf(user.getId()),file);
-        user.updateImage(imageUrl);
-        userRepository.save(user);
-        return ResponseEntity.ok("User image updated successfully");
     }
 }

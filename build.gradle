@@ -48,10 +48,13 @@ dependencies {
 	implementation 'org.json:json:20231013'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-	// Webp
+	// Webp & thumbnailator
 	implementation 'com.sksamuel.scrimage:scrimage-webp:4.1.1'
-	// thumbnailator
 	implementation 'net.coobird:thumbnailator:0.4.14'
+
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 tasks.named('test') {

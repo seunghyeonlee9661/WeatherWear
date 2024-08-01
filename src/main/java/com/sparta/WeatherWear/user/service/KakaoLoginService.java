@@ -54,7 +54,10 @@ public class KakaoLoginService {
         User kakaoUser = registerKakaoUser(kakaoUserInfo);
 
         // JWT 토큰 쿠키에 추가
-        jwtUtil.addJwtToCookie( jwtUtil.createAccessToken(kakaoUser),jwtUtil.createRefreshToken(kakaoUser), response);
+        String jwtAccessToken = jwtUtil.createAccessToken(kakaoUser);
+        jwtUtil.addTokenToCookie(jwtAccessToken,response);
+        String jwtRefreshToken = jwtUtil.createRefreshToken(kakaoUser);
+        jwtUtil.addTokenToRedis(jwtAccessToken,jwtRefreshToken);
         return ResponseEntity.ok("Kakao login successfully");
     }
 
@@ -81,7 +84,7 @@ public class KakaoLoginService {
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
                 String image = kakaoUserInfo.getImage();
-                kakaoUser = new User(encodedPassword, email,kakaoUserInfo.getNickname(), kakaoId,image);
+                kakaoUser = new User(encodedPassword, email,kakaoUserInfo.getNickname()+"_"+kakaoId, kakaoId,image);
             }
             userRepository.save(kakaoUser);
         }

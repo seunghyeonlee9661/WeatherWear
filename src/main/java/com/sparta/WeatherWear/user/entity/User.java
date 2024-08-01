@@ -105,19 +105,13 @@ public class User {
     }
 
     /* 사용자 정보 변경*/
-    public void updateInfo(UserUpdateRequestDTO userUpdateRequestDTO){
-        this.nickname = userUpdateRequestDTO.getNickname();
-        this.gender = UserGender.valueOf(userUpdateRequestDTO.getGender().toUpperCase());
-        this.birthday = userUpdateRequestDTO.getBirthday();
+    public void updateInfo(String nickname,String imageUrl ){
+        this.nickname = nickname;
+        this.image = imageUrl;
     }
 
     /* 사용자 정보 변경*/
     public void updatePassword(String password){
         this.password = password;
-    }
-
-    /* 사용자 이미지 변경*/
-    public void updateImage(String image){
-        this.image = image;
     }
 }

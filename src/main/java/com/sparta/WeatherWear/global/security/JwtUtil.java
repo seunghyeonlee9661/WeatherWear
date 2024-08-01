@@ -1,7 +1,10 @@
 package com.sparta.WeatherWear.global.security;
 
+import com.sparta.WeatherWear.global.service.RedisService;
 import com.sparta.WeatherWear.user.entity.User;
+import com.sparta.WeatherWear.user.repository.UserRepository;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
@@ -9,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -29,17 +33,24 @@ JWT 생성, 검증을 맡은 클래스
 @Component
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
-    public static final String REFRESH_HEADER = "Refresh"; // Refresh Token Header KEY 값
 //    public static final String AUTHORIZATION_KEY = "auth"; // 사용자 권한 값의 KEY
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
-    private final long ACCESS_TOKEN_VALIDITY = 60 * 60 * 1000L; // Access Token 만료시간 : 1시간
+    private final long ACCESS_TOKEN_VALIDITY = 1 * 3 * 1000L; // Access Token 만료시간 : 1시간
     private final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000L; // Refresh Token 만료시간 : 7일
+    private final UserRepository userRepository;
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     public static final Logger logger = LoggerFactory.getLogger("JWT : "); // 로그 설정
+
+    @Autowired
+    private RedisService redisService; // RedisService 주입
+
+    public JwtUtil(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @PostConstruct
     public void init() {
@@ -65,31 +76,31 @@ public class JwtUtil {
     // Refresh 토큰 생성
     public String createRefreshToken(User user) {
         Date date = new Date();
-        return BEARER_PREFIX + Jwts.builder()
+        return Jwts.builder()
                         .setSubject(String.valueOf(user.getEmail())) // 사용자 식별자값(ID)
                         .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_VALIDITY)) // 만료 시간
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
     }
 
-    // JWT Cookie 에 저장
-    public void addJwtToCookie(String accessToken,String refreshToken, HttpServletResponse res) {
+    // JWT Cookie에 AccessToken 저장
+    public void addTokenToCookie(String accessToken, HttpServletResponse res) {
         try {
             Cookie accessTokenCookie = new Cookie(AUTHORIZATION_HEADER, URLEncoder.encode(accessToken, "utf-8").replaceAll("\\+", "%20")); // Name-Value
             accessTokenCookie.setPath("/");
             accessTokenCookie.setHttpOnly(true);
-
-            Cookie refreshTokenCookie = new Cookie(REFRESH_HEADER, URLEncoder.encode(refreshToken, "utf-8").replaceAll("\\+", "%20")); // Name-Value
-            refreshTokenCookie.setPath("/");
-            refreshTokenCookie.setHttpOnly(true);
-
-            // Response 객체에 Cookie 추가
             res.addCookie(accessTokenCookie);
-            res.addCookie(refreshTokenCookie);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
     }
+
+    // Redis에 AccessToken과 RefreshToken 저장
+    public void addTokenToRedis(String accessToken, String refreshToken) {
+        String strippedAccessToken = substringToken(accessToken); // BEARER_PREFIX 제거
+        redisService.saveRefreshToken(strippedAccessToken, refreshToken, REFRESH_TOKEN_VALIDITY);
+    }
+
 
     // JWT Cookie 삭제
     public void removeJwtCookie(HttpServletResponse res) {
@@ -97,14 +108,7 @@ public class JwtUtil {
         accessTokenCookie.setPath("/");
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setMaxAge(0); // 쿠키 삭제
-
-        Cookie refreshTokenCookie = new Cookie(REFRESH_HEADER, null);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(0); // 쿠키 삭제
-
         res.addCookie(accessTokenCookie);
-        res.addCookie(refreshTokenCookie);
     }
 
     // JWT 토큰 substring : BEARER 제거해주는 코드
@@ -117,7 +121,7 @@ public class JwtUtil {
     }
 
     // 토큰 검증
-    public boolean validateToken(String token,HttpServletResponse res) {
+    public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -133,12 +137,26 @@ public class JwtUtil {
         return false;
     }
 
-    // Refresh Token을 사용하여 새로운 Access Token을 발급하는 메서드
-    public String refreshAccessToken(String refreshToken, User user) {
-        String email = getUserInfoFromToken(refreshToken).getSubject();
-        if (user != null && email.equals(user.getEmail())) {
-            return createAccessToken(user);
+    public String refreshAccessToken(String accessToken) {
+        logger.info("accessToken 재발급");
+        String strippedAccessToken = substringToken(accessToken); // BEARER_PREFIX 제거
+        String storedRefreshToken = redisService.getRefreshToken(strippedAccessToken);
+        logger.info("저장된 키 : {}", storedRefreshToken);
+        if (storedRefreshToken != null && validateToken(storedRefreshToken)) {
+            String email = getUserInfoFromToken(storedRefreshToken).getSubject();
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+
+            // 기존 refreshToken 삭제
+            redisService.deleteRefreshToken(strippedAccessToken);
+            // 새로운 Access Token 생성
+            String newAccessToken = createAccessToken(user);
+            // 새로운 Refresh Token 생성
+            String newRefreshToken = createRefreshToken(user);
+            // Redis에 새로운 Refresh Token 저장
+            redisService.saveRefreshToken(substringToken(newAccessToken), newRefreshToken, REFRESH_TOKEN_VALIDITY);
+            return newAccessToken;
         }
+        logger.info("값을 찾지 못함");
         return null;
     }
 

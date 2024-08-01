@@ -12,13 +12,19 @@ import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.clothes.repository.ClothesRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import com.sparta.WeatherWear.wishlist.entity.NaverProduct;
+import com.sparta.WeatherWear.wishlist.entity.Wishlist;
+import com.sparta.WeatherWear.wishlist.repository.WishlistRepository;
 import com.sparta.WeatherWear.wishlist.service.NaverShoppingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RecommendService {
@@ -29,6 +35,7 @@ public class RecommendService {
     private final NaverShoppingService naverShoppingService;
     private final ClothesRepository clothesRepository;
     private final BoardRepository boardRepository;
+    private final WishlistRepository wishlistRepository;
 
     /* 기온에 맞는 옷 목록 리스트 */
     private static final Map<Double, List<ClothesType>> temperatureClothesMap = new LinkedHashMap<>();
@@ -43,11 +50,12 @@ public class RecommendService {
         temperatureClothesMap.put(Double.MIN_VALUE, Arrays.asList(ClothesType.PADDED_COAT, ClothesType.COAT, ClothesType.SCARF, ClothesType.LINED_CLOTHING));
     }
 
-    public RecommendService(WeatherService weatherService, NaverShoppingService naverShoppingService, ClothesRepository clothesRepository, BoardRepository boardRepository) {
+    public RecommendService(WeatherService weatherService, NaverShoppingService naverShoppingService, ClothesRepository clothesRepository, BoardRepository boardRepository, WishlistRepository wishlistRepository) {
         this.weatherService = weatherService;
         this.naverShoppingService = naverShoppingService;
         this.clothesRepository = clothesRepository;
         this.boardRepository = boardRepository;
+        this.wishlistRepository = wishlistRepository;
     }
 
     /*______________________Recommend___________________*/
@@ -60,17 +68,17 @@ public class RecommendService {
         Weather weather = weatherService.getWeatherByAddress(id);
         User user = userDetails.getUser();
 
-        /* 1. 날씨 기반 옷차림 추천 */
-        recommendResponseDTOS.add(getClothesByWeather(user, weather));
-
-        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
-        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
-
-        /* 3. 트랜드 옷차림 추천 */
-        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
+//        /* 1. 날씨 기반 옷차림 추천 */
+//        recommendResponseDTOS.add(getClothesByWeather(user, weather));
+//
+//        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
+//        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
+//
+//        /* 3. 트랜드 옷차림 추천 */
+//        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
 
         /* 4. 네이버 아이템 추천 */
-        recommendResponseDTOS.add(getNaverProductsByNaver(user, weather));
+        recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
 
 
         return recommendResponseDTOS;
@@ -126,21 +134,63 @@ public class RecommendService {
 
     /* 4. 네이버에서 아이템들을 추천해줍니다. */
     @Transactional(readOnly = true)
-    private List<? extends ResponseDTO>  getNaverProductsByNaver(User user, Weather weather){
+    private List<? extends ResponseDTO> getNaverProductsByWeather(User user, Weather weather){
         logger.info("네이버 아이템 추천 받기");
         /* 기온에 맞는 옷 타입 선정을 위한 배열 선언*/
         List<ClothesType> types = new ArrayList<>();
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
             if (weather.getTMP() > entry.getKey()) { types = entry.getValue(); break; }
         }
+        List<Wishlist> userWishlists = wishlistRepository.findByUserId(user.getId());
+        Set<Long> wishlistedProductIds = userWishlists.stream().map(wishlist -> wishlist.getProduct().getId()).collect(Collectors.toSet());
+        logger.info("사용자 위시리스트 아이템 id 목록 {}", wishlistedProductIds.toString());
+
         // 결과를 배열에 저장하고 반환합니다.
         List<ResponseDTO> response = new ArrayList<>();
+
         for (ClothesType type : types) {
+            logger.info("type : {}", type);
+
             String query = type.toString() + " " + user.getGender();  // ClothesType에서 쿼리 문자열 변환
             logger.info(query);
-            List<NaverProductResponseDTO> naverProducts = naverShoppingService.searchProducts(query, 3);
-            response.addAll(naverProducts);
+
+            List<NaverProductResponseDTO> filteredProducts = new ArrayList<>();
+            int start = 1;
+
+            List<NaverProductResponseDTO> naverProducts;
+            do {
+                naverProducts = naverShoppingService.searchProducts(query, 10, start);
+                logger.info("naverProducts (start={}): {}", start, naverProducts.toString());
+                for (NaverProductResponseDTO product : naverProducts) {
+                    if (!wishlistedProductIds.contains(product.getProductId())) {
+                        logger.info("filteredProducts에 아이템 추가 : {}", product.toString());
+                        product.setType(type.name());
+                        filteredProducts.add(product);
+                        if (filteredProducts.size() >= 3) {
+                            break;
+                        }
+                    }else{
+                        logger.info("이미 wishlist에 있는 아이템 : {}", product.toString());
+                    }
+                }
+                start++; // 다음 페이지로 이동
+            } while (filteredProducts.size() < 3 && !naverProducts.isEmpty());
+
+            // 검색된 제품 중 위시리스트에 없는 제품만 필터링
+            response.addAll(filteredProducts);
         }
+        logger.info("response : {}", response.toString());
         return response;
+    }
+
+    /* 위시리스트 삭제 */
+    @Transactional
+    public ResponseEntity<String> removeWishlistByProductId(UserDetailsImpl userDetails, long product_id){
+        Long userId = userDetails.getUser().getId();
+        Wishlist wishlist = wishlistRepository.findByUserIdAndProductId(userId,product_id).orElseThrow(() -> new IllegalArgumentException("No Wishlist"));
+        if(!wishlist.getUser().getId().equals(userId))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 위시리스트 아이템이 아닙니다.");
+        wishlistRepository.delete(wishlist);
+        return ResponseEntity.ok("Wishlist delete successfully");
     }
 }

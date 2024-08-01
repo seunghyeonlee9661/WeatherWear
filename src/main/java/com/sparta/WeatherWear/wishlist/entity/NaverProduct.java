@@ -1,6 +1,6 @@
 package com.sparta.WeatherWear.wishlist.entity;
 
-import com.sparta.WeatherWear.wishlist.dto.NaverProductRequestDTO;
+import com.sparta.WeatherWear.wishlist.dto.WishlistRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -53,7 +53,7 @@ public class NaverProduct {
     @Column(name = "category4", columnDefinition = "MEDIUMTEXT")
     private String category4;
 
-    public NaverProduct(NaverProductRequestDTO productRequestDTO) {
+    public NaverProduct(WishlistRequestDTO productRequestDTO) {
         this.id = productRequestDTO.getProductId();
         this.title = productRequestDTO.getTitle();
         this.link = productRequestDTO.getLink();

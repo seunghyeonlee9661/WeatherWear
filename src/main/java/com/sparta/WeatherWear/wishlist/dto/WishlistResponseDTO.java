@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.wishlist.dto;
 
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.wishlist.entity.NaverProduct;
 import com.sparta.WeatherWear.wishlist.entity.Wishlist;
 import lombok.Getter;
@@ -11,9 +12,11 @@ import lombok.Getter;
 public class WishlistResponseDTO {
     private long id;
     private NaverProduct product;
+    private ClothesType type;
 
     public WishlistResponseDTO(Wishlist wishlist) {
         this.id = wishlist.getId();
         this.product = wishlist.getProduct();
+        this.type = wishlist.getType();
     }
 }
