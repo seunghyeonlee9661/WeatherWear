@@ -11,7 +11,6 @@ import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.entity.User;
-import com.sparta.WeatherWear.user.repository.UserRepository;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import com.sparta.WeatherWear.weather.service.WeatherService;
 import jakarta.validation.Valid;
@@ -37,7 +36,6 @@ public class BoardService {
     private final BoardImageRepository boardImageRepository;
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
-    private WeatherService weatherService;
 
     @Transactional
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, Long id, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
