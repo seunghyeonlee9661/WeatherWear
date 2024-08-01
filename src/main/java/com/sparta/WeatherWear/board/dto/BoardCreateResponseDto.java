@@ -19,6 +19,7 @@ public class BoardCreateResponseDto {
     private long id;
     private Long userId;
     private String nickname;
+    private String image;
     private String title;
     private String contents;
     private boolean isPrivate;
@@ -37,6 +38,7 @@ public class BoardCreateResponseDto {
         this.id = board.getId();
         this.userId = board.getUser().getId();
         this.nickname = board.getUser().getNickname();
+        this.image = board.getUser().getImage();
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
@@ -53,6 +55,7 @@ public class BoardCreateResponseDto {
         this.id = board.getId();
         this.userId = board.getUser().getId();
         this.nickname = board.getUser().getNickname();
+        this.image = board.getUser().getImage();
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
