@@ -78,17 +78,16 @@ public class ImageService {
 
     // 이미지 파일의 경로를 통해 이미지를 삭제하는 기능
     public void deleteImage(String imagePath) throws IOException {
-	String relativePath = imagePath.substring(imagePath.indexOf("/images/"));
-	Path absolutePath = Paths.get(uploadDir, relativePath).normalize();
-	File file = absolutePath.toFile();
+        String relativePath = imagePath.substring(imagePath.indexOf("/", imagePath.indexOf("//") + 2));
+        Path absolutePath = Paths.get(uploadDir, relativePath).normalize();
+        File file = absolutePath.toFile();
         if (file.exists()) {
             Files.delete(absolutePath);
             System.out.println("Deleted file: " + absolutePath.toString());
         } else {
             System.out.println("File not found: " + absolutePath.toString());
         }
-    }
-    /*jpeg로 변환하는 방법*/
+    }    /*jpeg로 변환하는 방법*/
     /*구현 과정에서 Webp를 선택했기 때문에 jpg로 변환하는 과정은 탈락했습니다. */
 //    public String uploadImagefileToJPG(String filename, MultipartFile file,int height, int width, double quality) throws IOException {
 //        Path filePath = Paths.get(uploadDir).resolve(filename + ".jpg"); // 저장할 경로
