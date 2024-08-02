@@ -2,7 +2,7 @@ package com.sparta.WeatherWear.user.service;
 
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
-import com.sparta.WeatherWear.board.dto.BoardResponseDTO;
+import com.sparta.WeatherWear.user.dto.RecommendBoardResponseDTO;
 import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
 import com.sparta.WeatherWear.weather.service.WeatherService;
 import com.sparta.WeatherWear.user.entity.User;
@@ -12,7 +12,6 @@ import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.clothes.repository.ClothesRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
-import com.sparta.WeatherWear.wishlist.entity.NaverProduct;
 import com.sparta.WeatherWear.wishlist.entity.Wishlist;
 import com.sparta.WeatherWear.wishlist.repository.WishlistRepository;
 import com.sparta.WeatherWear.wishlist.service.NaverShoppingService;
@@ -40,14 +39,14 @@ public class RecommendService {
     /* 기온에 맞는 옷 목록 리스트 */
     private static final Map<Double, List<ClothesType>> temperatureClothesMap = new LinkedHashMap<>();
     static {
-        temperatureClothesMap.put(28.0, Arrays.asList(ClothesType.SLEEVELESS, ClothesType.SHORT_SLEEVE, ClothesType.SHORTS, ClothesType.DRESS));
-        temperatureClothesMap.put(23.0, Arrays.asList(ClothesType.SHORT_SLEEVE, ClothesType.LIGHT_SHIRT, ClothesType.SHORTS, ClothesType.COTTON_PANTS));
-        temperatureClothesMap.put(20.0, Arrays.asList(ClothesType.CARDIGAN, ClothesType.LONG_SLEEVE, ClothesType.COTTON_PANTS, ClothesType.JEANS));
-        temperatureClothesMap.put(17.0, Arrays.asList(ClothesType.LIGHT_KNIT, ClothesType.SWEATSHIRT, ClothesType.CARDIGAN, ClothesType.JEANS));
-        temperatureClothesMap.put(12.0, Arrays.asList(ClothesType.JACKET, ClothesType.CARDIGAN, ClothesType.MILITARY_JACKET, ClothesType.STOCKINGS, ClothesType.JEANS, ClothesType.COTTON_PANTS));
-        temperatureClothesMap.put(9.0, Arrays.asList(ClothesType.JACKET, ClothesType.TRENCH_COAT, ClothesType.MILITARY_JACKET, ClothesType.KNIT, ClothesType.JEANS, ClothesType.STOCKINGS));
-        temperatureClothesMap.put(5.0, Arrays.asList(ClothesType.COAT, ClothesType.LEATHER_JACKET, ClothesType.HEAT_TECH, ClothesType.KNIT, ClothesType.LEGGINGS));
-        temperatureClothesMap.put(Double.MIN_VALUE, Arrays.asList(ClothesType.PADDED_COAT, ClothesType.COAT, ClothesType.SCARF, ClothesType.LINED_CLOTHING));
+        temperatureClothesMap.put(28.0, Arrays.asList(ClothesType.SLEEVELESS, ClothesType.SHORT_SLEEVE, ClothesType.SHORTS, ClothesType.DRESS, ClothesType.MINI_SKIRT));
+        temperatureClothesMap.put(23.0, Arrays.asList(ClothesType.SHORT_SLEEVE, ClothesType.LIGHT_SHIRT, ClothesType.SHORTS, ClothesType.LONG_SLEEVE));
+        temperatureClothesMap.put(20.0, Arrays.asList(ClothesType.LONG_SLEEVE, ClothesType.LEGGINGS, ClothesType.LIGHT_KNIT, ClothesType.SLACKS, ClothesType.BLOUSE));
+        temperatureClothesMap.put(17.0, Arrays.asList(ClothesType.KNIT, ClothesType.HOODIE, ClothesType.SWEAT_SHIRT, ClothesType.COTTON_PANTS, ClothesType.JEANS));
+        temperatureClothesMap.put(12.0, Arrays.asList(ClothesType.JACKET, ClothesType.CARDIGAN, ClothesType.SHIRT));
+        temperatureClothesMap.put(9.0, Arrays.asList(ClothesType.TRENCH_COAT, ClothesType.MILITARY_JACKET,ClothesType.STOCKINGS));
+        temperatureClothesMap.put(5.0, Arrays.asList(ClothesType.COAT, ClothesType.LEATHER_JACKET,  ClothesType.LINED_CLOTHING));
+        temperatureClothesMap.put(Double.MIN_VALUE, Arrays.asList(ClothesType.PADDED_COAT, ClothesType.SCARF, ClothesType.LINED_CLOTHING,ClothesType.HEAT_TECH));
     }
 
     public RecommendService(WeatherService weatherService, NaverShoppingService naverShoppingService, ClothesRepository clothesRepository, BoardRepository boardRepository, WishlistRepository wishlistRepository) {
@@ -68,14 +67,14 @@ public class RecommendService {
         Weather weather = weatherService.getWeatherByAddress(id);
         User user = userDetails.getUser();
 
-//        /* 1. 날씨 기반 옷차림 추천 */
-//        recommendResponseDTOS.add(getClothesByWeather(user, weather));
-//
-//        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
-//        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
-//
-//        /* 3. 트랜드 옷차림 추천 */
-//        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
+        /* 1. 날씨 기반 옷차림 추천 */
+        recommendResponseDTOS.add(getClothesByWeather(user, weather));
+
+        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
+        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
+
+        /* 3. 트랜드 옷차림 추천 */
+        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
 
         /* 4. 네이버 아이템 추천 */
         recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
@@ -96,15 +95,16 @@ public class RecommendService {
         return clothesRepository.findByUserAndTypeIn(user, types).stream().map(ClothesResponseDTO::new).toList();
     }
 
-    /* 2. 나의 Best OOTD 추천 : 높은 좋아요의 게시물 추천 */
+    // 점수 합산하여 순위 계산
     @Transactional(readOnly = true)
     protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
         // 온도 차이
         int tmpGap = 3;
         // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
-        return boardRepository.findByUserAndWeather_SKYAndWeather_PTYAndWeather_TMPBetween(user, weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap)
-                // 찾은 게시물의 좋아요 수를 기반으로 상위 5개를 선택합니다.
-                .stream().sorted(Comparator.comparingInt(Board::getLikesSize).reversed()).limit(5).map(BoardResponseDTO::new).toList();
+        List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeather(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
+
+        // 결과 반환
+        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
     }
 
     /* 3. 트랜드 OOTD : 높은 좋아요의 게시물 추천 */
@@ -112,60 +112,93 @@ public class RecommendService {
     protected List<? extends ResponseDTO>  getBoardsByTrends(User user, Weather weather){
         int tmpGap = 3;
         // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
-        List<Board> boards = boardRepository.findByWeather_SKYAndWeather_PTYAndWeather_TMPBetween(weather.getSKY(),weather.getPTY(),weather.getTMP()-tmpGap,weather.getTMP()+tmpGap).stream().filter(board -> !board.getUser().equals(user)).toList();
-        // 좋아요 수가 높은 상위 3개
-        List<Board> topLikesBoards = boards.stream().sorted(Comparator.comparingInt(Board::getLikesSize).reversed()).limit(3).toList();
-        // 좋아요 수 높은 게시물을 제외한 나머지 목록
-        List<Board> remainingBoards = boards.stream().filter(board -> !topLikesBoards.contains(board)).toList();
-        // 조회 수가 높은 상위 3개
-        List<Board> topViewsBoards = remainingBoards.stream().sorted(Comparator.comparingInt(Board::getViews).reversed()).limit(3).toList();
-        // 조회 수 높은 게시물을 제외한 나머지 목록
-        remainingBoards = remainingBoards.stream().filter(board -> !topViewsBoards.contains(board)).toList();
-        // 댓글 수가 높은 상위 3개
-        List<Board> topCommentsBoards = remainingBoards.stream().sorted(Comparator.comparingInt(Board::getCommentsSize).reversed()).limit(3).toList();
+        List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUser(weather.getSKY(), weather.getPTY(), weather.getTMP()-tmpGap, weather.getTMP()+tmpGap, user.getId());
 
         // 결과를 배열에 저장하고 반환합니다.
-        List<ResponseDTO> response = new ArrayList<>();
-        for (Board board : topLikesBoards) response.add(new BoardResponseDTO(board));
-        for (Board board : topViewsBoards) response.add(new BoardResponseDTO(board));
-        for (Board board : topCommentsBoards) response.add(new BoardResponseDTO(board));
-        return response;
+        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
     }
+// 기존 방법 하나씩 뽑고 제외하기...
+//    /* 2. 나의 Best OOTD 추천 : 높은 좋아요의 게시물 추천 */
+//    @Transactional(readOnly = true)
+//    protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
+//        // 온도 차이
+//        int tmpGap = 3;
+//        // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
+//        return boardRepository.findByUserAndWeather_SKYAndWeather_PTYAndWeather_TMPBetween(user, weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap)
+//                // 찾은 게시물의 좋아요 수를 기반으로 상위 5개를 선택합니다.
+//                .stream().sorted(Comparator.comparingInt(Board::getLikesSize).reversed()).limit(5).map(RecommendBoardResponseDTO::new).toList();
+//    }
+//
+//    /* 3. 트랜드 OOTD : 높은 좋아요의 게시물 추천 */
+//    @Transactional(readOnly = true)
+//    protected List<? extends ResponseDTO>  getBoardsByTrends(User user, Weather weather){
+//        int tmpGap = 3;
+//        // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
+//        List<Board> boards = boardRepository.findByWeather_SKYAndWeather_PTYAndWeather_TMPBetween(weather.getSKY(),weather.getPTY(),weather.getTMP()-tmpGap,weather.getTMP()+tmpGap).stream().filter(board -> !board.getUser().equals(user)).toList();
+//        // 좋아요 수가 높은 상위 3개
+//        List<Board> topLikesBoards = boards.stream().sorted(Comparator.comparingInt(Board::getLikesSize).reversed()).limit(3).toList();
+//        // 좋아요 수 높은 게시물을 제외한 나머지 목록
+//        List<Board> remainingBoards = boards.stream().filter(board -> !topLikesBoards.contains(board)).toList();
+//        // 조회 수가 높은 상위 3개
+//        List<Board> topViewsBoards = remainingBoards.stream().sorted(Comparator.comparingInt(Board::getViews).reversed()).limit(3).toList();
+//        // 조회 수 높은 게시물을 제외한 나머지 목록
+//        remainingBoards = remainingBoards.stream().filter(board -> !topViewsBoards.contains(board)).toList();
+//        // 댓글 수가 높은 상위 3개
+//        List<Board> topCommentsBoards = remainingBoards.stream().sorted(Comparator.comparingInt(Board::getCommentsSize).reversed()).limit(3).toList();
+//
+//        // 결과를 배열에 저장하고 반환합니다.
+//        List<ResponseDTO> response = new ArrayList<>();
+//        for (Board board : topLikesBoards) response.add(new RecommendBoardResponseDTO(board));
+//        for (Board board : topViewsBoards) response.add(new RecommendBoardResponseDTO(board));
+//        for (Board board : topCommentsBoards) response.add(new RecommendBoardResponseDTO(board));
+//        return response;
+//    }
 
     /* 4. 네이버에서 아이템들을 추천해줍니다. */
     @Transactional(readOnly = true)
     private List<? extends ResponseDTO> getNaverProductsByWeather(User user, Weather weather){
         logger.info("네이버 아이템 추천 받기");
-        /* 기온에 맞는 옷 타입 선정을 위한 배열 선언*/
+
+        /* 기온에 맞는 옷 타입 배열 선언*/
         List<ClothesType> types = new ArrayList<>();
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
             if (weather.getTMP() > entry.getKey()) { types = entry.getValue(); break; }
         }
+        /* 사용자가 가진 위시리스트 아이템 ID 목록 */
         List<Wishlist> userWishlists = wishlistRepository.findByUserId(user.getId());
         Set<Long> wishlistedProductIds = userWishlists.stream().map(wishlist -> wishlist.getProduct().getId()).collect(Collectors.toSet());
         logger.info("사용자 위시리스트 아이템 id 목록 {}", wishlistedProductIds.toString());
 
-        // 결과를 배열에 저장하고 반환합니다.
+        // 결과 저장 배열 선언
         List<ResponseDTO> response = new ArrayList<>();
 
         for (ClothesType type : types) {
-            logger.info("type : {}", type);
 
-            String query = type.toString() + " " + user.getGender();  // ClothesType에서 쿼리 문자열 변환
+            // 네이버 API 검색어를 선정합니다 : 타입 + 성별
+            String query = type.toString() + " " + user.getGender();
             logger.info(query);
 
+            // 검색 결과 저장을 위한 배열을 선언합니다.
             List<NaverProductResponseDTO> filteredProducts = new ArrayList<>();
+            // 검색 결과 페이지 번호를 선언합니다.
             int start = 1;
 
             List<NaverProductResponseDTO> naverProducts;
             do {
+                // 검색어를 입력하고 네이버 API에 검색 결과를 받아옵니다.
                 naverProducts = naverShoppingService.searchProducts(query, 10, start);
                 logger.info("naverProducts (start={}): {}", start, naverProducts.toString());
+
+                // 받아온 네이버 결과의 ID가 현재 위시리스트에 포함되어 있는지 확인합니다.
                 for (NaverProductResponseDTO product : naverProducts) {
+                    // 받아온 네이버 결과의 ID가 현재 위시리스트에 포함되어 있는지 확인합니다.
                     if (!wishlistedProductIds.contains(product.getProductId())) {
+                        // 포함되어 있지 않다면 리스트에 저장합니다.
                         logger.info("filteredProducts에 아이템 추가 : {}", product.toString());
+                        // 저장되는 아이템에 검색어를 타입으로 추가합니다.
                         product.setType(type.name());
                         filteredProducts.add(product);
+                        // 저장된 검색 결과가 3개 이상이라면 비교를 중단합니다.
                         if (filteredProducts.size() >= 3) {
                             break;
                         }
@@ -173,10 +206,10 @@ public class RecommendService {
                         logger.info("이미 wishlist에 있는 아이템 : {}", product.toString());
                     }
                 }
-                start++; // 다음 페이지로 이동
+                // 다음 검색 결과 페이지를 요청합니다.
+                start++;
             } while (filteredProducts.size() < 3 && !naverProducts.isEmpty());
-
-            // 검색된 제품 중 위시리스트에 없는 제품만 필터링
+            // 검색 결과를 저장합니다.
             response.addAll(filteredProducts);
         }
         logger.info("response : {}", response.toString());
