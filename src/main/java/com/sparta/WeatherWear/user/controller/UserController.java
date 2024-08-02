@@ -33,7 +33,7 @@ public class UserController {
     private final RecommendService recommendService;
     private final KakaoLoginService kakaoLoginService;
 
-    /* 카카오 로그인 콜백 처리 */
+    /* 사용자 정보 요청 */
     @GetMapping("/users")
     public ResponseEntity<UserResponseDTO> findUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok(new UserResponseDTO(userDetails.getUser()));

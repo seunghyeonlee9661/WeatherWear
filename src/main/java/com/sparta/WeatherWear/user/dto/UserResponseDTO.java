@@ -3,9 +3,11 @@ package com.sparta.WeatherWear.user.dto;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.enums.UserGender;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Date;
 
+@Getter
 public class UserResponseDTO {
     private Long id;
     private String email;
