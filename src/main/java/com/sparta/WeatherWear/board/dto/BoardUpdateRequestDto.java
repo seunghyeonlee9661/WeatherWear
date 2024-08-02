@@ -16,7 +16,7 @@ public class BoardUpdateRequestDto {
     private String title;
     private String contents;
     private boolean isPrivate;
-    private int stn;
+//    private int stn;
     private List<BoardLike> boardLikes;
     private List<Comment> comments;
     private List<BoardTag> boardTags;
