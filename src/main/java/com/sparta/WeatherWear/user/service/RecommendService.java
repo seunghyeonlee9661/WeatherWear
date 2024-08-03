@@ -95,7 +95,7 @@ public class RecommendService {
         return clothesRepository.findByUserAndTypeIn(user, types).stream().map(ClothesResponseDTO::new).toList();
     }
 
-    // 점수 합산하여 순위 계산
+    // 2. 점수 합산하여 순위 계산
     @Transactional(readOnly = true)
     protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
         // 온도 차이
