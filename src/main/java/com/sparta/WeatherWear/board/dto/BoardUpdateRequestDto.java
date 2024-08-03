@@ -3,6 +3,9 @@ package com.sparta.WeatherWear.board.dto;
 import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.entity.Comment;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
+import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,11 +16,12 @@ import java.util.List;
 public class BoardUpdateRequestDto {
 
     private Long userId;
+    private Long bCode;
+    //
     private String title;
-    private String contents;
+    private String content;
     private boolean isPrivate;
-    private int stn;
-    private List<BoardLike> boardLikes;
-    private List<Comment> comments;
-    private List<BoardTag> boardTags;
+    //
+    private ClothesColor color;
+    private ClothesType type;
 }
