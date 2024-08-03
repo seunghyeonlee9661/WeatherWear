@@ -5,6 +5,7 @@ import com.sparta.WeatherWear.user.enums.UserGender;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -14,7 +15,7 @@ public class UserResponseDTO {
     private String nickname;
     private String image;
     private UserGender gender;
-    private Date birthday;
+    private String birthday;
 
     public UserResponseDTO(User user){
         this.id = user.getId();
@@ -22,6 +23,6 @@ public class UserResponseDTO {
         this.nickname = user.getNickname();
         this.image = user.getImage();
         this.gender = user.getGender();
-        this.birthday = user.getBirthday();
+        this.birthday =new SimpleDateFormat("yyyy MM dd").format(user.getBirthday());
     }
 }
