@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.entity;
 
+import com.sparta.WeatherWear.board.dto.CommentCreateResponseDto;
 import com.sparta.WeatherWear.board.time.Timestamped;
 import com.sparta.WeatherWear.user.entity.User;
 import jakarta.persistence.*;
@@ -25,12 +26,6 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-//    @Column(name = "regist_date", nullable = false)
-//    private Date registDate;
-//
-//    @Column(name = "update_date", nullable = false)
-//    private Date updateDate;
-
     @Column(name = "contents", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String contents;
 
@@ -42,4 +37,9 @@ public class Comment extends Timestamped {
         this.board = board;
         this.contents = contents;
     }
+    public Comment update(String contents) {
+        this.contents = contents;
+        return this;
+    }
+
 }
