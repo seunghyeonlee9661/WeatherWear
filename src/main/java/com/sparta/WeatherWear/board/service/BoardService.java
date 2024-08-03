@@ -9,6 +9,8 @@ import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import com.sparta.WeatherWear.board.repository.BoardLikeRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
@@ -120,8 +122,18 @@ public class BoardService {
             // 조회수 추가
             views++;
             
+            // 태그 추가
+            ClothesColor color = null;
+            ClothesType type = null;
+
+            List<BoardTag> boardTags= board.getBoardTags();
+            for (BoardTag boardTag : boardTags) {
+                color= boardTag.getColor();
+                type= boardTag.getType();
+            }
+
             // newBoard -> responseDto로 반환
-            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
+            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views, color, type);
             // Creating the ApiResponse object
             ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
             // Returning the response entity with the appropriate HTTP status
@@ -153,12 +165,21 @@ public class BoardService {
     }
 
     // 페이징 구현 추가 필요
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll() {
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(UserDetailsImpl userDetails) {
         List<Board> boards = boardRepository.findAll();
         List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
 
+        User user = userDetails.getUser();
         for (Board board : boards) {
-            responseDtos.add(new BoardCreateResponseDto(board));
+            // 비공개인지 확인
+            if(board.isPrivate() == false) {
+                // 아이디 비교
+                if (user.equals(board.getUser().getId())) {
+                    responseDtos.add(new BoardCreateResponseDto(board));
+                }
+            }else {
+                responseDtos.add(new BoardCreateResponseDto(board));
+            }
         }
         // Creating the ApiResponse object
         ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
@@ -253,4 +274,25 @@ public class BoardService {
 
     }
 
+    @Transactional
+    public ResponseEntity<String> switchBoardLikes(Long boardId, UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        Board board = boardRepository.findById(boardId).orElseThrow(()->
+                new IllegalArgumentException("게시물이 존재하지 않습니다")
+        );
+
+        BoardLike newBoardLike = new BoardLike(user, board);
+
+        // 유저가 이미 있는지 확인
+        for(BoardLike boardLike : board.getBoardLikes()) {
+            if(boardLike.getUser().getId().equals(user.getId())) {
+                board.getBoardLikes().remove(boardLike);
+                boardLikeRepository.delete(boardLike);
+            }else {
+                board.getBoardLikes().add(boardLike);
+                boardLikeRepository.save(newBoardLike);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

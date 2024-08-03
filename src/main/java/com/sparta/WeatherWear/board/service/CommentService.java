@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -39,5 +41,13 @@ public class CommentService {
         ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(201, "Board created successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<ApiResponse<List<CommentCreateResponseDto>>> findBoardCommentsByBoardId(Long boardId, UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                ()-> new IllegalArgumentException("게시물을 찾을 수 없습니다")
+        );
+
     }
 }

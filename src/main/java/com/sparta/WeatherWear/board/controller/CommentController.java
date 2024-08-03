@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/board")
@@ -25,8 +27,8 @@ public class CommentController {
     }    
     /* BoardId에 해당하는 댓글 모두 조회 */
     @GetMapping("/comments/{boardId}")
-    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.addComments(requestDto, boardId, userDetails);
+    public ResponseEntity<ApiResponse<List<CommentCreateResponseDto>>> findBoardCommentsByBoardId(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.findBoardCommentsByBoardId(boardId, userDetails);
     }    
 //    /* User가 작성한 댓글 모두 조회  */
 //    @PostMapping("/comments/{boardId}")

@@ -40,8 +40,8 @@ public class BoardController {
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll() {
-        return boardService.findBoardAll();
+    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.findBoardAll(userDetails);
     }
 
     /* 게시물 수정 */
@@ -62,10 +62,10 @@ public class BoardController {
 //        return boardService.removeBoard(boardId, userDetails);
 //    }
     
-    /* 게시물 좋아요 추가 */
+    /* 게시물 좋아요 변경 */
     @GetMapping("/likes/{boardId}")
-    public ResponseEntity<String> userBoardImages(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return boardService.removeBoard(boardId, userDetails);
+    public ResponseEntity<String> switchBoardLikes(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.switchBoardLikes(boardId, userDetails);
     }
 
 //    /* 특정 회원의 게시물 이미지 전체 불러오기 */
