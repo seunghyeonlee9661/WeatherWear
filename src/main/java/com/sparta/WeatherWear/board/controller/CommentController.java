@@ -22,5 +22,25 @@ public class CommentController {
     @PostMapping("/comments/{boardId}")
     public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.addComments(requestDto, boardId, userDetails);
-    }
+    }    
+    /* BoardId에 해당하는 댓글 모두 조회 */
+    @GetMapping("/comments/{boardId}")
+    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.addComments(requestDto, boardId, userDetails);
+    }    
+//    /* User가 작성한 댓글 모두 조회  */
+//    @PostMapping("/comments/{boardId}")
+//    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return commentService.addComments(requestDto, boardId, userDetails);
+//    }
+//    /* 댓글 수정 */
+//    @PostMapping("/comments/{boardId}")
+//    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return commentService.addComments(requestDto, boardId, userDetails);
+//    }
+//    /* 댓글 삭제 */
+//    @PostMapping("/comments/{boardId}")
+//    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return commentService.addComments(requestDto, boardId, userDetails);
+//    }
 }

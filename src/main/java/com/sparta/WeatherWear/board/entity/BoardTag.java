@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.board.entity;
 
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
+import com.sparta.WeatherWear.user.enums.UserGender;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,12 @@ public class BoardTag {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(name = "color", length = 50, nullable = false)
+    // 색상
+    @Enumerated(EnumType.STRING)
     private ClothesColor color;
 
-    @Column(name = "type", length = 50, nullable = false)
+    // 종류
+    @Enumerated(EnumType.STRING)
     private ClothesType type;
 
     public BoardTag(Board board, ClothesColor color, ClothesType type) {
@@ -31,4 +34,5 @@ public class BoardTag {
         this.color = color;
         this.type = type;
     }
+
 }

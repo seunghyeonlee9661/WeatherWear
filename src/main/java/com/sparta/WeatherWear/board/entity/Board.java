@@ -3,8 +3,11 @@ package com.sparta.WeatherWear.board.entity;
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
 
+import com.sparta.WeatherWear.board.enums.ClothesColor;
+import com.sparta.WeatherWear.board.enums.ClothesType;
 import com.sparta.WeatherWear.board.time.Timestamped;
 import com.sparta.WeatherWear.user.entity.User;
+import com.sparta.WeatherWear.user.enums.UserGender;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,6 +29,9 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "addr", columnDefinition = "MEDIUMTEXT", nullable = false)
+    private String addr;
+
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String title;
 
@@ -34,9 +40,6 @@ public class Board extends Timestamped {
 
     @Column(name = "isPrivate", nullable = false)
     private boolean isPrivate;
-
-//    @Column(name = "stn", nullable = false)
-//    private int stn;
 
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
@@ -61,23 +64,26 @@ public class Board extends Timestamped {
     private int views;
 
     public Board(BoardCreateRequestDto requestDto, User user, Weather weather) {
-
         this.user = user;
+        //
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
         this.isPrivate = requestDto.isPrivate();
+        //
         this.weather = weather;
+        //
+        this.addr = requestDto.getAddr();
+        this.views = requestDto.getViews();
     }
 
-    public Board update(BoardUpdateRequestDto requestDTO){
-        this.title = requestDTO.getTitle();
-        this.content = requestDTO.getContents();
-        this.isPrivate = requestDTO.isPrivate();
-        this.boardLikes = requestDTO.getBoardLikes();
-        this.comments = requestDTO.getComments();
-        this.boardTags = requestDTO.getBoardTags();
-        return this;
-    }
+//    public Board update(BoardUpdateRequestDto requestDTO){
+//        this.title = requestDTO.getTitle();
+//        this.content = requestDTO.getContents();
+//        this.isPrivate = requestDTO.isPrivate();
+//        this.comments = requestDTO.getComments();
+//        this.boardTags = requestDTO.getBoardTags();
+//        return this;
+//    }
     public void addComment(Comment comment){
         this.comments.add(comment);
     }
@@ -90,5 +96,13 @@ public class Board extends Timestamped {
     // 이승현 : 댓글 수 확인
     public int getCommentsSize(){
         return this.comments.size();
+    }
+
+    public Board update(BoardUpdateRequestDto requestDTO, Weather weather) {
+        this.weather = weather;
+        this.title = requestDTO.getTitle();
+        this.content = requestDTO.getContent();
+        this.isPrivate = requestDTO.isPrivate();
+        return this;
     }
 }

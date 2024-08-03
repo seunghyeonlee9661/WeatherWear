@@ -21,15 +21,15 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody @Valid BoardCreateRequestDto requestDto, @RequestParam(value = "id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
-        return boardService.createBoard(requestDto, id, userDetails, images);
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody @Valid BoardCreateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
+        return boardService.createBoard(requestDto, userDetails, images);
 
     }
 
     /* 게시물 id로 조회 */
     @GetMapping("/board-id/{boardId}")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long boardId) {
-        return boardService.findBoardById(boardId);
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.findBoardById(boardId, userDetails);
     }
 
     /* 게시물 user_id 전체 목록 조회 (페이징) */
@@ -56,8 +56,14 @@ public class BoardController {
         return boardService.removeBoard(boardId, userDetails);
     }
 
-    /* 게시물 이미지 전체 불러오기 */
-    @GetMapping("/images/{boardId}")
+//    /* 게시물 이미지 전체 불러오기 */
+//    @GetMapping("/images/{boardId}")
+//    public ResponseEntity<String> userBoardImages(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return boardService.removeBoard(boardId, userDetails);
+//    }
+    
+    /* 게시물 좋아요 추가 */
+    @GetMapping("/likes/{boardId}")
     public ResponseEntity<String> userBoardImages(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.removeBoard(boardId, userDetails);
     }
@@ -73,6 +79,7 @@ public class BoardController {
 //    public ResponseEntity<String> userBoardTags(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        return boardService.removeBoard(board_id, userDetails);
 //    }
+
 //    /* 특정 회원의 게시물 태그 전체 불러오기 */
 //    @DeleteMapping("/tags/{user_id}")
 //    public ResponseEntity<String> userBoardTagsById(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {

@@ -38,7 +38,7 @@ public class BoardService {
     private BoardImageService boardImageService;
 
     @Transactional
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, Long id, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
         // 예외처리
         if (requestDto == null) {
             throw new IllegalArgumentException("게시판 생성에 필요한 정보가 없습니다");
@@ -52,9 +52,9 @@ public class BoardService {
 
         // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
         // 법정동 코드 띄어쓰기 제거 필요
-        Weather weather = weatherService.getWeatherByAddress(id);
+        Weather weather = weatherService.getWeatherByAddress(requestDto.getBCode());
 
-        // request에서 받아온 값을 Board Entity로 만들기 
+        // request에서 받아온 값을 Board Entity로 만들기
         Board newBoard = new Board(requestDto, user, weather); // Weather 추가하기
 
         // requestDto 확인
@@ -95,17 +95,38 @@ public class BoardService {
 
 
 
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(Long boardId) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(Long boardId, UserDetailsImpl userDetails) {
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
         );
+        // user 정보 가져오기 (id)
+        User user = userDetails.getUser();
+        int views = board.getViews();
 
-        // newBoard -> responseDto로 반환
-        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
-        // Creating the ApiResponse object
-        ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
-        // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        // 비공개인지 확인
+        if(board.isPrivate() == false){
+            // 아이디 비교
+            if(user.equals(board.getUser().getId())){
+                // newBoard -> responseDto로 반환
+                BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
+                // Creating the ApiResponse object
+                ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
+                // Returning the response entity with the appropriate HTTP status
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        }else {
+            // 조회수 추가
+            views++;
+            
+            // newBoard -> responseDto로 반환
+            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
+            // Creating the ApiResponse object
+            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
+            // Returning the response entity with the appropriate HTTP status
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
 
     }
 
@@ -162,6 +183,8 @@ public class BoardService {
             log.info("User의 Id 값이 없습니다.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
+        Weather weather = weatherService.getWeatherByAddress(requestDTO.getBCode());
 
         // 같으면 update 실행
         if(boardUserId.equals(userId)) {
@@ -170,9 +193,10 @@ public class BoardService {
                     new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
             );;
             // request 로 받아 온 값 넣기
-            Board updateBoard = board.update(requestDTO);
+            Board updateBoard = board.update(requestDTO, weather);
             
             // 날씨 정보 & 사진 업데이트하기
+
             // 사진 업데이트
             if(images != null) {
                 // 기존 사진을 제거해야 한다
@@ -182,14 +206,13 @@ public class BoardService {
                 // 추가 - 사진 저장 메서드 실행
                 boardImageService.uploadImage(updateBoard, images);
 
-                // 사진 확인
                 for (BoardImage boardImage : boardImages) {
                     System.out.println("boardImage_path = " + boardImage.getImagePath());
                 }
             }
 
-            // 해당하는 날씨 정보가 존재하는 지 먼저 확인 (캐싱)
-
+            // 추가 - 태그 저장 메서드 실행
+            boardTagRepository.save(new BoardTag(updateBoard, requestDTO.getColor(), requestDTO.getType()));
 
             // newBoard -> responseDto로 반환
             BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
