@@ -96,9 +96,7 @@ public class BoardService {
 
 
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(()->
-                new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
-        );
+        Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("선택한 게시물은 없는 게시물입니다."));
 
         // newBoard -> responseDto로 반환
         BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
@@ -106,7 +104,6 @@ public class BoardService {
         ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
     // 페이징 구현 추가 필요

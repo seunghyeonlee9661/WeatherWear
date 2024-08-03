@@ -78,7 +78,5 @@ public class BoardController {
 //    public ResponseEntity<String> userBoardTagsById(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        return boardService.removeBoard(board_id, userDetails);
 //    }
-
-
 }
 

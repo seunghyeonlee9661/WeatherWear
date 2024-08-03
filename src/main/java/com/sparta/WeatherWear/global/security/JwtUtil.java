@@ -44,6 +44,7 @@ public class JwtUtil {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     public static final Logger logger = LoggerFactory.getLogger("JWT : "); // 로그 설정
 
+
     @Autowired
     private RedisService redisService; // RedisService 주입
 
