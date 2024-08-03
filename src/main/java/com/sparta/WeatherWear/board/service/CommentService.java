@@ -68,7 +68,7 @@ public class CommentService {
         }else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
+        return null;
     }
 
     public ResponseEntity<String> deleteBoardComment(Long commentId, UserDetailsImpl userDetails) {
