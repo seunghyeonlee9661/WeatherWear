@@ -9,12 +9,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /*
 작성자 : 이승현
@@ -51,7 +54,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     /* 로그인 성공 */
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult){
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         log.info("로그인 성공 및 JWT 생성");
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
         // accessToken 생성 및 쿠키 추가
@@ -60,12 +63,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtUtil.createRefreshToken(user);
         jwtUtil.addTokenToRedis(accessToken,refreshToken);
         jwtUtil.addTokenToCookie(accessToken,response);
+
+        // 성공 응답 전송
+        sendResponse(response, HttpStatus.OK, "로그인 성공");
     }
 
     /* 로그인 실패 */
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed){
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         log.info("로그인 실패");
-        response.setStatus(401);
+        // 실패 응답 전송
+        sendResponse(response, HttpStatus.UNAUTHORIZED, "로그인 실패: " + failed.getMessage());
+    }
+
+    /* 응답 전송 */
+    private void sendResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);  // 콘텐츠 타입을 텍스트로 설정
+        response.setStatus(status.value());  // 상태 코드 설정
+
+        // 응답 본문에 메시지를 작성
+        PrintWriter out = response.getWriter();
+        out.write(message);
+        out.flush();
     }
 }
