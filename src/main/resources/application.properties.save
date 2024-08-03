@@ -1,12 +1,10 @@
 spring.application.name=WeatherWear
 
-#Server Port
-server.port=8081
-
 # DB
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
 spring.datasource.url=jdbc:mysql://localhost:3306/weatherwear?serverTimezone=Asia/Seoul
-spring.datasource.username=wwbe
+pring.datasource.username=wwbe
 spring.datasource.password=RUu2fOceFTk5LszF
 
 # JPA
@@ -23,7 +21,7 @@ naver.client.secret=EMg_zEqo1B
 
 #Kakao api
 kakao.client.id=58964ac977f1abb0693b2cb7121c1a5c
-kakao.redirect.uri=http://119.56.220.32:8081/api/kakao/callback
+kakao.redirect.uri=http://localhost:8080/api/kakao/callback
 
 #Multipart
 spring.servlet.multipart.enabled=true
@@ -34,14 +32,10 @@ spring.servlet.multipart.max-request-size=10MB
 weather.api.key = yQySG8GFHEteUErFlzAElk8PgaVJKYMDgXcG%2BcHcv3qmJYcp9VKIyjlx5lqlCQ5lkuABj9RV95UWim%2BdWWWVOw%3D%3D
 weather.api.uri =  http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst
 
-#imageUploadDir
-image.upload.dir=/home/leesh/Sparta/WeatherWear/src/main/resources/static/images/
-
+#imageDir
+image.upload.dir=C:/InteliJ/WeatherWear/src/main/resources/static/images/
 
 #Redis
-spring.redis.host=localhost
+spring.redis.host=119.56.220.32
 spring.redis.port=6379
 spring.redis.password=redis6379
-
-#ImageBaseURL
-image.base-url=http://119.56.220.32:8081/images/

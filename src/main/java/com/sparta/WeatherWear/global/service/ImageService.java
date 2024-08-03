@@ -24,6 +24,9 @@ public class ImageService {
     @Value("${image.upload.dir}") // 이미지 저장 디렉토리를 설정 파일에서 주입 받음
     private String uploadDir;
 
+    @Value("${image.base-url}")
+    private String baseUrl;
+
     /* 이미지를 WEBP로 변환해서 업로드하는 기능 */
     public String uploadImagefile(String dir, String filename, MultipartFile file) throws IOException {
         // 먼저 기존 파일을 임시 파일로 지정
@@ -48,7 +51,7 @@ public class ImageService {
         // 변환된 웹피 파일 정보
         System.out.println("Converted file size: " + Files.size(webPFile.toPath()) + " bytes");
         System.out.println("Converted file format: webp");
-        return dir + webPFile.getName();
+        return baseUrl + dir + webPFile.getName();
     }
 
 
@@ -75,8 +78,9 @@ public class ImageService {
 
     // 이미지 파일의 경로를 통해 이미지를 삭제하는 기능
     public void deleteImage(String imagePath) throws IOException {
-        Path absolutePath = Paths.get(uploadDir, imagePath).normalize();
-        File file = absolutePath.toFile();
+	String relativePath = imagePath.substring(imagePath.indexOf("/images/"));
+	Path absolutePath = Paths.get(uploadDir, relativePath).normalize();
+	File file = absolutePath.toFile();
         if (file.exists()) {
             Files.delete(absolutePath);
             System.out.println("Deleted file: " + absolutePath.toString());
@@ -84,8 +88,6 @@ public class ImageService {
             System.out.println("File not found: " + absolutePath.toString());
         }
     }
-
-
     /*jpeg로 변환하는 방법*/
     /*구현 과정에서 Webp를 선택했기 때문에 jpg로 변환하는 과정은 탈락했습니다. */
 //    public String uploadImagefileToJPG(String filename, MultipartFile file,int height, int width, double quality) throws IOException {

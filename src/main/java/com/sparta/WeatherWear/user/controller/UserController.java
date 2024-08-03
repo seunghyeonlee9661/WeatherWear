@@ -3,6 +3,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
+import com.sparta.WeatherWear.user.dto.UserResponseDTO;
 import com.sparta.WeatherWear.user.service.RecommendService;
 import com.sparta.WeatherWear.user.service.UserService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
@@ -31,6 +32,12 @@ public class UserController {
     private final UserService userService;
     private final RecommendService recommendService;
     private final KakaoLoginService kakaoLoginService;
+
+    /* 사용자 정보 요청 */
+    @GetMapping("/users")
+    public ResponseEntity<UserResponseDTO> findUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseEntity.ok(new UserResponseDTO(userDetails.getUser()));
+    }
 
     /* 사용자 정보 추가 */
     @PostMapping("/users")
