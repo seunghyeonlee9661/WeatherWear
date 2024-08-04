@@ -35,7 +35,6 @@ public class BoardCreateResponseDto {
     //
     private int boardLikes;
     //
-    private List<Comment> comments;
     private int commentsSize;
     //
     private ClothesColor clothesColor;

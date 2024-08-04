@@ -36,7 +36,7 @@ public class CommentService {
         // newBoard -> responseDto로 반환
         CommentCreateResponseDto responseDto = new CommentCreateResponseDto(newComment);
         // Creating the ApiResponse object
-        ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(201, "Board created successfully", responseDto);
+        ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(201, "comment created successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -65,6 +65,13 @@ public class CommentService {
         if(user.getId().equals(comment.getUser().getId())) {
             Comment updatedComment = comment.update(requestDto.getContents());
             commentRepository.save(updatedComment);
+
+            // newBoard -> responseDto로 반환
+            CommentCreateResponseDto responseDto = new CommentCreateResponseDto(updatedComment);
+            // Creating the ApiResponse object
+            ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(200, "comment updated successfully", responseDto);
+            // Returning the response entity with the appropriate HTTP status
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -80,7 +87,7 @@ public class CommentService {
         if(user.getId().equals(comment.getUser().getId())) {
             commentRepository.deleteById(commentId);
         }
-        return new ResponseEntity<>("Board deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("comment deleted successfully", HttpStatus.OK);
     }
 
 
