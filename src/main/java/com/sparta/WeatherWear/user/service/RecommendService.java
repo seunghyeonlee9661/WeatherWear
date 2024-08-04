@@ -89,10 +89,10 @@ public class RecommendService {
     public List<? extends ResponseDTO>  getClothesByWeather(User user, Weather weather){
         logger.info("날씨 기반 옷차림 추천");
         /* 기온에 맞는 옷 타입 선정을 위한 배열 선언*/
-        List<ClothesType> types = new ArrayList<>();
         logger.info("온도 : {}", weather.getTMP());
+        List<ClothesType>  types = temperatureClothesMap.get(Double.MIN_VALUE);
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
-            if (weather.getTMP() > entry.getKey()) { types = entry.getValue(); break; }
+            if (weather.getTMP() >= entry.getKey()) {types = entry.getValue(); break;}
         }
         /* 사용자의 옷 중에 배열의 태그와 동일한 옷을 추천합니다. */
         List<Clothes> clothes = clothesRepository.findByUserAndTypeIn(user, types);
