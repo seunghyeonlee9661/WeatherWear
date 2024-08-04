@@ -13,6 +13,7 @@ import com.sparta.WeatherWear.global.service.RedisService;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import com.sparta.WeatherWear.weather.service.WeatherService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -83,21 +84,25 @@ public class BoardService {
         }
     }
 
-    public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails) {
+    @Transactional
+    public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails, HttpServletRequest request) {
         Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("선택한 게시물은 없는 게시물입니다."));
-        User user = userDetails.getUser();
-        if(board.isPrivate(user.getId())){
-            boolean isNewView = redisService.incrementViewCount(user.getId().toString(), boardId.toString());
-            if (isNewView) {
-                board.incrementViews(); // Board 엔티티의 조회수 증가 메서드 호출
-                boardRepository.save(board);
-            }
+        User user = userDetails != null ? userDetails.getUser() : null;
 
-            BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board);
-            boardDetailResponseDTO.setLike(boardLikeRepository.existsByUserAndBoard(user,board));
-            return ResponseEntity.ok(boardDetailResponseDTO);
+        // 게시물이 비공개이고, 로그인하지 않았거나 게시물 작성자가 현재 로그인한 사용자가 아닌 경우
+        if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 게시물은 비공개 상태이므로 접근할 수 없습니다.");
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 게시물은 비공개 상태이므로 접근할 수 없습니다.");
+        // 사용자 ip를 활용해 24시간 동안 조회수 사용을 방지합니다.
+        if (redisService.incrementViewCount(getClientIp(request), boardId.toString())) {
+            board.incrementViews(); // Board 엔티티의 조회수 증가 메서드 호출
+            boardRepository.save(board);
+        }
+        BoardDetailResponseDTO boardDetailResponseDTO = new BoardDetailResponseDTO(board);
+        if (user != null) {
+            boardDetailResponseDTO.setLike(boardLikeRepository.existsByUserAndBoard(user, board));
+        }
+        return ResponseEntity.ok(boardDetailResponseDTO);
     }
 
 
@@ -131,5 +136,14 @@ public class BoardService {
             boardLikeRepository.save(new BoardLike(user, board));
             return ResponseEntity.ok("좋아요가 설정되었습니다.");
         }
+    }
+
+    // 사용자 IP 확인
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty()) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }

@@ -37,8 +37,8 @@ public class RedisService {
 
 
     // 조회수 증가
-    public boolean incrementViewCount(String userId, String boardId) {
-        String key = "viewCount:" + userId + ":" + boardId;
+    public boolean incrementViewCount(String userIp, String boardId) {
+        String key = "viewCount:" + userIp + ":" + boardId;
         // NX 옵션으로 키가 없을 때만 값을 설정하고, EX 옵션으로 만료 시간을 설정
         Boolean result = redisTemplate.opsForValue().setIfAbsent(key, "viewed", VIEW_LIMIT_DURATION, TimeUnit.MILLISECONDS);
         // result가 true면 새로운 키가 생성되었으므로 조회수를 증가시킴

@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.board.controller;
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,8 @@ public class BoardController {
 
     /* 게시물 상세 정보 */
     @GetMapping("/boards/{id}")
-    public ResponseEntity<?> findBoardById(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return boardService.findBoardById(id, userDetails);
+    public ResponseEntity<?> findBoardById(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        return boardService.findBoardById(id, userDetails,request);
     }
 
     /* 게시물 전체 조회 : 커서 기반 페이지네이션, 검색어를 통한 검색 기능 */

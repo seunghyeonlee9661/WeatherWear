@@ -11,7 +11,7 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByUserId(Long userId);
 
-    @Query("SELECT b FROM Board b WHERE (:search IS NULL OR b.title LIKE %:search%) AND (:lastId IS NULL OR b.id > :lastId) ORDER BY b.id DESC")
+    @Query("SELECT b FROM Board b WHERE (:search IS NULL OR b.title LIKE %:search%) AND (:lastId IS NULL OR b.id < :lastId) ORDER BY b.id DESC")
     List<Board> findBoards(@Param("lastId") Long lastId, @Param("search") String search, Pageable pageable);
 
     @Query(value = "SELECT b.* " +
