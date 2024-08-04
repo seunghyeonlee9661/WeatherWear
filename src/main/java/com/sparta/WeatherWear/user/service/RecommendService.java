@@ -90,18 +90,21 @@ public class RecommendService {
         logger.info("날씨 기반 옷차림 추천");
         logger.info("온도 : {}", weather.getTMP());
         // 초기값 설정: 가장 높은 온도의 옷 목록으로 시작
-        List<ClothesType> types = temperatureClothesMap.get(Double.MIN_VALUE);
-        // 현재 온도보다 낮은 범위의 목록을 찾기
-        for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
-            logger.info("비교 온도 : {}", weather.getTMP());
-            logger.info("비교 키값 : {}", entry.getKey());
 
-            if (weather.getTMP() >= entry.getKey()) {
-                types = entry.getValue(); // 현재 온도보다 작거나 같은 가장 높은 온도에 해당하는 목록을 설정
-            } else {
-                break; // 현재 온도보다 낮은 온도는 더 이상 필요하지 않으므로 루프 종료
+        List<ClothesType> types = new ArrayList<>();
+        // 온도 범위를 기준으로 리스트 선택
+        for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
+            Double tempKey = entry.getKey();
+            logger.info("온도 : {}", weather.getTMP());
+            logger.info("리스트 온도 : {}", tempKey);
+            // 온도가 범위에 맞는 경우 목록을 선택
+            if (weather.getTMP() >= tempKey) {
+                logger.info("온도가 tempKey보다 높음");
+                types = entry.getValue(); // 온도에 맞는 목록으로 업데이트
+                break;
             }
         }
+
         // 사용자의 옷 중에 배열의 태그와 동일한 옷을 추천합니다.
         List<Clothes> clothes = clothesRepository.findByUserAndTypeIn(user, types);
         return clothes.stream().map(ClothesResponseDTO::new).toList();
