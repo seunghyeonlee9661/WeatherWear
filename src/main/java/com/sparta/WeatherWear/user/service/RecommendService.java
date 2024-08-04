@@ -172,7 +172,7 @@ public class RecommendService {
         /* 사용자가 가진 위시리스트 아이템 ID 목록 */
         List<Wishlist> userWishlists = wishlistRepository.findByUserId(user.getId());
         Set<Long> wishlistedProductIds = userWishlists.stream().map(wishlist -> wishlist.getProduct().getId()).collect(Collectors.toSet());
-        logger.info("사용자 위시리스트 아이템 id 목록 {}", wishlistedProductIds.toString());
+//        logger.info("사용자 위시리스트 아이템 id 목록 {}", wishlistedProductIds.toString());
 
         // 결과 저장 배열 선언
         List<ResponseDTO> response = new ArrayList<>();
@@ -192,14 +192,14 @@ public class RecommendService {
             do {
                 // 검색어를 입력하고 네이버 API에 검색 결과를 받아옵니다.
                 naverProducts = naverShoppingService.searchProducts(query, 10, start);
-                logger.info("naverProducts (start={}): {}", start, naverProducts.toString());
+//                logger.info("naverProducts (start={}): {}", start, naverProducts.toString());
 
                 // 받아온 네이버 결과의 ID가 현재 위시리스트에 포함되어 있는지 확인합니다.
                 for (NaverProductResponseDTO product : naverProducts) {
                     // 받아온 네이버 결과의 ID가 현재 위시리스트에 포함되어 있는지 확인합니다.
                     if (!wishlistedProductIds.contains(product.getProductId())) {
                         // 포함되어 있지 않다면 리스트에 저장합니다.
-                        logger.info("filteredProducts에 아이템 추가 : {}", product.toString());
+//                        logger.info("filteredProducts에 아이템 추가 : {}", product.toString());
                         // 저장되는 아이템에 검색어를 타입으로 추가합니다.
                         product.setType(type.name());
                         filteredProducts.add(product);
@@ -208,7 +208,7 @@ public class RecommendService {
                             break;
                         }
                     }else{
-                        logger.info("이미 wishlist에 있는 아이템 : {}", product.toString());
+//                        logger.info("이미 wishlist에 있는 아이템 : {}", product.toString());
                     }
                 }
                 // 다음 검색 결과 페이지를 요청합니다.
@@ -217,7 +217,7 @@ public class RecommendService {
             // 검색 결과를 저장합니다.
             response.addAll(filteredProducts);
         }
-        logger.info("response : {}", response.toString());
+//        logger.info("response : {}", response.toString());
         return response;
     }
 
