@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 작성자 : 이승현
@@ -78,12 +80,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     /* 응답 전송 */
     private void sendResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
-        response.setContentType(MediaType.TEXT_PLAIN_VALUE);  // 콘텐츠 타입을 텍스트로 설정
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);  // 콘텐츠 타입을 JSON으로 설정
         response.setStatus(status.value());  // 상태 코드 설정
 
-        // 응답 본문에 메시지를 작성
+        // 응답 본문에 JSON 형태로 메시지 작성
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", message);
+
+        ObjectMapper objectMapper = new ObjectMapper();
         PrintWriter out = response.getWriter();
-        out.write(message);
+        objectMapper.writeValue(out, responseBody);
         out.flush();
     }
 }

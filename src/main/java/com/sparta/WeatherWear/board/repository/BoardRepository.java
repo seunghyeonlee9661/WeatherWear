@@ -16,7 +16,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByWeather_SKYAndWeather_PTYAndWeather_TMPBetween(int sky, int pty, Double minTmp, Double maxTmp);
 
     @Query(value = "SELECT b.* " +
-            "FROM boards b " +
+            "FROM board b " +
             "WHERE b.user_id = :userId " +
             "  AND b.weather_sky = :sky " +
             "  AND b.weather_pty = :pty " +
@@ -31,7 +31,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query(value = "SELECT b.*, " +
             "       (b.likes_size * 5 + b.views * 0.5 + b.comments_size * 0.5) AS score " +
-            "FROM boards b " +
+            "FROM board b " +
             "WHERE b.weather_sky = :sky " +
             "  AND b.weather_pty = :pty " +
             "  AND b.weather_tmp BETWEEN :minTmp AND :maxTmp " +
