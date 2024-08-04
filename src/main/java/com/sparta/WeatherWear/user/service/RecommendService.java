@@ -91,12 +91,14 @@ public class RecommendService {
         /* 기온에 맞는 옷 타입 선정을 위한 배열 선언*/
         logger.info("온도 : {}", weather.getTMP());
 
-        List<ClothesType> types = temperatureClothesMap.get(Double.MIN_VALUE);
+        List<ClothesType> types = temperatureClothesMap.get(28.0);
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
+            logger.info("비교 온도 : {}", weather.getTMP());
+            logger.info("비교 키값 : {}", entry.getKey());
             if (weather.getTMP() >= entry.getKey()) {
-                types = entry.getValue();
-            } else {
                 break;
+            } else {
+                types = entry.getValue();
             }
         }
         logger.info("선택된 타입 : {}", types.toString());
