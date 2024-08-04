@@ -89,10 +89,8 @@ public class RecommendService {
     public List<? extends ResponseDTO> getClothesByWeather(User user, Weather weather) {
         logger.info("날씨 기반 옷차림 추천");
         logger.info("온도 : {}", weather.getTMP());
-
         // 초기값 설정: 가장 높은 온도의 옷 목록으로 시작
         List<ClothesType> types = temperatureClothesMap.get(Double.MIN_VALUE);
-
         // 현재 온도보다 낮은 범위의 목록을 찾기
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
             logger.info("비교 온도 : {}", weather.getTMP());
