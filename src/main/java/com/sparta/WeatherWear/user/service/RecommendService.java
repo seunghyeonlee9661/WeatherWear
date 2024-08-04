@@ -1,6 +1,7 @@
 package com.sparta.WeatherWear.user.service;
 
 import com.sparta.WeatherWear.board.entity.Board;
+import com.sparta.WeatherWear.clothes.entity.Clothes;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import com.sparta.WeatherWear.user.dto.RecommendBoardResponseDTO;
 import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
@@ -86,13 +87,17 @@ public class RecommendService {
     /* 1. 날씨 기반 옷차림 추천 : 내 옷장 속 옷 아이템 추천 */
     @Transactional(readOnly = true)
     public List<? extends ResponseDTO>  getClothesByWeather(User user, Weather weather){
+        logger.info("날씨 기반 옷차림 추천");
         /* 기온에 맞는 옷 타입 선정을 위한 배열 선언*/
         List<ClothesType> types = new ArrayList<>();
+        logger.info("온도 : {}", weather.getTMP());
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
             if (weather.getTMP() > entry.getKey()) { types = entry.getValue(); break; }
         }
         /* 사용자의 옷 중에 배열의 태그와 동일한 옷을 추천합니다. */
-        return clothesRepository.findByUserAndTypeIn(user, types).stream().map(ClothesResponseDTO::new).toList();
+        List<Clothes> clothes = clothesRepository.findByUserAndTypeIn(user, types);
+        logger.info("선택된 옷 목록 : {}", clothes.toString());
+        return clothes.stream().map(ClothesResponseDTO::new).toList();
     }
 
     // 2. 점수 합산하여 순위 계산
