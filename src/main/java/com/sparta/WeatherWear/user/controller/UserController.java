@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.WeatherWear.board.dto.BoardListResponseDTO;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
@@ -37,6 +38,13 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<UserResponseDTO> findUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok(new UserResponseDTO(userDetails.getUser()));
+    }
+
+
+    /* 사용자 정보 요청 */
+    @GetMapping("/users/boards")
+    public ResponseEntity<List<BoardListResponseDTO>> findUserBoard(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.findUserBoard(userDetails);
     }
 
     /* 사용자 정보 추가 */

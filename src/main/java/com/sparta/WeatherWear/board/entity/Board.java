@@ -10,8 +10,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -25,68 +25,57 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "addr", columnDefinition = "MEDIUMTEXT", nullable = false)
-    private String addr;
-
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String title;
 
     @Column(name = "content", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
-    @Column(name = "isPrivate", nullable = false)
-    private boolean isPrivate;
+    @Column(name = "address", columnDefinition = "MEDIUMTEXT", nullable = false)
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
     private Weather weather;
 
+    @Column(name = "isPrivate", nullable = false)
+    private boolean isPrivate;
+
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<BoardLike> boardLikes;
+    private List<BoardLike> likes;
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    // enum 변경 예정
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<BoardTag> boardTags;
+    private List<BoardTag> tags;
 
-    // Board 엔티티에 image 리스트 필드 추가
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoardImage> boardImages = new ArrayList<>();
+    @Column(name = "image", nullable = false)
+    private String image;
 
     // 이승현 : 조회수
     @Column(name = "views", nullable = true)
     private int views;
 
+    // 게시물 생성
     public Board(BoardCreateRequestDto requestDto, User user, Weather weather) {
         this.user = user;
-        //
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
         this.isPrivate = requestDto.isPrivate();
-        //
+        this.address = requestDto.getAddress();
         this.weather = weather;
-        //
-        this.addr = requestDto.getAddr();
-        this.views = requestDto.getViews();
+        this.image = null;
+        this.views = 0;
     }
 
-//    public Board update(BoardUpdateRequestDto requestDTO){
-//        this.title = requestDTO.getTitle();
-//        this.content = requestDTO.getContents();
-//        this.isPrivate = requestDTO.isPrivate();
-//        this.comments = requestDTO.getComments();
-//        this.boardTags = requestDTO.getBoardTags();
-//        return this;
-//    }
-    public void addComment(Comment comment){
-        this.comments.add(comment);
+    public void uploadImage(String image){
+        this.image = image;
     }
 
     // 이승현 : 좋아요 수 확인
     public int getLikesSize(){
-        return this.boardLikes.size();
+        return this.likes.size();
     }
 
     // 이승현 : 댓글 수 확인
@@ -94,11 +83,19 @@ public class Board extends Timestamped {
         return this.comments.size();
     }
 
-    public Board update(BoardUpdateRequestDto requestDTO, Weather weather) {
-        this.weather = weather;
+    // 게시물 업데이트
+    public void update(BoardUpdateRequestDto requestDTO,String image) {
         this.title = requestDTO.getTitle();
-        this.content = requestDTO.getContent();
+        this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
-        return this;
+        this.image = image;
+    }
+
+    public boolean isPrivate(Long id){
+        return Objects.equals(this.user.getId(), id) || !this.isPrivate;
+    }
+
+    public void incrementViews(){
+        views++;
     }
 }

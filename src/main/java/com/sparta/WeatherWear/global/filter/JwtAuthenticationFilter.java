@@ -81,6 +81,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     /* 응답 전송 */
     private void sendResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);  // 콘텐츠 타입을 JSON으로 설정
+        response.setCharacterEncoding("UTF-8");  // 문자 인코딩을 UTF-8로 설정
         response.setStatus(status.value());  // 상태 코드 설정
 
         // 응답 본문에 JSON 형태로 메시지 작성

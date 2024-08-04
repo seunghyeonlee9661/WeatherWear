@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.entity;
 
+import com.sparta.WeatherWear.board.dto.BoardTagDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.user.enums.UserGender;
@@ -35,4 +36,9 @@ public class BoardTag {
         this.type = type;
     }
 
+    public BoardTag(Board board, BoardTagDTO tag) {
+        this.board = board;
+        this.color = tag.getColor();
+        this.type = tag.getType();
+    }
 }

@@ -40,10 +40,9 @@ public class ClothesService {
 
         // 필터링을 적용합니다 : 없으면 전체 선택
         List<Clothes> filteredClothes = clothesList.stream()
-                .filter(clothes -> (type == null || type.trim().isEmpty() || clothes.getType().name().equalsIgnoreCase(type)))
-                .filter(clothes -> (color == null || color.trim().isEmpty() || clothes.getColor().name().equalsIgnoreCase(color)))
+                .filter(clothes -> (type == null || type.isEmpty() || clothes.getType().name().equalsIgnoreCase(type)))
+                .filter(clothes -> (color == null || color.isEmpty() || clothes.getColor().name().equalsIgnoreCase(color)))
                 .collect(Collectors.toList());
-
         // 페이지네이션을 적용합니다.
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), filteredClothes.size());

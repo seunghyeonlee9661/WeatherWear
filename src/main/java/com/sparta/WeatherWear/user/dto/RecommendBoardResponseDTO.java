@@ -1,7 +1,6 @@
 package com.sparta.WeatherWear.user.dto;
 
 import com.sparta.WeatherWear.board.entity.Board;
-import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import lombok.Getter;
 
@@ -14,10 +13,10 @@ import java.util.List;
 @Getter
 public class RecommendBoardResponseDTO implements ResponseDTO {
     private Long id;
-    private List<BoardImage> image;
+    private String image;
 
     public RecommendBoardResponseDTO(Board board) {
         this.id = board.getId();
-        this.image = board.getBoardImages();
+        this.image = board.getImage();
     }
 }

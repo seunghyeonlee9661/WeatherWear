@@ -1,11 +1,16 @@
 package com.sparta.WeatherWear.user.service;
 
+import com.sparta.WeatherWear.board.dto.BoardListResponseDTO;
+import com.sparta.WeatherWear.board.entity.Board;
+import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.global.service.ImageService;
+import com.sparta.WeatherWear.user.dto.RecommendBoardResponseDTO;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,25 +18,27 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 /*
 작성자 : 이승현
 사용자 관련 서비스 처리
 */
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ImageService imageService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.imageService = imageService;
+
+    public ResponseEntity<List<BoardListResponseDTO>> findUserBoard(UserDetailsImpl userDetails){
+        List<Board> boardList = boardRepository.findByUserId(userDetails.getUser().getId());
+        return ResponseEntity.ok(boardList.stream().map(BoardListResponseDTO::new).toList());
     }
 
-    /*______________________User_______________________*/
 
     /* 회원가입 */
     @Transactional
