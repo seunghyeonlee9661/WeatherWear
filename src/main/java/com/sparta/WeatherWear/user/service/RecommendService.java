@@ -86,28 +86,29 @@ public class RecommendService {
 
     /* 1. 날씨 기반 옷차림 추천 : 내 옷장 속 옷 아이템 추천 */
     @Transactional(readOnly = true)
-    public List<? extends ResponseDTO>  getClothesByWeather(User user, Weather weather){
+    public List<? extends ResponseDTO> getClothesByWeather(User user, Weather weather) {
         logger.info("날씨 기반 옷차림 추천");
-        /* 기온에 맞는 옷 타입 선정을 위한 배열 선언*/
         logger.info("온도 : {}", weather.getTMP());
 
-        List<ClothesType> types = temperatureClothesMap.get(28.0);
+        // 초기값 설정: 가장 높은 온도의 옷 목록으로 시작
+        List<ClothesType> types = temperatureClothesMap.get(Double.MIN_VALUE);
+
+        // 현재 온도보다 낮은 범위의 목록을 찾기
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
             logger.info("비교 온도 : {}", weather.getTMP());
             logger.info("비교 키값 : {}", entry.getKey());
+
             if (weather.getTMP() >= entry.getKey()) {
-                break;
+                types = entry.getValue(); // 현재 온도보다 작거나 같은 가장 높은 온도에 해당하는 목록을 설정
             } else {
-                types = entry.getValue();
+                break; // 현재 온도보다 낮은 온도는 더 이상 필요하지 않으므로 루프 종료
             }
         }
-        logger.info("선택된 타입 : {}", types.toString());
-
-        /* 사용자의 옷 중에 배열의 태그와 동일한 옷을 추천합니다. */
+        // 사용자의 옷 중에 배열의 태그와 동일한 옷을 추천합니다.
         List<Clothes> clothes = clothesRepository.findByUserAndTypeIn(user, types);
-        logger.info("선택된 옷 목록 : {}", clothes.toString());
         return clothes.stream().map(ClothesResponseDTO::new).toList();
     }
+
 
     // 2. 점수 합산하여 순위 계산
     @Transactional(readOnly = true)
