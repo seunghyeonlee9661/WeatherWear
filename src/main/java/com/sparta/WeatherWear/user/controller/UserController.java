@@ -66,8 +66,8 @@ public class UserController {
     }
     /* 사용자 정보 삭제 */
     @DeleteMapping("/users")
-    public ResponseEntity<String>  removeUser(@RequestBody Map<String, String> request, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return userService.removeUser(userDetails,request.get("password"));
+    public ResponseEntity<String>  removeUser(@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return userService.removeUser(userDetails);
     }
 
     /* 사용자 정보 요청 */

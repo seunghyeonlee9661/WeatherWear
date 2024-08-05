@@ -52,11 +52,8 @@ public class UserService {
 
     /* 회원 탈퇴*/
     @Transactional
-    public ResponseEntity<String> removeUser(UserDetailsImpl userDetails, String password) throws IOException {
+    public ResponseEntity<String> removeUser(UserDetailsImpl userDetails) throws IOException {
         User user = userDetails.getUser();
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
-        }
         // 카카오 계정이 아니고, 이미지가 있는 경우에만 이미지 삭제
         if (user.getKakaoId() == null && user.getImage() != null) {
             imageService.deleteImage(user.getImage());
