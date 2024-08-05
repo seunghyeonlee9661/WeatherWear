@@ -76,7 +76,6 @@ public class UserController {
         return userService.logout(userDetails);
     }
 
-
     /* 카카오 로그인 콜백 처리 */
     @GetMapping("/kakao/callback")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
@@ -94,4 +93,6 @@ public class UserController {
     public ResponseEntity<String> removeWishlistAtRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("product_id") Long product_id) {
         return recommendService.removeWishlistByProductId(userDetails,product_id);
     }
+
+
 }
