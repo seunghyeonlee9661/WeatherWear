@@ -38,6 +38,11 @@ public class RedisService {
         // 코드가 유효한 경우 이메일을 조회
         return redisTemplate.opsForValue().get(RESET_CODE_PREFIX + code);
     }
+    // Refresh Token 삭제
+    public void deleteEmail(String code) {
+        redisTemplate.delete(RESET_CODE_PREFIX + code);
+    }
+
 
     // 코드로 이메일을 찾아서 반환합니다.
     public String getRefreshToken(String accessToken) {

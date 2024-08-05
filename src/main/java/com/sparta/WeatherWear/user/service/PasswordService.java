@@ -48,7 +48,8 @@ public class PasswordService {
         }else{
             User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
             user.updatePassword(passwordEncoder.encode(requestDTO.getNewPassword()));
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가입되지 않은 메일입니다.");
+            redisService.deleteEmail(requestDTO.getCode());
+            return ResponseEntity.ok("비밀번호 변경이 완료되었습니다.");
         }
     }
 }
