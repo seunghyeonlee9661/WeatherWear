@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.user.service;
 
 import com.sparta.WeatherWear.global.service.EmailService;
 import com.sparta.WeatherWear.global.service.RedisService;
+import com.sparta.WeatherWear.user.dto.EmailRequestDTO;
 import com.sparta.WeatherWear.user.dto.PasswordResetRequestDTO;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
@@ -24,7 +25,8 @@ public class PasswordService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public ResponseEntity<String> sendEmail(String email) {
+    public ResponseEntity<String> sendEmail(EmailRequestDTO requestDTO) {
+        String email = requestDTO.getEmail();
         if(userRepository.existsByEmail(email)){
             String resetCode = UUID.randomUUID().toString(); // 임의의 코드 생성
             if(emailService.sendPasswordResetEmail(email, resetCode)){ // 메일 발송
@@ -44,7 +46,7 @@ public class PasswordService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("올바르지 않은 코드값입니다.");
         }else{
             User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-            user.updatePassword(requestDTO.getNewPassword());
+            user.updatePassword(passwordEncoder.encode(requestDTO.getNewPassword()));
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가입되지 않은 메일입니다.");
         }
     }

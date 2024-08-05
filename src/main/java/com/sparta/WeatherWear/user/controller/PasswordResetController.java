@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.user.controller;
 
+import com.sparta.WeatherWear.user.dto.EmailRequestDTO;
 import com.sparta.WeatherWear.user.dto.PasswordResetRequestDTO;
 import com.sparta.WeatherWear.user.service.PasswordService;
 import jakarta.validation.Valid;
@@ -14,9 +15,9 @@ public class PasswordResetController {
 
     private final PasswordService passwordService;
 
-    @PostMapping("/forgot/{email}")
-    public ResponseEntity<String> requestPasswordReset(@PathVariable("email") String email) {
-        return passwordService.sendEmail(email);
+    @PostMapping("/forgot")
+    public ResponseEntity<String> requestPasswordReset(@RequestBody EmailRequestDTO requestDTO) {
+        return passwordService.sendEmail(requestDTO);
     }
 
     @PostMapping("/reset")
