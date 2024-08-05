@@ -27,6 +27,7 @@ public class PasswordService {
 
     public ResponseEntity<String> sendEmail(EmailRequestDTO requestDTO) {
         String email = requestDTO.getEmail();
+        System.out.println(email);
         if(userRepository.existsByEmail(email)){
             String resetCode = UUID.randomUUID().toString(); // 임의의 코드 생성
             if(emailService.sendPasswordResetEmail(email, resetCode)){ // 메일 발송
