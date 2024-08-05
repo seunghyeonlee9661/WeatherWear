@@ -14,8 +14,8 @@ public class PasswordResetController {
 
     private final PasswordService passwordService;
 
-    @PostMapping("/forgot")
-    public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
+    @PostMapping("/forgot/{email}")
+    public ResponseEntity<String> requestPasswordReset(@PathVariable("email") String email) {
         return passwordService.sendEmail(email);
     }
 
