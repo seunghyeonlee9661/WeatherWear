@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 /*
  * 작성자 :
  * 날씨 정보 데이터를 받아서 처리합니다.
@@ -46,12 +48,13 @@ public class WeatherService {
     /* 법정동 코드와 현재 시간으로 DB에서 날씨 정보를 찾아 반환합니다. */
     /* 법정동 코드 -> 날씨 */
     @Transactional
+    @Cacheable(value = "weather", key = "#id")
     public Weather getWeatherByAddress(Long id){
         Address address = addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Address not found"));
         /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
         // Weather 데이터를 조회하고 반환합니다.
-        return weatherRepository.findByAddressAndDate(address,Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
+        return weatherRepository.findByAddressAndDate(address, Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
                 // Weather가 없는 경우 기상청 API에 날씨 정보를 요청합니다.
                 .orElseGet(() -> {
                     Weather newWeather = null;
@@ -80,7 +83,7 @@ public class WeatherService {
         if (date.getHour() < 2) {
             baseDate = date.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             baseTime = "2300";
-        /* 시간을 3시간 단위로 조절합니다. */
+            /* 시간을 3시간 단위로 조절합니다. */
         } else {
             baseDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             int hour = date.getHour();
