@@ -18,6 +18,5 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("로그인이 필요한 서비스입니다.");
-
     }
 }

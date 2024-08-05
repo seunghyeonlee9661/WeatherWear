@@ -5,7 +5,7 @@ import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.filter.LoginRedirectFilter;
 import com.sparta.WeatherWear.global.handler.AccessDeniedHandler;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
-import com.sparta.WeatherWear.global.handler.AuthenticationSuccessHandler;
+import com.sparta.WeatherWear.global.handler.CustomAuthenticationFailureHandler;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
 import com.sparta.WeatherWear.user.repository.UserRepository;
@@ -21,6 +21,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /*
@@ -109,6 +111,7 @@ public class WebSecurityConfig {
                 loginPage("/login") // 로그인 페이지 url
                 .loginProcessingUrl("/api/login") // 로그인 요청 url
                 .successHandler(authenticationSuccessHandler) // 로그인 성공을 처리하는 핸들러
+                .failureHandler(customAuthenticationFailureHandler())
                 .permitAll()
         );
 
@@ -132,5 +135,10 @@ public class WebSecurityConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
     }
 }
