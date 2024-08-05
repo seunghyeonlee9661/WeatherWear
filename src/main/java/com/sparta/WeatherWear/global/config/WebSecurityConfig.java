@@ -5,10 +5,11 @@ import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.filter.LoginRedirectFilter;
 import com.sparta.WeatherWear.global.handler.AccessDeniedHandler;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
-import com.sparta.WeatherWear.global.handler.CustomAuthenticationFailureHandler;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
-import com.sparta.WeatherWear.user.repository.UserRepository;
+import com.sparta.WeatherWear.global.service.RedisService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +19,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.IOException;
 
 /*
 작성자 : 이승현
@@ -38,7 +41,7 @@ public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private final UserRepository userRepository;
+    private final RedisService redisService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final LoginRedirectFilter loginRedirectFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
@@ -108,7 +111,14 @@ public class WebSecurityConfig {
         http.formLogin((formLogin) -> formLogin.
                 loginPage("/login") // 로그인 페이지 url
                 .loginProcessingUrl("/api/login") // 로그인 요청 url
-                .failureHandler(customAuthenticationFailureHandler())
+                .permitAll()
+        );
+
+        // 로그아웃 처리 진행
+        http.logout(logout -> logout
+                .logoutUrl("/api/logout")
+                .addLogoutHandler(this::handleLogout)
+                .logoutSuccessHandler(this::handleLogoutSuccess)
                 .permitAll()
         );
 
@@ -134,8 +144,17 @@ public class WebSecurityConfig {
         return new ObjectMapper();
     }
 
-    @Bean
-    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
-        return new CustomAuthenticationFailureHandler();
+    private void handleLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        String accessToken = jwtUtil.getTokenFromRequest(request, JwtUtil.AUTHORIZATION_HEADER);
+        if (accessToken != null && jwtUtil.validateToken(jwtUtil.substringToken(accessToken))) {
+            redisService.deleteRefreshToken(jwtUtil.substringToken(accessToken));
+        }// 쿠키 클리어
+        jwtUtil.removeJwtCookie(response);
     }
+
+    private void handleLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("Logout successful");
+    }
+
 }

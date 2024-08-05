@@ -70,6 +70,13 @@ public class UserController {
         return userService.removeUser(userDetails,request.get("password"));
     }
 
+    /* 사용자 정보 요청 */
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.logout(userDetails);
+    }
+
+
     /* 카카오 로그인 콜백 처리 */
     @GetMapping("/kakao/callback")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {

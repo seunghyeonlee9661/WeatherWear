@@ -98,4 +98,10 @@ public class UserService {
         userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");
     }
+
+    public ResponseEntity<String> logout(UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+
+        return ResponseEntity.ok().body("User logout successfully");
+    }
 }
