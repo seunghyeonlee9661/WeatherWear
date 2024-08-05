@@ -35,7 +35,7 @@ public class UserController {
     private final KakaoLoginService kakaoLoginService;
 
     /* 사용자 정보 요청 */
-    @GetMapping("/users")
+    @GetMapping("/users/me")
     public ResponseEntity<UserResponseDTO> findUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok(new UserResponseDTO(userDetails.getUser()));
     }
