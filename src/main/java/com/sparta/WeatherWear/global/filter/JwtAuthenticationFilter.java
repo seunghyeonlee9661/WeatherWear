@@ -11,9 +11,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -75,7 +77,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         log.info("로그인 실패");
         // 실패 응답 전송
-        sendResponse(response, HttpStatus.UNAUTHORIZED, "로그인 실패: " + failed.getMessage());
+        String errorMessage;
+        if (failed instanceof UsernameNotFoundException) {
+            errorMessage = "계정이 존재하지 않습니다.";
+            sendResponse(response, HttpStatus.NOT_FOUND, errorMessage);
+        } else if (failed instanceof BadCredentialsException) {
+            errorMessage = "비밀번호가 틀렸습니다.";
+            sendResponse(response, HttpStatus.UNAUTHORIZED, errorMessage);
+        } else {
+            errorMessage = "로그인 실패: " + failed.getMessage();
+            sendResponse(response, HttpStatus.UNAUTHORIZED, errorMessage);
+        }
     }
 
     /* 응답 전송 */

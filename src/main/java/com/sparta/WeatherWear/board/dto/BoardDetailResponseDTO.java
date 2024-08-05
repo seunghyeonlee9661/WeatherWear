@@ -16,14 +16,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/*
+ * 작성자 : 이승현
+ * 게시물 상세보기를 위한 DTO
+ * */
 @Getter
 @Setter
 public class BoardDetailResponseDTO {
 
     private long id;
-    private SimpleUserDTO user;
-    private String address;
+    private SimpleUserDTO user; // 사용자 정보
+    private String address; // 즈소
     private Weather weather;
     private String title;
     private String contents;
