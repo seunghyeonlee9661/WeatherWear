@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
+    private final String senderEmail = "WeatherWear@gmail.com"; // 발송자 이메일 주소
+    private final String senderName = "WW_Admin"; // 발송자 이름
+
     private final JavaMailSender emailSender;
 
     public EmailService(JavaMailSender emailSender) {
@@ -17,7 +20,7 @@ public class EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
-            message.setFrom("WeatherWear@wws.com"); // 발송자 이메일 주소 설정
+            message.setFrom(String.format("%s <%s>", senderName, senderEmail)); // 발송자 이름과 이메일 주소 설정
             message.setSubject("Password Reset Request");
             message.setText("To reset your password, please use the following link: " + "http://your-website.com/reset-password?token=" + token);
             emailSender.send(message); // 이메일 전송
