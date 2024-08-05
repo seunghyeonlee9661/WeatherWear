@@ -22,7 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /*
@@ -44,7 +43,6 @@ public class WebSecurityConfig {
     private final LoginRedirectFilter loginRedirectFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -110,7 +108,6 @@ public class WebSecurityConfig {
         http.formLogin((formLogin) -> formLogin.
                 loginPage("/login") // 로그인 페이지 url
                 .loginProcessingUrl("/api/login") // 로그인 요청 url
-                .successHandler(authenticationSuccessHandler) // 로그인 성공을 처리하는 핸들러
                 .failureHandler(customAuthenticationFailureHandler())
                 .permitAll()
         );
