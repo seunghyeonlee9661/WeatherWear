@@ -91,9 +91,9 @@ public class UserService {
     public ResponseEntity<String> updateUserPassword(UserDetailsImpl userDetails, UserPasswordUpdateRequestDTO userPasswordUpdateRequestDTO) {
         User user = userDetails.getUser();
         if(!userPasswordUpdateRequestDTO.getNewPassword().equals(userPasswordUpdateRequestDTO.getNewPasswordCheck()))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호 확인이 일치하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("새 비밀번호 확인이 일치하지 않습니다.");
         if(!passwordEncoder.matches(userPasswordUpdateRequestDTO.getCurrentPassword(),user.getPassword()))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 올바르지 않습니다.");
         user.updatePassword(passwordEncoder.encode(userPasswordUpdateRequestDTO.getNewPassword()));
         userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");

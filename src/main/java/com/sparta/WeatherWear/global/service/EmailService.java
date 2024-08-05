@@ -25,8 +25,7 @@ public class EmailService {
             message.setText("To reset your password, please use the following link: " + "http://your-website.com/reset-password?token=" + token);
             emailSender.send(message); // 이메일 전송
             return true; // 전송 성공
-        } catch (Exception e) {
-            // 이메일 전송 실패 시 예외 처리
+        } catch (Exception e) { // 이메일 전송 실패 시 예외 처리
             e.printStackTrace(); // 또는 로깅 처리
             return false; // 전송 실패
         }
