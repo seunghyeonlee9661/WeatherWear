@@ -3,18 +3,15 @@ package com.sparta.WeatherWear.board.entity;
 import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
 
-import com.sparta.WeatherWear.board.enums.ClothesColor;
-import com.sparta.WeatherWear.board.enums.ClothesType;
 import com.sparta.WeatherWear.board.time.Timestamped;
+import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.user.entity.User;
-import com.sparta.WeatherWear.user.enums.UserGender;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -69,6 +66,7 @@ public class Board extends Timestamped {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
         this.isPrivate = requestDto.isPrivate();
+
         //
         this.weather = weather;
         //
@@ -76,7 +74,7 @@ public class Board extends Timestamped {
         this.views = requestDto.getViews();
     }
 
-//    public Board update(BoardUpdateRequestDto requestDTO){
+    //    public Board update(BoardUpdateRequestDto requestDTO){
 //        this.title = requestDTO.getTitle();
 //        this.content = requestDTO.getContents();
 //        this.isPrivate = requestDTO.isPrivate();

@@ -24,6 +24,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository  boardRepository;
 
+    /* 댓글 생성 */
     public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addComments(@Valid CommentCreateRequestDto requestDto, Long boardId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Board board = boardRepository.findById(boardId).orElseThrow(()->
@@ -41,6 +42,7 @@ public class CommentService {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /* BoardId에 해당하는 댓글 모두 조회 */
     public List<CommentCreateResponseDto> findBoardCommentsByBoardId(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(
                 ()-> new IllegalArgumentException("게시물을 찾을 수 없습니다")
@@ -54,7 +56,7 @@ public class CommentService {
         }
         return commentCreateResponseDtos;
     }
-
+    /* 댓글 수정 */
     public ResponseEntity<ApiResponse<CommentCreateResponseDto>> updateBoardComment(CommentUpdateRequesteDto requestDto, Long commentId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(
@@ -77,7 +79,7 @@ public class CommentService {
         }
 
     }
-
+    /* 댓글 삭제 */
     public ResponseEntity<String> deleteBoardComment(Long commentId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(

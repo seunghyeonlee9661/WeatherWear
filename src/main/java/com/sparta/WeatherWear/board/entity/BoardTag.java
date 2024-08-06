@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.entity;
 
+import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.user.enums.UserGender;
