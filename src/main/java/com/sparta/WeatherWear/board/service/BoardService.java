@@ -8,6 +8,7 @@ import com.sparta.WeatherWear.board.repository.BoardLikeRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import com.sparta.WeatherWear.global.service.ImageTransformService;
 import com.sparta.WeatherWear.global.service.RedisService;
 import com.sparta.WeatherWear.global.service.S3Service;
 import com.sparta.WeatherWear.user.entity.User;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +44,7 @@ public class BoardService {
     private BoardTagRepository boardTagRepository;
     private BoardLikeRepository boardLikeRepository;
     private RedisService redisService;
+    private final ImageTransformService imageTransformService;
 
     // 게시물 생성 
     @Transactional
@@ -52,7 +55,11 @@ public class BoardService {
         Board newBoard = boardRepository.save(new Board(requestDto, userDetails.getUser(), weather));
         // 이미지가 있을 경우 파일로 저장
         String image = null;
-        if(!file.isEmpty()) image = s3Service.uploadFile(file);
+
+        if(!file.isEmpty()) {
+            File webPFile = imageTransformService.convertToWebP(file);
+            image = s3Service.uploadFile(webPFile);
+        }
         newBoard.uploadImage(image);
         // 태그 정보 저장
         saveTags(newBoard,requestDto.getTags());
@@ -68,7 +75,10 @@ public class BoardService {
 
         String image = board.getImage();
         if(!image.isEmpty() && file.isEmpty()) s3Service.deleteFileByUrl(image);
-        if(!file.isEmpty()) image = s3Service.uploadFile(file);
+        if(!file.isEmpty()) {
+            File webPFile = imageTransformService.convertToWebP(file);
+            image = s3Service.uploadFile(webPFile);
+        }
 
         board.update(requestDTO,image);
         // 기존 태그 삭제

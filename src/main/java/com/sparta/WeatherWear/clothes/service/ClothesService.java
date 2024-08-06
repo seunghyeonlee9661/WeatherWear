@@ -6,6 +6,7 @@ import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.clothes.repository.ClothesRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import com.sparta.WeatherWear.global.service.ImageTransformService;
 import com.sparta.WeatherWear.global.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +32,7 @@ public class ClothesService {
 
     private final ClothesRepository clothesRepository;
     private final S3Service s3Service;
+    private final ImageTransformService imageTransformService;
 
     /* 옷 목록 불러오기 : 페이지네이션과 타입, 색상에 따라 필터링 됩니다. */
     public ResponseEntity<Page<ClothesResponseDTO>> getClotheList(UserDetailsImpl userDetails, int page, String type, String color) {
@@ -66,9 +69,9 @@ public class ClothesService {
         Clothes savedClothes = clothesRepository.save( new Clothes(color,type,userDetails.getUser()));
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
         if(file != null){
-            String imageUrl = s3Service.uploadFile(file);
+            File webPFile = imageTransformService.convertToWebP(file);
+            String imageUrl = s3Service.uploadFile(webPFile);
             savedClothes.updateImage(imageUrl);
-            clothesRepository.save(savedClothes);
         }
         return ResponseEntity.ok().body("Clothes created successfully");
     }
@@ -87,7 +90,8 @@ public class ClothesService {
             if(clothes.getImage() != null){
                 s3Service.deleteFileByUrl(clothes.getImage());
             }
-            url = s3Service.uploadFile(file);
+            File webPFile = imageTransformService.convertToWebP(file);
+            url = s3Service.uploadFile(webPFile);
         }
         clothes.update(color,type,url);
         return ResponseEntity.ok().body("Clothes created successfully");

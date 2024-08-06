@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.user.service;
 import com.sparta.WeatherWear.board.dto.BoardListResponseDTO;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
+import com.sparta.WeatherWear.global.service.ImageTransformService;
 import com.sparta.WeatherWear.global.service.S3Service;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class UserService {
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final ImageTransformService imageTransformService;
 
 
     public ResponseEntity<List<BoardListResponseDTO>> findUserBoard(UserDetailsImpl userDetails){
@@ -66,31 +69,17 @@ public class UserService {
     /* 회원 수정 */
     @Transactional
     public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,boolean deleteImage, MultipartFile file) throws IOException {
-        Logger logger = LoggerFactory.getLogger(getClass());
-
         User user = userDetails.getUser();
         // 사용자의 기존 nickname과 다르면서 현재 다른 사람이 nickname을 쓰고 있는 경우 : nickname 중복
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
 
         String url = null;
         if(file == null){
-            logger.info("No file provided. Checking if image should be deleted.");
-
-            if(deleteImage) {
-                logger.info("Deleting user image: {}", user.getImage());
-                s3Service.deleteFileByUrl(user.getImage());
-            }
+            if(deleteImage) s3Service.deleteFileByUrl(user.getImage());
         }else{
-            logger.info("File provided. Deleting existing image and uploading new file.");
-            if(user.getImage() != null){
-                logger.info("Deleting existing image: {}", user.getImage());
-                s3Service.deleteFileByUrl(user.getImage());
-            }
-            logger.info("Uploading new file.");
-            logger.info("Received file: {}", file.getOriginalFilename());
-            logger.info("File size: {} bytes", file.getSize());
-            url = s3Service.uploadFile(file);
-            logger.info("New file uploaded. URL: {}", url);
+            if(user.getImage() != null) s3Service.deleteFileByUrl(user.getImage());
+            File webPFile = imageTransformService.convertToWebP(file);
+            url = s3Service.uploadFile(webPFile);
         }
         user.updateInfo(nickname,url);
         return ResponseEntity.ok().body("User updated successfully");

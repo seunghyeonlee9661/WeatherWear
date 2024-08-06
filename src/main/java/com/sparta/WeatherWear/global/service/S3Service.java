@@ -5,14 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,14 +32,49 @@ public class S3Service {
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
-        String key = file.getOriginalFilename();
+        String key = generateUniqueFileName();
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(key).build();
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
 
         try (InputStream inputStream = file.getInputStream()) {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
         }
+
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
+    }
+
+    public String uploadFile(File file) throws IOException {
+        String key = generateUniqueFileName();
+
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+
+        try (InputStream inputStream = Files.newInputStream(file.toPath())) {
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.length()));
+        }
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
+    }
+
+    private String generateUniqueFileName() {
+        String key;
+        do {
+            key = UUID.randomUUID().toString() + ".webp";
+        } while (fileExistsInS3(key));
+        return key;
+    }
+
+    private boolean fileExistsInS3(String key) {
+        try {
+            s3Client.headObject(HeadObjectRequest.builder().bucket(bucketName).key(key).build());
+            return true;
+        } catch (NoSuchKeyException e) {
+            return false;
+        }
     }
 
     public void deleteFileByUrl(String fileUrl) {
