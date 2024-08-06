@@ -11,8 +11,10 @@ import com.sparta.WeatherWear.global.service.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -73,33 +75,20 @@ public class WebSecurityConfig {
         http.csrf((csrf) -> csrf.disable());
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         // 접근 가능 범위 설정
-        http.authorizeHttpRequests((authorizeHttpRequests) ->
+        http.authorizeHttpRequests(authorizeHttpRequests ->
                 authorizeHttpRequests
-                        .anyRequest().permitAll()
+                        // resources 접근 허용 설정
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        // 로그인 없이 접근 가능한 경로들
+                        .requestMatchers("/api/login").permitAll() // 로그인
+                        .requestMatchers(HttpMethod.POST, "/api/user").permitAll() // 회원가입
+                        .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
+                        .requestMatchers(HttpMethod.GET, "/kakao/callback").permitAll() // 카카오 로그인 콜백
+                        // 그 외 모든 요청 인증 처리
+                        .anyRequest().authenticated()
         );
-        // 로그인 관련 경로 설정
-//        http.authorizeHttpRequests((authorizeHttpRequests) ->
-//                authorizeHttpRequests
-//                        // resources 접근 허용 설정
-//                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-//                        // 로그인 없이 접근 가능한 경로
-//                        .requestMatchers(
-//                                "/api/login", // 로그인
-//                                "/api/signup"
-//                        ).permitAll()
-//                        .requestMatchers(
-//                                HttpMethod.GET,
-//                                "/api/teacher", // 강사 정보 불러오기
-//                                "/api/teachers", // 강사 목록 불러오기
-//                                "/api/lecture", // 강의 정보 불러오기
-//                                "/api/lectures", // 강의 목록 불러오기
-//                                "/api/products", // 제품 목록 불러오기
-//                                "/api/product" // 제품 정보 불러오기
-//                        ).permitAll()
-//                        // 그 외 모든 요청 인증처리
-//                        .anyRequest().authenticated()
-//        );
 
         // 에러 처리를 위한 핸들러 설정
         http.exceptionHandling((exceptionHandling) -> {

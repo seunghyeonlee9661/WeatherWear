@@ -2,8 +2,6 @@ package com.sparta.WeatherWear.global.filter;
 
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
-import com.sparta.WeatherWear.user.entity.User;
-import com.sparta.WeatherWear.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
