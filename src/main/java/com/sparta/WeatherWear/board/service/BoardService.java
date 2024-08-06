@@ -9,6 +9,7 @@ import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import com.sparta.WeatherWear.board.repository.BoardLikeRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
+import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
@@ -39,6 +40,7 @@ public class BoardService {
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
 
+    /* 게시물 작성 */
     @Transactional
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
         // 예외처리
@@ -65,8 +67,14 @@ public class BoardService {
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
         System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
         System.out.println("requestDto.getBCode() = " + requestDto.getBCode());
-        System.out.println("requestDto.getColor() = " + requestDto.getColor());
-        System.out.println("requestDto.getType() = " + requestDto.getType());
+        System.out.println("requestDto.getViews() = " + requestDto.getViews());
+
+        // 추가 - 태그 저장 메서드 실행
+        for (ClothesRequestDTO clothesRequestDTO: requestDto.getClothesRequestDTO()) {
+            System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
+            System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
+            boardTagRepository.save(new BoardTag(newBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType()));
+        }
 
         // Board Entity -> db에 저장
         boardRepository.save(newBoard);
@@ -80,14 +88,11 @@ public class BoardService {
             System.out.println("boardImage_path = " + boardImage.getImagePath());
         }
         
-        // 추가 - 태그 저장 메서드 실행
-        boardTagRepository.save(new BoardTag(newBoard, requestDto.getColor(), requestDto.getType()));
-
         // 추가 - 좋아요 저장 메서드 실행
         boardLikeRepository.save(new BoardLike(user,newBoard));
 
         // newBoard -> responseDto로 반환
-        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getColor(), requestDto.getType());
+        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getClothesRequestDTO());
         // Creating the ApiResponse object
         ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(201, "Board created successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status
@@ -96,7 +101,7 @@ public class BoardService {
     }
 
 
-
+    /* 게시물 id로 조회 */
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(Long boardId, UserDetailsImpl userDetails) {
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
@@ -123,17 +128,18 @@ public class BoardService {
             views++;
             
             // 태그 추가
-            ClothesColor color = null;
-            ClothesType type = null;
-
             List<BoardTag> boardTags= board.getBoardTags();
+
+            List<ClothesRequestDTO> clothesRequestDTOS = new ArrayList<>();
             for (BoardTag boardTag : boardTags) {
-                color= boardTag.getColor();
-                type= boardTag.getType();
+                ClothesColor color = boardTag.getColor();
+                ClothesType type = boardTag.getType();
+                ClothesRequestDTO clothesRequestDTO = new ClothesRequestDTO(color, type);
+                clothesRequestDTOS.add(clothesRequestDTO);
             }
 
             // newBoard -> responseDto로 반환
-            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views, color, type);
+            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views, clothesRequestDTOS);
             // Creating the ApiResponse object
             ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
             // Returning the response entity with the appropriate HTTP status
@@ -141,7 +147,7 @@ public class BoardService {
         }
 
     }
-
+    /* 게시물 user_id 전체 목록 조회 (페이징) */
     // 페이징 구현 추가 필요
     public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(Long userId) {
         List<Board> boards = boardRepository.findByUserId(userId);
@@ -163,7 +169,7 @@ public class BoardService {
         // Returning the response entity with the appropriate HTTP status
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
     public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(UserDetailsImpl userDetails) {
         List<Board> boards = boardRepository.findAll();
@@ -187,6 +193,7 @@ public class BoardService {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    /* 게시물 수정 */
     @Transactional
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, List<MultipartFile> images) {
         if (requestDTO == null) {
@@ -249,6 +256,7 @@ public class BoardService {
 
         
     }
+    /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
     public ResponseEntity<String> removeBoard(Long boardId, UserDetailsImpl userDetails) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(()->
@@ -274,6 +282,7 @@ public class BoardService {
 
     }
 
+    /* 게시물 좋아요 변경 */
     @Transactional
     public ResponseEntity<String> switchBoardLikes(Long boardId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();

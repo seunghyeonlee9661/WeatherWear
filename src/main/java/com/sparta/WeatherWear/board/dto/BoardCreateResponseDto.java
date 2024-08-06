@@ -4,6 +4,7 @@ import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.entity.Comment;
+import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 
@@ -37,6 +38,7 @@ public class BoardCreateResponseDto {
     //
     private int commentsSize;
     //
+    private List<ClothesRequestDTO> clothesRequestDTO;
     private ClothesColor clothesColor;
     private ClothesType clothesType;
     private List<String> boardImages;
@@ -72,7 +74,7 @@ public class BoardCreateResponseDto {
         this.views = board.getViews();
     }
     // 처음 생성할 때
-    public BoardCreateResponseDto(Board board, ClothesColor clothesColor, ClothesType clothesType) {
+    public BoardCreateResponseDto(Board board, List<ClothesRequestDTO> clothesRequestDTO) {
         this.id = board.getId();
         // 사용자
         this.userId = board.getUser().getId();
@@ -90,14 +92,15 @@ public class BoardCreateResponseDto {
         //
         this.boardLikes = board.getLikesSize();
         this.commentsSize = board.getCommentsSize();
-        this.clothesColor = clothesColor;
-        this.clothesType = clothesType;
+
+        //
+        this.clothesRequestDTO = clothesRequestDTO;
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = board.getViews();
     }
 
     // 게시물 조회 & 조회수 추가
-    public BoardCreateResponseDto(Board board, int views,ClothesColor color, ClothesType type) {
+    public BoardCreateResponseDto(Board board, int views, List<ClothesRequestDTO> clothesRequestDTO) {
         this.id = board.getId();
         // 사용자
         this.userId = board.getUser().getId();
@@ -116,8 +119,7 @@ public class BoardCreateResponseDto {
         this.boardLikes = board.getLikesSize();
         this.commentsSize = board.getCommentsSize();
         //
-        this.clothesColor = color;
-        this.clothesType = type;
+        this.clothesRequestDTO = clothesRequestDTO;
         //
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = views;

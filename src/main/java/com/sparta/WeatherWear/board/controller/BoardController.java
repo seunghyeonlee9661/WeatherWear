@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/boards")
 public class BoardController {
 
     private final BoardService boardService;
@@ -27,13 +27,13 @@ public class BoardController {
     }
 
     /* 게시물 id로 조회 */
-    @GetMapping("/board-id/{boardId}")
+    @GetMapping("/board/{boardId}")
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.findBoardById(boardId, userDetails);
     }
 
     /* 게시물 user_id 전체 목록 조회 (페이징) */
-    @GetMapping("/user-id/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(@PathVariable Long userId) {
         return boardService.findBoardByUserId(userId);
     }

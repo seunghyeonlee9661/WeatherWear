@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.dto;
 
+import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 
@@ -12,7 +13,6 @@ import java.util.List;
 @Setter
 public class BoardCreateRequestDto {
 
-//    private Long userId;
     private String addr;
     private Long bCode;
     //
@@ -20,8 +20,10 @@ public class BoardCreateRequestDto {
     private String contents;
     private boolean isPrivate;
     //
-    private ClothesColor color;
-    private ClothesType type;
+    private List<ClothesRequestDTO> clothesRequestDTO;
+//    private ClothesColor color;
+//    private ClothesType type;
     //
     private int views;
+
 }
