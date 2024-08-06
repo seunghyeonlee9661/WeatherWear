@@ -3,12 +3,14 @@ package com.sparta.WeatherWear.global.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -33,8 +35,9 @@ public class S3Service {
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(key).build();
 
-        s3Client.putObject(putObjectRequest, Paths.get(Objects.requireNonNull(file.getOriginalFilename())));
-
+        try (InputStream inputStream = file.getInputStream()) {
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+        }
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
     }
 
