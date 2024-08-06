@@ -82,8 +82,10 @@ public class UserService {
             }
         }else{
             logger.info("File provided. Deleting existing image and uploading new file.");
-            logger.info("Deleting existing image: {}", user.getImage());
-            s3Service.deleteFileByUrl(user.getImage());
+            if(!user.getImage().isEmpty()){
+                logger.info("Deleting existing image: {}", user.getImage());
+                s3Service.deleteFileByUrl(user.getImage());
+            }
             logger.info("Uploading new file.");
             url = s3Service.uploadFile(file);
             logger.info("New file uploaded. URL: {}", url);

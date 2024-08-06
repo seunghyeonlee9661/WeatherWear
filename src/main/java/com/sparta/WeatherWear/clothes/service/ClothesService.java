@@ -84,7 +84,9 @@ public class ClothesService {
         if(file == null){
             if(deleteImage) s3Service.deleteFileByUrl(clothes.getImage());
         }else{
-            s3Service.deleteFileByUrl(clothes.getImage());
+            if(!clothes.getImage().isEmpty()){
+                s3Service.deleteFileByUrl(clothes.getImage());
+            }
             url = s3Service.uploadFile(file);
         }
         clothes.update(color,type,url);
