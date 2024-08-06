@@ -48,14 +48,22 @@ public class ClothesController {
 
     /* 옷 정보 추가 */
     @PostMapping("/clothes")
-    public ResponseEntity<String> createClothes(@RequestPart("color") ClothesColor color, @RequestPart("type") ClothesType type, @RequestPart(value = "file" , required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return clothesService.createClothes(userDetails,color,type,file);
+    public ResponseEntity<String> createClothes(
+            @RequestPart("color") String color,
+            @RequestPart("type") String type,
+            @RequestPart(value = "file" , required = false) MultipartFile file,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return clothesService.createClothes(userDetails,ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
     }
 
     /* 옷 정보 수정 */
     @PutMapping("/clothes")
-    public ResponseEntity<String> updateClothes(@RequestPart("color")long id, @RequestPart("color")String color,@RequestPart("type")String type, @RequestPart(value = "file" , required = false) MultipartFile file,@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return clothesService.updateClothes(userDetails,id,color,type,file);
+    public ResponseEntity<String> updateClothes(
+            @RequestPart("color")long id,
+            @RequestPart("color") String color,
+            @RequestPart("type") String type,
+            @RequestPart(value = "file" , required = false) MultipartFile file,@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return clothesService.updateClothes(userDetails,id,ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
     }
 
     /* 옷 정보 삭제 */

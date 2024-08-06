@@ -76,7 +76,7 @@ public class ClothesService {
 
     /* 옷 추가 */
     @Transactional
-    public ResponseEntity<String> updateClothes(UserDetailsImpl userDetails,Long id,String color, String type,MultipartFile file) throws IOException {
+    public ResponseEntity<String> updateClothes(UserDetailsImpl userDetails,Long id,ClothesColor color, ClothesType type,MultipartFile file) throws IOException {
         // 타입과 색상을 기준으로 옷 정보를 추가합니다.
         Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
         if(!clothes.getUser().getId().equals(userDetails.getUser().getId())) ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 데이터가 아닙니다.");
@@ -85,7 +85,7 @@ public class ClothesService {
         if(file != null){
             imageUrl = imageService.uploadImagefile("clothes/", String.valueOf(clothes.getId()),file);
         }
-        clothes.update(ClothesColor.valueOf(color),ClothesType.valueOf(type),imageUrl);
+        clothes.update(color,type,imageUrl);
         return ResponseEntity.ok().body("Clothes created successfully");
     }
 
