@@ -87,6 +87,8 @@ public class UserService {
                 s3Service.deleteFileByUrl(user.getImage());
             }
             logger.info("Uploading new file.");
+            logger.info("Received file: {}", file.getOriginalFilename());
+            logger.info("File size: {} bytes", file.getSize());
             url = s3Service.uploadFile(file);
             logger.info("New file uploaded. URL: {}", url);
         }
