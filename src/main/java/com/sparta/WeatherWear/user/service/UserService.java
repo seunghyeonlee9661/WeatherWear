@@ -3,8 +3,7 @@ package com.sparta.WeatherWear.user.service;
 import com.sparta.WeatherWear.board.dto.BoardListResponseDTO;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
-import com.sparta.WeatherWear.global.service.ImageService;
-import com.sparta.WeatherWear.user.dto.RecommendBoardResponseDTO;
+import com.sparta.WeatherWear.global.service.S3Service;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.entity.User;
@@ -31,7 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ImageService imageService;
+    private final S3Service s3Service;
 
 
     public ResponseEntity<List<BoardListResponseDTO>> findUserBoard(UserDetailsImpl userDetails){
@@ -56,7 +55,7 @@ public class UserService {
         User user = userDetails.getUser();
         // 카카오 계정이 아니고, 이미지가 있는 경우에만 이미지 삭제
         if (user.getKakaoId() == null && user.getImage() != null) {
-            imageService.deleteImage(user.getImage());
+            s3Service.deleteFileByUrl(user.getImage());
         }
         userRepository.delete(user);
         return ResponseEntity.ok().body("User deleted successfully");
@@ -64,19 +63,17 @@ public class UserService {
 
     /* 회원 수정 */
     @Transactional
-    public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,String url, MultipartFile file) throws IOException {
+    public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,boolean deleteImage, MultipartFile file) throws IOException {
         User user = userDetails.getUser();
         // 사용자의 기존 nickname과 다르면서 현재 다른 사람이 nickname을 쓰고 있는 경우 : nickname 중복
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
-        if (url.isEmpty()) {
-            if (file.isEmpty()) { // 사용자가 기존 사진 삭제한 경우
-                if (user.getKakaoId() == null && user.getImage() != null) imageService.deleteImage(user.getImage());
-                url = null;
-            } else { // 사용자가 새롭게 사진을 올리는 경우
-                url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);
-            }
-        } else { // imageUrl: prevImageUrl
-            if (!file.isEmpty()) url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);// 사용자가 이미지를 수정하는 경우
+
+        String url = null;
+        if(file == null){
+            if(deleteImage) s3Service.deleteFileByUrl(user.getImage());
+        }else{
+            s3Service.deleteFileByUrl(user.getImage());
+            url = s3Service.uploadFile(file);
         }
         user.updateInfo(nickname,url);
         userRepository.save(user);

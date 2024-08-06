@@ -8,7 +8,6 @@ import com.sparta.WeatherWear.board.repository.BoardLikeRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
-import com.sparta.WeatherWear.global.service.ImageService;
 import com.sparta.WeatherWear.global.service.RedisService;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;

@@ -1,13 +1,12 @@
 package com.sparta.WeatherWear.clothes.service;
 
-import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
 import com.sparta.WeatherWear.clothes.entity.Clothes;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.clothes.repository.ClothesRepository;
-import com.sparta.WeatherWear.global.service.ImageService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import com.sparta.WeatherWear.global.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
 public class ClothesService {
 
     private final ClothesRepository clothesRepository;
-    private final ImageService imageService;
+    private final S3Service s3Service;
 
     /* 옷 목록 불러오기 : 페이지네이션과 타입, 색상에 따라 필터링 됩니다. */
     public ResponseEntity<Page<ClothesResponseDTO>> getClotheList(UserDetailsImpl userDetails, int page, String type, String color) {
@@ -67,25 +66,28 @@ public class ClothesService {
         Clothes savedClothes = clothesRepository.save( new Clothes(color,type,userDetails.getUser()));
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
         if(file != null){
-            String imageUrl = imageService.uploadImagefile("clothes/", String.valueOf(savedClothes.getId()),file);
+            String imageUrl = s3Service.uploadFile(file);
             savedClothes.updateImage(imageUrl);
             clothesRepository.save(savedClothes);
         }
         return ResponseEntity.ok().body("Clothes created successfully");
     }
 
-    /* 옷 추가 */
+    /* 옷 수정 */
     @Transactional
-    public ResponseEntity<String> updateClothes(UserDetailsImpl userDetails,Long id,ClothesColor color, ClothesType type,MultipartFile file) throws IOException {
+    public ResponseEntity<String> updateClothes(UserDetailsImpl userDetails,Long id,ClothesColor color, ClothesType type,boolean deleteImage,MultipartFile file) throws IOException {
         // 타입과 색상을 기준으로 옷 정보를 추가합니다.
         Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
         if(!clothes.getUser().getId().equals(userDetails.getUser().getId())) ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 데이터가 아닙니다.");
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
-        String imageUrl = clothes.getImage();
-        if(file != null){
-            imageUrl = imageService.uploadImagefile("clothes/", String.valueOf(clothes.getId()),file);
+        String url = null;
+        if(file == null){
+            if(deleteImage) s3Service.deleteFileByUrl(clothes.getImage());
+        }else{
+            s3Service.deleteFileByUrl(clothes.getImage());
+            url = s3Service.uploadFile(file);
         }
-        clothes.update(color,type,imageUrl);
+        clothes.update(color,type,url);
         return ResponseEntity.ok().body("Clothes created successfully");
     }
 
@@ -98,7 +100,7 @@ public class ClothesService {
         // 사용자와 옷의 등록자가 일치하는지 확인
         if(!clothes.getUser().getId().equals(userDetails.getUser().getId()))  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 옷장 아이템이 아닙니다.");
         // 옷 이미지가 있을 경우 해당 이미지 삭제
-        if(!clothes.getImage().isEmpty()) imageService.deleteImage(clothes.getImage());
+        if(!clothes.getImage().isEmpty()) s3Service.deleteFileByUrl(clothes.getImage());
         // 삭제
         clothesRepository.delete(clothes);
         return ResponseEntity.ok("Clothes delete successfully");
