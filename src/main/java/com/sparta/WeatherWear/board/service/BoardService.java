@@ -9,6 +9,7 @@ import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.global.service.RedisService;
+import com.sparta.WeatherWear.global.service.S3Service;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import com.sparta.WeatherWear.weather.service.WeatherService;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private WeatherService weatherService;
-    private ImageService imageService;
+    private S3Service s3Service;
     private BoardRepository boardRepository;
     private BoardTagRepository boardTagRepository;
     private BoardLikeRepository boardLikeRepository;
@@ -51,7 +52,7 @@ public class BoardService {
         Board newBoard = boardRepository.save(new Board(requestDto, userDetails.getUser(), weather));
         // 이미지가 있을 경우 파일로 저장
         String image = null;
-        if(!file.isEmpty()) image = imageService.uploadImagefile("board/", String.valueOf(newBoard.getId()),file);
+        if(!file.isEmpty()) image = s3Service.uploadFile(file);
         newBoard.uploadImage(image);
         // 태그 정보 저장
         saveTags(newBoard,requestDto.getTags());
@@ -66,8 +67,8 @@ public class BoardService {
         if(!Objects.equals(board.getUser().getId(), userDetails.getUser().getId())) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시물 작성자만 수정을 요청할 수 있습니다.");
 
         String image = board.getImage();
-        if(!image.isEmpty() && file.isEmpty()) imageService.deleteImage(image);
-        if(!file.isEmpty()) image = imageService.uploadImagefile("board/", String.valueOf(board.getId()),file);
+        if(!image.isEmpty() && file.isEmpty()) s3Service.deleteFileByUrl(image);
+        if(!file.isEmpty()) image = s3Service.uploadFile(file);
 
         board.update(requestDTO,image);
         // 기존 태그 삭제
@@ -116,7 +117,7 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("선택한 게시물은 없는 게시물입니다."));
         if(!Objects.equals(board.getUser().getId(), userDetails.getUser().getId())) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시물 작성자만 수정을 요청할 수 있습니다.");
         // 이미지 제거
-        if(!board.getImage().isEmpty()) imageService.deleteImage(board.getImage());
+        if(!board.getImage().isEmpty()) s3Service.deleteFileByUrl(board.getImage());
         boardRepository.delete(board);
         return ResponseEntity.ok("Board delete successfully.");
     }
