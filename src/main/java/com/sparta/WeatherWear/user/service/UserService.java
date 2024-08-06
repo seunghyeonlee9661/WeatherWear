@@ -10,6 +10,8 @@ import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,19 +66,29 @@ public class UserService {
     /* 회원 수정 */
     @Transactional
     public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,boolean deleteImage, MultipartFile file) throws IOException {
+        Logger logger = LoggerFactory.getLogger(getClass());
+
         User user = userDetails.getUser();
         // 사용자의 기존 nickname과 다르면서 현재 다른 사람이 nickname을 쓰고 있는 경우 : nickname 중복
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
 
         String url = null;
         if(file == null){
-            if(deleteImage) s3Service.deleteFileByUrl(user.getImage());
+            logger.info("No file provided. Checking if image should be deleted.");
+
+            if(deleteImage) {
+                logger.info("Deleting user image: {}", user.getImage());
+                s3Service.deleteFileByUrl(user.getImage());
+            }
         }else{
+            logger.info("File provided. Deleting existing image and uploading new file.");
+            logger.info("Deleting existing image: {}", user.getImage());
             s3Service.deleteFileByUrl(user.getImage());
+            logger.info("Uploading new file.");
             url = s3Service.uploadFile(file);
+            logger.info("New file uploaded. URL: {}", url);
         }
         user.updateInfo(nickname,url);
-        userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");
     }
 
