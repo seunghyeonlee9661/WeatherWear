@@ -85,7 +85,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/login").permitAll() // 로그인
                         .requestMatchers(HttpMethod.POST, "/api/user").permitAll() // 회원가입
                         .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
-                        .requestMatchers(HttpMethod.GET, "/kakao/callback").permitAll() // 카카오 로그인 콜백
+                        .requestMatchers(HttpMethod.GET, "/api/kakao/callback").permitAll() // 카카오 로그인 콜백
+                        .requestMatchers(HttpMethod.GET, "/api/weathers ").permitAll() // 날씨 정보 불러오기
                         // 그 외 모든 요청 인증 처리
                         .anyRequest().authenticated()
         );

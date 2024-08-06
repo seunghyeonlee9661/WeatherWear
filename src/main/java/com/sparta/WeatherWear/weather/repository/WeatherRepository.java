@@ -10,4 +10,5 @@ import java.util.Optional;
 
 public interface WeatherRepository extends JpaRepository<Weather, Long> {
     Optional<Weather> findByAddressAndDate(Address address, Date date);
+    Optional<Weather> getWeatherById(long id);
 }

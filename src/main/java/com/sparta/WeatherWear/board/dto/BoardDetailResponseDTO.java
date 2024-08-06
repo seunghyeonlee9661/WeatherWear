@@ -7,6 +7,7 @@ import com.sparta.WeatherWear.board.entity.Comment;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.user.dto.SimpleUserDTO;
+import com.sparta.WeatherWear.weather.dto.WeatherResponseDTO;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class BoardDetailResponseDTO {
     private long id;
     private SimpleUserDTO user; // 사용자 정보
     private String address; // 즈소
-    private Weather weather;
+    private WeatherResponseDTO weather;
     private String title;
     private String contents;
     private List<BoardTagDTO> tags;
@@ -45,7 +46,7 @@ public class BoardDetailResponseDTO {
         this.id = board.getId();
         this.user = new SimpleUserDTO(board.getUser());
         this.address = board.getAddress();
-        this.weather = board.getWeather();
+        this.weather = new WeatherResponseDTO(board.getWeather());
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.tags = board.getTags().stream().map(BoardTagDTO::new).collect(Collectors.toList()); // BoardTagDTO 생성자 사용

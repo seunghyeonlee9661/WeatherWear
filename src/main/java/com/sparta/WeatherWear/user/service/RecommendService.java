@@ -5,6 +5,7 @@ import com.sparta.WeatherWear.clothes.entity.Clothes;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import com.sparta.WeatherWear.user.dto.RecommendBoardResponseDTO;
 import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
+import com.sparta.WeatherWear.weather.repository.WeatherRepository;
 import com.sparta.WeatherWear.weather.service.WeatherService;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
@@ -31,7 +32,7 @@ public class RecommendService {
 
     private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
-    private final WeatherService weatherService;
+    private final WeatherRepository weatherRepository;
     private final NaverShoppingService naverShoppingService;
     private final ClothesRepository clothesRepository;
     private final BoardRepository boardRepository;
@@ -50,8 +51,8 @@ public class RecommendService {
         temperatureClothesMap.put(Double.MIN_VALUE, Arrays.asList(ClothesType.PADDED_COAT, ClothesType.SCARF, ClothesType.LINED_CLOTHING,ClothesType.HEAT_TECH));
     }
 
-    public RecommendService(WeatherService weatherService, NaverShoppingService naverShoppingService, ClothesRepository clothesRepository, BoardRepository boardRepository, WishlistRepository wishlistRepository) {
-        this.weatherService = weatherService;
+    public RecommendService(WeatherRepository weatherRepository, NaverShoppingService naverShoppingService, ClothesRepository clothesRepository, BoardRepository boardRepository, WishlistRepository wishlistRepository) {
+        this.weatherRepository = weatherRepository;
         this.naverShoppingService = naverShoppingService;
         this.clothesRepository = clothesRepository;
         this.boardRepository = boardRepository;
@@ -65,17 +66,17 @@ public class RecommendService {
         //반환을 위한 배열의 배열 선언
         List<List<? extends ResponseDTO> > recommendResponseDTOS = new ArrayList<>();
         // 날씨값 찾기
-        Weather weather = weatherService.getWeatherByAddress(id);
+        Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
         User user = userDetails.getUser();
 
         /* 1. 날씨 기반 옷차림 추천 */
         recommendResponseDTOS.add(getClothesByWeather(user, weather));
 
-//        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
-//        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
-//
-//        /* 3. 트랜드 옷차림 추천 */
-//        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
+        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
+        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
+
+        /* 3. 트랜드 옷차림 추천 */
+        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
 
         /* 4. 네이버 아이템 추천 */
         recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
@@ -133,6 +134,7 @@ public class RecommendService {
         // 결과를 배열에 저장하고 반환합니다.
         return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
     }
+
 // 기존 방법 하나씩 뽑고 제외하기...
 //    /* 2. 나의 Best OOTD 추천 : 높은 좋아요의 게시물 추천 */
 //    @Transactional(readOnly = true)
