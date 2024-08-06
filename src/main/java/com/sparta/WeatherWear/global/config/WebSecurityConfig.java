@@ -83,7 +83,7 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         // 로그인 없이 접근 가능한 경로들
                         .requestMatchers("/api/login").permitAll() // 로그인
-                        .requestMatchers(HttpMethod.POST, "/api/user").permitAll() // 회원가입
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // 회원가입
                         .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
                         .requestMatchers(HttpMethod.GET, "/api/kakao/callback").permitAll() // 카카오 로그인 콜백
                         .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 불러오기
