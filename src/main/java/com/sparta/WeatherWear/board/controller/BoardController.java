@@ -18,7 +18,7 @@ import java.util.List;
 /*
 * 작성자 : 이승현
 * 게시물 CRUD와 좋아요 기능 구현
-* */
+*/
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")

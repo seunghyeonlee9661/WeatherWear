@@ -16,10 +16,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query(value = "SELECT b.* " +
             "FROM board b " +
+            "JOIN weather w ON b.weather_id = w.id " +
             "WHERE b.user_id = :userId " +
-            "  AND b.weather_sky = :sky " +
-            "  AND b.weather_pty = :pty " +
-            "  AND b.weather_tmp BETWEEN :minTmp AND :maxTmp " +
+            "  AND w.sky = :sky " +
+            "  AND w.pty = :pty " +
+            "  AND w.tmp BETWEEN :minTmp AND :maxTmp " +
             "ORDER BY b.likes_size DESC " +
             "LIMIT 5", nativeQuery = true)
     List<Board> findTopBoardsByUserAndWeather(@Param("userId") Long userId,
@@ -31,9 +32,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query(value = "SELECT b.*, " +
             "       (b.likes_size * 5 + b.views * 0.5 + b.comments_size * 0.5) AS score " +
             "FROM board b " +
-            "WHERE b.weather_sky = :sky " +
-            "  AND b.weather_pty = :pty " +
-            "  AND b.weather_tmp BETWEEN :minTmp AND :maxTmp " +
+            "JOIN weather w ON b.weather_id = w.id " +
+            "WHERE w.sky = :sky " +
+            "  AND w.pty = :pty " +
+            "  AND w.tmp BETWEEN :minTmp AND :maxTmp " +
             "  AND b.user_id <> :userId " +
             "ORDER BY score DESC " +
             "LIMIT 9", nativeQuery = true)
@@ -42,4 +44,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                                                     @Param("minTmp") double minTmp,
                                                     @Param("maxTmp") double maxTmp,
                                                     @Param("userId") Long userId);
+
 }

@@ -3,6 +3,8 @@ package com.sparta.WeatherWear.clothes.service;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
 import com.sparta.WeatherWear.clothes.entity.Clothes;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.clothes.repository.ClothesRepository;
 import com.sparta.WeatherWear.global.service.ImageService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
@@ -60,9 +62,9 @@ public class ClothesService {
 
     /* 옷 추가 */
     @Transactional
-    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesRequestDTO clothesRequestDTO,MultipartFile file) throws IOException {
+    public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesColor color, ClothesType type, MultipartFile file) throws IOException {
         // 타입과 색상을 기준으로 옷 정보를 추가합니다.
-        Clothes savedClothes = clothesRepository.save( new Clothes(clothesRequestDTO,userDetails.getUser()));
+        Clothes savedClothes = clothesRepository.save( new Clothes(color,type,userDetails.getUser()));
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
         if(file != null){
             String imageUrl = imageService.uploadImagefile("clothes/", String.valueOf(savedClothes.getId()),file);
@@ -71,6 +73,22 @@ public class ClothesService {
         }
         return ResponseEntity.ok().body("Clothes created successfully");
     }
+
+    /* 옷 추가 */
+    @Transactional
+    public ResponseEntity<String> updateClothes(UserDetailsImpl userDetails,Long id,String color, String type,MultipartFile file) throws IOException {
+        // 타입과 색상을 기준으로 옷 정보를 추가합니다.
+        Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
+        if(!clothes.getUser().getId().equals(userDetails.getUser().getId())) ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 데이터가 아닙니다.");
+        // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
+        String imageUrl = clothes.getImage();
+        if(file != null){
+            imageUrl = imageService.uploadImagefile("clothes/", String.valueOf(clothes.getId()),file);
+        }
+        clothes.update(ClothesColor.valueOf(color),ClothesType.valueOf(type),imageUrl);
+        return ResponseEntity.ok().body("Clothes created successfully");
+    }
+
 
     /* 옷 삭제 */
     @Transactional

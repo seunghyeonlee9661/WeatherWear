@@ -32,13 +32,21 @@ public class Clothes {
     @Column(name = "image", nullable = true)
     private String image;
 
-    public Clothes(ClothesRequestDTO clothesRequestDTO, User user) {
+    public Clothes(ClothesColor color,ClothesType type, User user) {
         this.user = user;
-        this.color = clothesRequestDTO.getColor();
-        this.type = clothesRequestDTO.getType();
+        this.color = color;
+        this.type = type;
+    }
+
+    public void update (ClothesColor color,ClothesType type,String image){
+        this.image = image;
+        this.color = color;
+        this.type = type;
     }
 
     public void updateImage (String image){
         this.image = image;
+        this.color = color;
+        this.type = type;
     }
 }
