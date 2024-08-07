@@ -88,6 +88,7 @@ public class UserController {
     /* 추천 아이템들 불러오기 */
     @GetMapping("/recommends")
     public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
+        System.out.println("Service 접근 : 접근 인자 " +  userDetails.getUser().getNickname() + " | id = "+ id);
         return ResponseEntity.ok(recommendService.getRecommends(userDetails,id));
     }
 

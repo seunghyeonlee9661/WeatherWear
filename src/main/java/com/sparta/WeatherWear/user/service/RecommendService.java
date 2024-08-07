@@ -63,8 +63,10 @@ public class RecommendService {
 
     /* 모든 추천 아이템 불러오기 */
     public List<List<? extends ResponseDTO>> getRecommends (UserDetailsImpl userDetails, long id){
+        logger.info("Service 접근 : 접근 인자 " +  userDetails.getUser().getNickname() + " | id = "+ id);
         //반환을 위한 배열의 배열 선언
         List<List<? extends ResponseDTO> > recommendResponseDTOS = new ArrayList<>();
+
 //        // 날씨값 찾기
 //        Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
 //        User user = userDetails.getUser();
