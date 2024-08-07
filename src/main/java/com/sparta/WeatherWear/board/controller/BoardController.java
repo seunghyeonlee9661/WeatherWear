@@ -38,8 +38,8 @@ public class BoardController {
         상세 조회
         게시물 id로 조회 
     */
-    @GetMapping("/by-board-id/{board_id}")
-    public ResponseEntity<BoardCreateResponseDto> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @GetMapping("/by-board-id/{boardId}")
+    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.findBoardById(boardId, userDetails);
     }
 

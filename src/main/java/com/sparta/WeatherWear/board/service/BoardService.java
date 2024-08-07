@@ -92,10 +92,10 @@ public class BoardService {
         System.out.println("boardImage_path = " + boardImagePath);
 
         // 추가 - 좋아요 저장 메서드 실행
-        BoardLike newBoardLike = new BoardLike(user,newBoard);
-        boardLikeRepository.save(newBoardLike);
+//        BoardLike newBoardLike = new BoardLike(user,newBoard);
+//        boardLikeRepository.save(newBoardLike);
         // Board Entity에 추가
-        newBoard.getBoardLikes().add(newBoardLike);
+//        newBoard.getBoardLikes().add(newBoardLike);
 
 //        Board updateImageToBoard = newBoard.update(boardImagePath);
         // newBoard -> responseDto로 반환
@@ -107,18 +107,23 @@ public class BoardService {
 
 
     /* 게시물 id로 조회 */
-    public ResponseEntity<BoardCreateResponseDto> findBoardById(Long boardId, UserDetailsImpl userDetails) {
+    public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails) {
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
         );
         // user 정보 가져오기 (id)
-        User user = userDetails.getUser();
+        Long user = userDetails.getUser().getId();
         int views = board.getViews();
 
+        System.out.println("aaaa");
         // 비공개인지 확인
         if(board.isPrivate() == true){
             // 아이디 비교
+            System.out.println("bbbb");
+            System.out.println("user = " + user);
+            System.out.println("board.getUser().getId() = " + board.getUser().getId());
             if(user.equals(board.getUser().getId())){
+             System.out.println("cccc");
                 // newBoard -> responseDto로 반환
                 BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
                 // Creating the ApiResponse object
@@ -126,25 +131,16 @@ public class BoardService {
                 // Returning the response entity with the appropriate HTTP status
                 return new ResponseEntity<>(responseDto, HttpStatus.OK);
             }else {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                System.out.println("ddddd");
+                return new ResponseEntity<>("선택한 게시물은 볼 수 없는 게시물입니다.",HttpStatus.NO_CONTENT);
             }
         }else {
-            // 조회수 추가
+            // 조회수 추가 & 저장
             views++;
-            
-            // 태그 추가
-            List<BoardTag> boardTags= board.getBoardTags();
-
-            List<ClothesRequestDTO> clothesRequestDTOS = new ArrayList<>();
-            for (BoardTag boardTag : boardTags) {
-                ClothesColor color = boardTag.getColor();
-                ClothesType type = boardTag.getType();
-                ClothesRequestDTO clothesRequestDTO = new ClothesRequestDTO(color, type);
-                clothesRequestDTOS.add(clothesRequestDTO);
-            }
+            System.out.println("eeeee");
 
             // newBoard -> responseDto로 반환
-            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views, clothesRequestDTOS);
+            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
             // Creating the ApiResponse object
 //            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
             // Returning the response entity with the appropriate HTTP status

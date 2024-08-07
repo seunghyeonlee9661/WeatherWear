@@ -97,7 +97,7 @@ public class BoardCreateResponseDto  {
     }
 
     // 게시물 조회 & 조회수 추가
-    public BoardCreateResponseDto(Board board, int views, List<ClothesRequestDTO> clothesRequestDTO) {
+    public BoardCreateResponseDto(Board board, int views) {
         this.id = board.getId();
         // 사용자
         this.userId = board.getUser().getId();
@@ -116,7 +116,13 @@ public class BoardCreateResponseDto  {
         this.boardLikes = board.getLikesSize();
 //        this.commentsSize = board.getCommentsSize();
         //
-        this.clothesRequestDTO = clothesRequestDTO;
+        // 보드의 태그 Response
+        List<ClothesRequestDTO> requestDTOS = new ArrayList<>();
+        for(BoardTag boardTag : board.getBoardTags()) {
+            ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
+            requestDTOS.add(requestDTO);
+        }
+        this.clothesRequestDTO = requestDTOS;
         //
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = views;
