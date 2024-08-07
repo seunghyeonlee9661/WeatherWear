@@ -150,7 +150,7 @@ public class BoardService {
     }
     /* 게시물 user_id 전체 목록 조회 (페이징) */
     // 페이징 구현 추가 필요
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(Long userId) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardByUserId(Long userId) {
         List<Board> boards = boardRepository.findByUserId(userId);
 
         // 예외처리 추가 필요
@@ -166,9 +166,9 @@ public class BoardService {
             responseDtos.add(new BoardCreateResponseDto(board));
         }
         // Creating the ApiResponse object
-        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
+//        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
         // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
     }
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요

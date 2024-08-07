@@ -45,7 +45,7 @@ public class BoardController {
 
     /* 게시물 user_id 전체 목록 조회 (페이징) */
     @GetMapping("/by-user-id/{userId}")
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardByUserId(@PathVariable Long userId) {
         return boardService.findBoardByUserId(userId);
     }
 
