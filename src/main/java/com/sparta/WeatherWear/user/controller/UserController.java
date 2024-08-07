@@ -55,7 +55,10 @@ public class UserController {
 
     /* 사용자 정보 수정 */
     @PutMapping("/users")
-    public ResponseEntity<String>  updateUserInfo(@RequestParam("nickname") String nickname,@RequestParam("deleteImage") boolean deleteImage, @RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public ResponseEntity<String>  updateUserInfo(
+            @RequestParam("nickname") String nickname,
+            @RequestParam("deleteImage") boolean deleteImage,
+            @RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return userService.updateUserInfo(userDetails,nickname,deleteImage,file);
     }
 

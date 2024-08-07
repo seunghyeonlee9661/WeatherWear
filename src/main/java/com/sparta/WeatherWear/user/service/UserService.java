@@ -78,7 +78,7 @@ public class UserService {
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
 
         String url = null;
-        if(file == null){
+        if(file == null || file.isEmpty()){
             System.out.println("file == null");
             if(deleteImage) s3Service.deleteFileByUrl(user.getImage());
         }else{

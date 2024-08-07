@@ -84,7 +84,7 @@ public class ClothesService {
         if(!clothes.getUser().getId().equals(userDetails.getUser().getId())) ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 데이터가 아닙니다.");
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
         String url = null;
-        if(file == null){
+        if(file == null || file.isEmpty()){
             if(deleteImage) s3Service.deleteFileByUrl(clothes.getImage());
         }else{
             if(clothes.getImage() != null){
