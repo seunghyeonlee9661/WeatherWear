@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/*
+  작성자 : 하준영
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/boards/comments")

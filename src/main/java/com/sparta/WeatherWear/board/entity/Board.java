@@ -102,4 +102,8 @@ public class Board extends Timestamped {
         this.isPrivate = requestDTO.isPrivate();
         return this;
     }
+
+//    public Board update(String boardImagePath) {
+////        this.boardImages.add(boardImagePath);
+//    }
 }

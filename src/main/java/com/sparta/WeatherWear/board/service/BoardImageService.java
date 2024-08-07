@@ -16,7 +16,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-
+/*
+  작성자 : 하준영
+ */
 @Service
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
@@ -25,18 +27,19 @@ public class BoardImageService {
     @Autowired
     private BoardImageRepository boardImageRepository;
 
-    public void uploadImage(Board newBoard, MultipartFile image) throws IOException {
+    public BoardImage uploadImage(Board newBoard, MultipartFile image) throws IOException {
             // 이미지 파일 저장을 위한 경로 설정
             String uploadsDir = "src/main/resources/static/uploads/Board/images/";
 
             // 각 이미지 파일에 대해 업로드 및 DB 저장 수행
 
-                // 이미지 파일 경로를 저장
-                String dbFilePath = saveImage(image, uploadsDir);
+            // 이미지 파일 경로를 저장
+            String dbFilePath = saveImage(image, uploadsDir);
 
-                // ProductThumbnail 엔티티 생성 및 저장
-                BoardImage boardImage = new BoardImage(newBoard, dbFilePath);
-        boardImageRepository.save(boardImage);
+            // ProductThumbnail 엔티티 생성 및 저장
+            BoardImage boardImage = new BoardImage(newBoard, dbFilePath);
+            boardImageRepository.save(boardImage);
+            return boardImage;
     }
     // 이미지 파일을 저장하는 메서드
     private String saveImage(MultipartFile image, String uploadsDir) throws IOException {

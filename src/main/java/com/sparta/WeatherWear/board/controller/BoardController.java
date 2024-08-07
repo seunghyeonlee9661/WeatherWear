@@ -14,6 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+  /*
+    작성자 : 하준영
+   */
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/boards")
@@ -29,13 +33,13 @@ public class BoardController {
         return boardService.createBoard(requestDto,userDetails, image);
 
     }
-
-    /* 
+    
+    /*
         상세 조회
         게시물 id로 조회 
     */
     @GetMapping("/by-board-id/{board_id}")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<BoardCreateResponseDto> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.findBoardById(boardId, userDetails);
     }
 
@@ -53,13 +57,13 @@ public class BoardController {
         & (페이징) 추가 예정
     */
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.findBoardAll(userDetails);
     }
 
     /* 게시물 수정 */
     @PutMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
+    public ResponseEntity<BoardCreateResponseDto> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                            @RequestPart(value = "images", required = false) MultipartFile image) throws IOException {
         return boardService.updateBoard(requestDto, userDetails, image);

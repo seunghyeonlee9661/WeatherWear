@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.board.dto;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
+import com.sparta.WeatherWear.board.time.Timestamped;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 
 import com.sparta.WeatherWear.weather.entity.Weather;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BoardCreateResponseDto {
+public class BoardCreateResponseDto  {
 
     private long id;
     // 사용자 정보
@@ -26,8 +27,8 @@ public class BoardCreateResponseDto {
     private String title;
     private String contents;
     private boolean isPrivate;
-    private LocalDateTime registDate;
-    private LocalDateTime updateDate;
+//    private LocalDateTime registDate;
+//    private LocalDateTime updateDate;
     //
     private Weather weather;
     private String address;
@@ -51,14 +52,13 @@ public class BoardCreateResponseDto {
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-        this.registDate = board.getRegistDate();
-        this.updateDate = board.getUpdateDate();
+//        this.registDate = board.getRegistDate();
+//        this.updateDate = board.getUpdateDate();
         // 날씨
         this.weather = board.getWeather();
         this.address = board.getAddress();
         //
         this.boardLikes = board.getLikesSize();
-//        this.commentsSize = board.getCommentsSize();
         // 보드의 태그 Response
         List<ClothesRequestDTO> requestDTOS = new ArrayList<>();
         for(BoardTag boardTag : board.getBoardTags()) {
@@ -81,8 +81,8 @@ public class BoardCreateResponseDto {
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-        this.registDate = board.getRegistDate();
-        this.updateDate = board.getUpdateDate();
+//        this.registDate = board.getRegistDate();
+//        this.updateDate = board.getUpdateDate();
         // 날씨
         this.weather = board.getWeather();
         this.address = board.getAddress();
@@ -107,8 +107,8 @@ public class BoardCreateResponseDto {
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-        this.registDate = board.getRegistDate();
-        this.updateDate = board.getUpdateDate();
+//        this.registDate = board.getRegistDate();
+//        this.updateDate = board.getUpdateDate();
         // 날씨
         this.weather = board.getWeather();
         this.address = board.getAddress();

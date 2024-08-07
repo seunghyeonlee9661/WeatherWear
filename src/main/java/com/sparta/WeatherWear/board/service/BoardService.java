@@ -28,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+  작성자 : 하준영
+ */
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -44,20 +46,18 @@ public class BoardService {
     /* 게시물 작성 */
     @Transactional
     public ResponseEntity<BoardCreateResponseDto> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid MultipartFile image) throws IOException {
-        // 예외처리
-        if (requestDto == null) {
-            throw new IllegalArgumentException("게시판 생성에 필요한 정보가 없습니다");
-        }
-        
-        if (image == null) {
-            throw new IllegalArgumentException("게시판 생성에 필요한 사진이 없습니다");
-        }
+
         // user 정보 가져오기 (id)
         User user = userDetails.getUser();
 
         // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
         // 법정동 코드 띄어쓰기 제거 필요
         Weather weather = weatherService.getWeatherByAddress(requestDto.getAddressId());
+
+        //초기 조회수 0으로 설정
+//        if(requestDto.getViews() == 0){
+//
+//        }
 
         // request에서 받아온 값을 Board Entity로 만들기
         Board newBoard = new Board(requestDto, user, weather); // Weather 추가하기
@@ -78,35 +78,36 @@ public class BoardService {
         for (ClothesRequestDTO clothesRequestDTO: requestDto.getClothesRequestDTO()) {
             System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
             System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
-            boardTagRepository.save(new BoardTag(newBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType()));
+            BoardTag newBoardTag = new BoardTag(newBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType());
+            boardTagRepository.save(newBoardTag);
+            // Board Entity에 추가
+            newBoard.getBoardTags().add(newBoardTag);
         }
         // 추가 - 사진 저장 메서드 실행
-        boardImageService.uploadImage(newBoard, image);
+        BoardImage boardImagePath = boardImageService.uploadImage(newBoard, image);
+        // Board Entity에 추가
+        newBoard.getBoardImages().add(boardImagePath);
 
-        System.out.println("aaaaa");
         // 사진 확인
-        List<BoardImage> boardImages = newBoard.getBoardImages();
-        for (BoardImage boardImage : boardImages) {
-            System.out.println("boardImage_path = " + boardImage.getImagePath());
-        }
-        System.out.println("bbbbb");
+        System.out.println("boardImage_path = " + boardImagePath);
 
         // 추가 - 좋아요 저장 메서드 실행
-        boardLikeRepository.save(new BoardLike(user,newBoard));
+        BoardLike newBoardLike = new BoardLike(user,newBoard);
+        boardLikeRepository.save(newBoardLike);
+        // Board Entity에 추가
+        newBoard.getBoardLikes().add(newBoardLike);
 
-        System.out.println("cccc");
+//        Board updateImageToBoard = newBoard.update(boardImagePath);
         // newBoard -> responseDto로 반환
         BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getClothesRequestDTO());
-        // Creating the ApiResponse object
-//        ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(201, "Board created successfully", responseDto);
-        // Returning the response entity with the appropriate HTTP status
+
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
 
     }
 
 
     /* 게시물 id로 조회 */
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(Long boardId, UserDetailsImpl userDetails) {
+    public ResponseEntity<BoardCreateResponseDto> findBoardById(Long boardId, UserDetailsImpl userDetails) {
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
         );
@@ -115,15 +116,15 @@ public class BoardService {
         int views = board.getViews();
 
         // 비공개인지 확인
-        if(board.isPrivate() == false){
+        if(board.isPrivate() == true){
             // 아이디 비교
             if(user.equals(board.getUser().getId())){
                 // newBoard -> responseDto로 반환
                 BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
                 // Creating the ApiResponse object
-                ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
+//                ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
                 // Returning the response entity with the appropriate HTTP status
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(responseDto, HttpStatus.OK);
             }else {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -145,9 +146,9 @@ public class BoardService {
             // newBoard -> responseDto로 반환
             BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views, clothesRequestDTOS);
             // Creating the ApiResponse object
-            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
+//            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
             // Returning the response entity with the appropriate HTTP status
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }
 
     }
@@ -175,7 +176,7 @@ public class BoardService {
     }
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
-    public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(UserDetailsImpl userDetails) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails) {
         List<Board> boards = boardRepository.findAll();
         List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
 
@@ -192,14 +193,14 @@ public class BoardService {
             }
         }
         // Creating the ApiResponse object
-        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
+//        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
         // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
 
     }
     /* 게시물 수정 */
     @Transactional
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, MultipartFile image) throws IOException {
+    public ResponseEntity<BoardCreateResponseDto> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, MultipartFile image) throws IOException {
 
         // user 정보 가져오기 (id)
         Long userId = userDetails.getUser().getId();
@@ -245,9 +246,9 @@ public class BoardService {
             // newBoard -> responseDto로 반환
             BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
             // Creating the ApiResponse object
-            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board updated successfully", responseDto);
+//            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board updated successfully", responseDto);
             // Returning the response entity with the appropriate HTTP status
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
             
         }else {
             log.info("User의 Id 값이 없습니다.");
