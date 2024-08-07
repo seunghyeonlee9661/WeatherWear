@@ -63,13 +63,12 @@ public class RecommendService {
 
     /* 모든 추천 아이템 불러오기 */
     public List<List<? extends ResponseDTO>> getRecommends (UserDetailsImpl userDetails, long id){
-        logger.info("Service 접근 : 접근 인자 " +  userDetails.getUser().getNickname() + " | id = "+ id);
         //반환을 위한 배열의 배열 선언
         List<List<? extends ResponseDTO> > recommendResponseDTOS = new ArrayList<>();
 
-//        // 날씨값 찾기
-//        Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
-//        User user = userDetails.getUser();
+        // 날씨값 찾기
+        Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
+        User user = userDetails.getUser();
 
         /* 1. 날씨 기반 옷차림 추천 */
 //        recommendResponseDTOS.add(getClothesByWeather(user, weather));
@@ -81,7 +80,7 @@ public class RecommendService {
 //        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
 
         /* 4. 네이버 아이템 추천 */
-//        recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
+        recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
 
 
         return recommendResponseDTOS;
