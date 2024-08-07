@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
+
+/* 게시물 태그 목록 저장 */
 public class BoardTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +31,6 @@ public class BoardTag {
     // 종류
     @Enumerated(EnumType.STRING)
     private ClothesType type;
-
-    public BoardTag(Board board, ClothesColor color, ClothesType type) {
-        this.board = board;
-        this.color = color;
-        this.type = type;
-    }
 
     public BoardTag(Board board, BoardTagDTO tag) {
         this.board = board;

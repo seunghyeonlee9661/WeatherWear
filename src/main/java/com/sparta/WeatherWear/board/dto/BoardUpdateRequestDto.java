@@ -14,6 +14,7 @@ import java.util.List;
 
 @Getter
 @Setter
+/* 게시물 수정 작업을 위한 DTO */
 public class BoardUpdateRequestDto {
 
     private long id;

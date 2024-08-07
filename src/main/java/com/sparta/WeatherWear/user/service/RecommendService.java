@@ -69,6 +69,10 @@ public class RecommendService {
         // 날씨값 찾기
         Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
         User user = userDetails.getUser();
+        //Todo : 사용자 추천 결과를 Redis에서 검색하고 없으면 만들어서 Redis에 넣기
+        // 1. 그냥 매번 검색한다.
+        // 2. Redis에 아이템과 게시물, 제품의 ID만 저장한다.
+        //
 
         /* 1. 날씨 기반 옷차림 추천 */
         recommendResponseDTOS.add(getClothesByWeather(user, weather));

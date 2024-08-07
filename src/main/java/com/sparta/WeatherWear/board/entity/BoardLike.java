@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor // 기본 생성자 추가
+/* 사용자 좋아요 여부 저장 */
 public class BoardLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

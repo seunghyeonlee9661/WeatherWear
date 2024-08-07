@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.List;
 
 /*
-* 작성자 : 이승현
 * 게시물 CRUD와 좋아요 기능 구현
 */
 @RequiredArgsConstructor
@@ -49,7 +48,7 @@ public class BoardController {
 
     /* 게시물 전체 조회 : 커서 기반 페이지네이션, 검색어를 통한 검색 기능 */
     @GetMapping("/boards")
-    public ResponseEntity<List<BoardListResponseDTO>> findBoardList(@RequestParam(value = "lastId", required = false, defaultValue = "0") Long lastId,@RequestParam(value = "search", required = false, defaultValue = "") String search) {
+    public ResponseEntity<List<BoardListResponseDTO>> findBoardList(@RequestParam(value = "lastId", required = false) Long lastId,@RequestParam(value = "search", required = false, defaultValue = "") String search) {
         return boardService.findBoardList(lastId,search);
     }
 

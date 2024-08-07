@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor  // 기본 생성자 추가
 @AllArgsConstructor
+// 게시물의 태그 아이템을 처리하기 위한 DTO
 public class BoardTagDTO {
     private ClothesColor color;
     private ClothesType type;
