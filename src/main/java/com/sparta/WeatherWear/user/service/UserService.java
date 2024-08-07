@@ -11,8 +11,6 @@ import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -80,8 +78,10 @@ public class UserService {
             if(user.getImage() != null) s3Service.deleteFileByUrl(user.getImage());
             File webPFile = imageTransformService.convertToWebP(file);
             url = s3Service.uploadFile(webPFile);
+            System.out.println(url);
         }
         user.updateInfo(nickname,url);
+        userRepository.save(user); // Transactional 왜 안되는지 확인해야됨!!!
         return ResponseEntity.ok().body("User updated successfully");
     }
 
