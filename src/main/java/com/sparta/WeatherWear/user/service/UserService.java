@@ -67,6 +67,12 @@ public class UserService {
     /* 회원 수정 */
     @Transactional
     public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,boolean deleteImage, MultipartFile file) throws IOException {
+        if(deleteImage){
+            System.out.println("deleteImage + true");
+        }else{
+            System.out.println("deleteImage + false");
+        }
+
         User user = userDetails.getUser();
         // 사용자의 기존 nickname과 다르면서 현재 다른 사람이 nickname을 쓰고 있는 경우 : nickname 중복
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
