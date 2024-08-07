@@ -35,34 +35,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         log.info("검증 시작 : " + req.getRequestURI());
-
-        // 헤더 정보 로그에 기록
-        Enumeration<String> headerNames = req.getHeaderNames();
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                String headerName = headerNames.nextElement();
-                String headerValue = req.getHeader(headerName);
-                logger.info("Header Name: "+headerName + ", Header Value: " + headerValue);
-            }
-        }
-
         // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER);
 
         // accessToken 확인
         if (accessToken != null) {
-            log.info("토큰 : {}", accessToken);
             // accessToken 검증
             String accessTokenValue = jwtUtil.substringToken(accessToken); 
             if (jwtUtil.validateToken(accessTokenValue)) {
-                log.info("토큰 검증 완료");
                 // 토큰이 올바르면 사용자 정보 확인
                 UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(accessTokenValue).getSubject());
                 // 사용자 인증 및 정보 저장
                 setAuthentication(userDetails, req);
             // accessToken이 유효하지 않은 경우
             } else {
-                log.info("토큰 검증 실패 : RefreshToken을 통한 재발급 시도");
                 // accessToken 기반으로 RefreshToken을 찾아 재발급을 진행
                 String newAccessToken = jwtUtil.refreshAccessToken(accessToken);
                 if (newAccessToken != null) {

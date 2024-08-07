@@ -71,7 +71,7 @@ public class RecommendService {
         User user = userDetails.getUser();
 
         /* 1. 날씨 기반 옷차림 추천 */
-//        recommendResponseDTOS.add(getClothesByWeather(user, weather));
+        recommendResponseDTOS.add(getClothesByWeather(user, weather));
 
 //        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
 //        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
