@@ -21,7 +21,7 @@ public class BoardCreateRequestDto {
     private String title;
     private String contents;
 
-//    private boolean isPrivate;
+    private boolean isPrivate;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
     //

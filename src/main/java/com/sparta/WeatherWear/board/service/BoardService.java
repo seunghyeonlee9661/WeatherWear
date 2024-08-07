@@ -65,7 +65,7 @@ public class BoardService {
         System.out.println("userDetails.getUser().getId() = " + userDetails.getUser().getId());
         System.out.println("requestDto.getTitle() = " + requestDto.getTitle());
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
-//        System.out.println("requestDto.isPrivate() = " + isPrivate);
+        System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
         System.out.println("requestDto.getAddressId() = " + requestDto.getAddressId());
         System.out.println("requestDto.getViews() = " + requestDto.getViews());
 

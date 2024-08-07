@@ -64,7 +64,7 @@ public class Board extends Timestamped {
         //
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
-//        this.isPrivate = isPrivate;
+        this.isPrivate = requestDto.isPrivate();
 
         //
         this.weather = weather;
