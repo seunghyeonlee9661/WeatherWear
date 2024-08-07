@@ -9,9 +9,12 @@ import com.sparta.WeatherWear.user.service.RecommendService;
 import com.sparta.WeatherWear.user.service.UserService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.service.KakaoLoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 /*
@@ -87,7 +91,7 @@ public class UserController {
 
     /* 추천 아이템들 불러오기 */
     @GetMapping("/recommends")
-    public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
+    public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(HttpServletRequest request,@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
         System.out.println("Service 접근 : 접근 인자 " +  userDetails.getUser().getNickname() + " | id = "+ id);
         return ResponseEntity.ok(recommendService.getRecommends(userDetails,id));
     }
