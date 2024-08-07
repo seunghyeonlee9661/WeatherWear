@@ -50,7 +50,7 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> tags;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image", nullable = true)
     private String image;
 
     // 이승현 : 조회수
