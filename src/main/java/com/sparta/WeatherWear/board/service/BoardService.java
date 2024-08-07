@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,13 +43,13 @@ public class BoardService {
 
     /* 게시물 작성 */
     @Transactional
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid MultipartFile image) throws IOException {
         // 예외처리
         if (requestDto == null) {
             throw new IllegalArgumentException("게시판 생성에 필요한 정보가 없습니다");
         }
         
-        if (images == null) {
+        if (image == null) {
             throw new IllegalArgumentException("게시판 생성에 필요한 사진이 없습니다");
         }
         // user 정보 가져오기 (id)
@@ -80,7 +81,7 @@ public class BoardService {
             boardTagRepository.save(new BoardTag(newBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType()));
         }
         // 추가 - 사진 저장 메서드 실행
-        boardImageService.uploadImage(newBoard, images);
+        boardImageService.uploadImage(newBoard, image);
 
         // 사진 확인
         List<BoardImage> boardImages = newBoard.getBoardImages();
@@ -195,7 +196,7 @@ public class BoardService {
     }
     /* 게시물 수정 */
     @Transactional
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, MultipartFile image) throws IOException {
 
         // user 정보 가져오기 (id)
         Long userId = userDetails.getUser().getId();
@@ -222,13 +223,13 @@ public class BoardService {
             // 날씨 정보 & 사진 업데이트하기
 
             // 사진 업데이트
-            if(images != null) {
+            if(image != null) {
                 // 기존 사진을 제거해야 한다
                 List<BoardImage> boardImages = updateBoard.getBoardImages();
                 boardImageRepository.deleteAll(boardImages);
 
                 // 추가 - 사진 저장 메서드 실행
-                boardImageService.uploadImage(updateBoard, images);
+                boardImageService.uploadImage(updateBoard, image);
 
                 for (BoardImage boardImage : boardImages) {
                     System.out.println("boardImage_path = " + boardImage.getImagePath());

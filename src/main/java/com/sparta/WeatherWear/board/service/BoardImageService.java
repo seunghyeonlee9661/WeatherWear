@@ -4,6 +4,7 @@ import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,27 +22,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BoardImageService {
 
+    @Autowired
     private BoardImageRepository boardImageRepository;
 
-    public void uploadImage(Board newBoard, List<MultipartFile> images) {
-        try {
+    public void uploadImage(Board newBoard, MultipartFile image) throws IOException {
             // 이미지 파일 저장을 위한 경로 설정
             String uploadsDir = "src/main/resources/static/uploads/Board/images/";
 
             // 각 이미지 파일에 대해 업로드 및 DB 저장 수행
-            for (MultipartFile image : images) {
 
                 // 이미지 파일 경로를 저장
                 String dbFilePath = saveImage(image, uploadsDir);
 
                 // ProductThumbnail 엔티티 생성 및 저장
                 BoardImage boardImage = new BoardImage(newBoard, dbFilePath);
-                boardImageRepository.save(boardImage);
-            }
-        } catch (IOException e) {
-            // 파일 저장 중 오류가 발생한 경우 처리
-            e.printStackTrace();
-        }
+        boardImageRepository.save(boardImage);
     }
     // 이미지 파일을 저장하는 메서드
     private String saveImage(MultipartFile image, String uploadsDir) throws IOException {

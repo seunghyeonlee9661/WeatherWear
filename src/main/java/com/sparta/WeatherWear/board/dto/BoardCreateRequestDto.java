@@ -12,7 +12,6 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
 public class BoardCreateRequestDto {
 
     private String address;
@@ -21,6 +20,7 @@ public class BoardCreateRequestDto {
     private String title;
     private String contents;
 
+    @JsonProperty("isPrivate")
     private boolean isPrivate;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;

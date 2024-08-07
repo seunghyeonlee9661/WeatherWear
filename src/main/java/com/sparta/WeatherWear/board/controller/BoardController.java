@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -24,8 +25,8 @@ public class BoardController {
     @PostMapping("/a")
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                           @RequestPart(value = "images") List<MultipartFile> images) {
-        return boardService.createBoard(requestDto,userDetails, images);
+                                                                           @RequestPart(value = "images") MultipartFile image) throws IOException {
+        return boardService.createBoard(requestDto,userDetails, image);
 
     }
 
@@ -60,8 +61,8 @@ public class BoardController {
     @PutMapping("/")
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                           @RequestPart(value = "images", required = false) List<MultipartFile> images) {
-        return boardService.updateBoard(requestDto, userDetails, images);
+                                                                           @RequestPart(value = "images", required = false) MultipartFile image) throws IOException {
+        return boardService.updateBoard(requestDto, userDetails, image);
     }
 
     /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
