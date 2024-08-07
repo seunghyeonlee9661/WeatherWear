@@ -83,9 +83,13 @@ public class ClothesService {
         Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
         if(!clothes.getUser().getId().equals(userDetails.getUser().getId())) ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 데이터가 아닙니다.");
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
-        String url = null;
+
+        String url = clothes.getImage();
         if(file == null || file.isEmpty()){
-            if(deleteImage) s3Service.deleteFileByUrl(clothes.getImage());
+            if(deleteImage) {
+                url = null;
+                s3Service.deleteFileByUrl(clothes.getImage());
+            }
         }else{
             if(clothes.getImage() != null){
                 s3Service.deleteFileByUrl(clothes.getImage());
