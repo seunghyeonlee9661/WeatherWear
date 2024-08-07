@@ -82,6 +82,8 @@ public class WebSecurityConfig {
                         // resources 접근 허용 설정
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         // 로그인 없이 접근 가능한 경로들
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/login").permitAll() // 로그인
                         .requestMatchers("/api/login").permitAll() // 로그인
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // 회원가입
                         .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
