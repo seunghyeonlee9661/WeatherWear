@@ -281,24 +281,40 @@ public class BoardService {
 
     /* 게시물 좋아요 변경 */
     @Transactional
-    public ResponseEntity<String> switchBoardLikes(Long boardId, UserDetailsImpl userDetails) {
+    public ResponseEntity<?> switchBoardLikes(Long boardId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("게시물이 존재하지 않습니다")
         );
 
+        // 좋아요가 아예 없는 경우
         BoardLike newBoardLike = new BoardLike(user, board);
-
-        // 유저가 이미 있는지 확인
-        for(BoardLike boardLike : board.getBoardLikes()) {
-            if(boardLike.getUser().getId().equals(user.getId())) {
-                board.getBoardLikes().remove(boardLike);
-                boardLikeRepository.delete(boardLike);
-            }else {
-                board.getBoardLikes().add(boardLike);
-                boardLikeRepository.save(newBoardLike);
-            }
+        if(board.getBoardLikes().isEmpty()) {
+            board.getBoardLikes().add(newBoardLike);
+            boardLikeRepository.save(newBoardLike);
+            int boardLikes = board.getBoardLikes().size();
+            return new ResponseEntity<>(boardLikes, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        for(BoardLike boardLike : board.getBoardLikes()) {
+            System.out.println("boardLike = " + boardLike);
+            System.out.println("boardLike.getUser() = " + boardLike.getUser());
+            System.out.println("boardLike.getBoard() = " + boardLike.getBoard());
+            
+        }
+        // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
+        BoardLike existingLike = boardLikeRepository.findByUserAndBoard(user, board);
+
+        if (existingLike != null) {
+            // User has already liked the post; remove the like
+            board.getBoardLikes().remove(existingLike);
+            boardLikeRepository.delete(existingLike);
+        } else {
+            // User has not liked the post; add the like
+            BoardLike newBoardLike2 = new BoardLike(user, board);
+            board.getBoardLikes().add(newBoardLike2);
+            boardLikeRepository.save(newBoardLike2);
+        }
+        int boardLikes = board.getBoardLikes().size();
+        return new ResponseEntity<>(boardLikes, HttpStatus.OK);
     }
 }
