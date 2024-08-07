@@ -23,7 +23,7 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("/a")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
+    public ResponseEntity<BoardCreateResponseDto> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                            @RequestPart(value = "images") MultipartFile image) throws IOException {
         return boardService.createBoard(requestDto,userDetails, image);

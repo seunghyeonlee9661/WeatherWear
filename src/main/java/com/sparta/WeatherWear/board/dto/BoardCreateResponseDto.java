@@ -3,10 +3,7 @@ package com.sparta.WeatherWear.board.dto;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
-import com.sparta.WeatherWear.board.entity.Comment;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
-import com.sparta.WeatherWear.clothes.enums.ClothesColor;
-import com.sparta.WeatherWear.clothes.enums.ClothesType;
 
 import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;

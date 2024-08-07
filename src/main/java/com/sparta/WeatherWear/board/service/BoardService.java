@@ -43,7 +43,7 @@ public class BoardService {
 
     /* 게시물 작성 */
     @Transactional
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid MultipartFile image) throws IOException {
+    public ResponseEntity<BoardCreateResponseDto> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid MultipartFile image) throws IOException {
         // 예외처리
         if (requestDto == null) {
             throw new IllegalArgumentException("게시판 생성에 필요한 정보가 없습니다");
@@ -83,21 +83,24 @@ public class BoardService {
         // 추가 - 사진 저장 메서드 실행
         boardImageService.uploadImage(newBoard, image);
 
+        System.out.println("aaaaa");
         // 사진 확인
         List<BoardImage> boardImages = newBoard.getBoardImages();
         for (BoardImage boardImage : boardImages) {
             System.out.println("boardImage_path = " + boardImage.getImagePath());
         }
-        
+        System.out.println("bbbbb");
+
         // 추가 - 좋아요 저장 메서드 실행
         boardLikeRepository.save(new BoardLike(user,newBoard));
 
+        System.out.println("cccc");
         // newBoard -> responseDto로 반환
         BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getClothesRequestDTO());
         // Creating the ApiResponse object
-        ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(201, "Board created successfully", responseDto);
+//        ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(201, "Board created successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
 
     }
 

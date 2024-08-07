@@ -43,13 +43,13 @@ public class Board extends Timestamped {
     private Weather weather;
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<BoardLike> boardLikes;
+    private List<BoardLike> boardLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<BoardTag> boardTags;
+    private List<BoardTag> boardTags = new ArrayList<>();
 
     // Board 엔티티에 image 리스트 필드 추가
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
