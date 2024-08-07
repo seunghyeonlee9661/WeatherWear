@@ -112,6 +112,7 @@ public class WebSecurityConfig {
                 .permitAll()
         );
 
+
         // JWT 검증 및 인가 필터
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         // 로그인 및 JWT 생성 필터
