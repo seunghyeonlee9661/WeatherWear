@@ -35,7 +35,7 @@ public class Board extends Timestamped {
     @Column(name = "content", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
-    @Column(name = "isPrivate")
+    @Column(name = "is_private")
     private boolean isPrivate;
 
     @ManyToOne
