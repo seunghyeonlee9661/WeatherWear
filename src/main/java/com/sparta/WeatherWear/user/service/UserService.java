@@ -79,8 +79,10 @@ public class UserService {
 
         String url = null;
         if(file == null){
+            System.out.println("file == null");
             if(deleteImage) s3Service.deleteFileByUrl(user.getImage());
         }else{
+            System.out.println("file != null");
             if(user.getImage() != null) s3Service.deleteFileByUrl(user.getImage());
             File webPFile = imageTransformService.convertToWebP(file);
             url = s3Service.uploadFile(webPFile);
