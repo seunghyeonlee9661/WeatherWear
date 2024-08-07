@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -39,8 +40,6 @@ public class BoardCreateResponseDto {
     private int commentsSize;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
-    private ClothesColor clothesColor;
-    private ClothesType clothesType;
     private List<String> boardImages;
     private int views;
 
@@ -62,13 +61,14 @@ public class BoardCreateResponseDto {
         this.addr = board.getAddr();
         //
         this.boardLikes = board.getLikesSize();
-        this.commentsSize = board.getCommentsSize();
-        //
-        List<BoardTag> boardTags= board.getBoardTags();
-        for (BoardTag boardTag : boardTags) {
-            this.clothesColor = boardTag.getColor();
-            this.clothesType = boardTag.getType(); 
+//        this.commentsSize = board.getCommentsSize();
+        // 보드의 태그 Response
+        List<ClothesRequestDTO> requestDTOS = new ArrayList<>();
+        for(BoardTag boardTag : board.getBoardTags()) {
+             ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
+             requestDTOS.add(requestDTO);
         }
+        this.clothesRequestDTO = requestDTOS;
         //
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = board.getViews();
@@ -91,7 +91,7 @@ public class BoardCreateResponseDto {
         this.addr = board.getAddr();
         //
         this.boardLikes = board.getLikesSize();
-        this.commentsSize = board.getCommentsSize();
+//        this.commentsSize = board.getCommentsSize();
 
         //
         this.clothesRequestDTO = clothesRequestDTO;
@@ -117,7 +117,7 @@ public class BoardCreateResponseDto {
         this.addr = board.getAddr();
         //
         this.boardLikes = board.getLikesSize();
-        this.commentsSize = board.getCommentsSize();
+//        this.commentsSize = board.getCommentsSize();
         //
         this.clothesRequestDTO = clothesRequestDTO;
         //

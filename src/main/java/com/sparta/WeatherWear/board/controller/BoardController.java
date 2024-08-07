@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,24 +22,35 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@RequestBody @Valid BoardCreateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
+                                                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                           @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         return boardService.createBoard(requestDto, userDetails, images);
 
     }
 
-    /* 게시물 id로 조회 */
-    @GetMapping("/board/{boardId}")
+    /* 
+        상세 조회
+        게시물 id로 조회 
+    */
+    @GetMapping("/by-board-id/{board_id}")
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.findBoardById(boardId, userDetails);
     }
 
     /* 게시물 user_id 전체 목록 조회 (페이징) */
-    @GetMapping("/user/{userId}")
+    @GetMapping("/by-user-id/{userId}")
     public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardByUserId(@PathVariable Long userId) {
         return boardService.findBoardByUserId(userId);
     }
 
-    /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
+    /*
+        <MainPage>
+        게시물 전체 목록 조회
+        & 아이디에 해당하는 값 있으면 수정 기능
+        & 최신순 추가 예정
+        & (페이징) 추가 예정
+    */
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<BoardCreateResponseDto>>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.findBoardAll(userDetails);
@@ -46,7 +58,9 @@ public class BoardController {
 
     /* 게시물 수정 */
     @PutMapping("/")
-    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@RequestBody @Valid BoardUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
+                                                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                           @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         return boardService.updateBoard(requestDto, userDetails, images);
     }
 

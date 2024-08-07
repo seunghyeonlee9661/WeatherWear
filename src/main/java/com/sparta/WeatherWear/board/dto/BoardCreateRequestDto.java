@@ -14,15 +14,13 @@ import java.util.List;
 public class BoardCreateRequestDto {
 
     private String addr;
-    private Long bCode;
+    private Long addressId;
     //
     private String title;
     private String contents;
     private boolean isPrivate;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
-//    private ClothesColor color;
-//    private ClothesType type;
     //
     private int views;
 

@@ -56,7 +56,7 @@ public class BoardService {
 
         // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
         // 법정동 코드 띄어쓰기 제거 필요
-        Weather weather = weatherService.getWeatherByAddress(requestDto.getBCode());
+        Weather weather = weatherService.getWeatherByAddress(requestDto.getAddressId());
 
         // request에서 받아온 값을 Board Entity로 만들기
         Board newBoard = new Board(requestDto, user, weather); // Weather 추가하기
@@ -66,7 +66,7 @@ public class BoardService {
         System.out.println("requestDto.getTitle() = " + requestDto.getTitle());
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
         System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
-        System.out.println("requestDto.getBCode() = " + requestDto.getBCode());
+        System.out.println("requestDto.getAddressId() = " + requestDto.getAddressId());
         System.out.println("requestDto.getViews() = " + requestDto.getViews());
 
         // 추가 - 태그 저장 메서드 실행
@@ -196,10 +196,6 @@ public class BoardService {
     /* 게시물 수정 */
     @Transactional
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, List<MultipartFile> images) {
-        if (requestDTO == null) {
-            log.info("요청한 수정 내용이 없습니다.");
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
 
         // user 정보 가져오기 (id)
         Long userId = userDetails.getUser().getId();
@@ -212,7 +208,7 @@ public class BoardService {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
-        Weather weather = weatherService.getWeatherByAddress(requestDTO.getBCode());
+        Weather weather = weatherService.getWeatherByAddress(requestDTO.getAddressId());
 
         // 같으면 update 실행
         if(boardUserId.equals(userId)) {

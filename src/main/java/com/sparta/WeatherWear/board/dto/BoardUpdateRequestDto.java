@@ -16,7 +16,7 @@ import java.util.List;
 public class BoardUpdateRequestDto {
 
     private Long userId;
-    private Long bCode;
+    private Long addressId;
     //
     private String title;
     private String content;
