@@ -78,19 +78,14 @@ public class ClothesService {
 
     /* 옷 수정 */
     @Transactional
-    public ResponseEntity<String> updateClothes(UserDetailsImpl userDetails,Long id,ClothesColor color, ClothesType type,boolean deleteImage,MultipartFile file) throws IOException {
+    public ResponseEntity<String> updateClothes(UserDetailsImpl userDetails,Long id,ClothesColor color, ClothesType type,MultipartFile file) throws IOException {
         // 타입과 색상을 기준으로 옷 정보를 추가합니다.
         Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
         if(!clothes.getUser().getId().equals(userDetails.getUser().getId())) ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자의 데이터가 아닙니다.");
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
 
         String url = clothes.getImage();
-        if(file == null || file.isEmpty()){
-            if(deleteImage) {
-                url = null;
-                s3Service.deleteFileByUrl(clothes.getImage());
-            }
-        }else{
+        if(!file.isEmpty()){
             if(clothes.getImage() != null){
                 s3Service.deleteFileByUrl(clothes.getImage());
             }
@@ -98,6 +93,7 @@ public class ClothesService {
             url = s3Service.uploadFile(webPFile);
         }
         clothes.update(color,type,url);
+
         return ResponseEntity.ok().body("Clothes created successfully");
     }
 

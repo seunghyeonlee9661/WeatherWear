@@ -62,10 +62,9 @@ public class ClothesController {
             @RequestPart("id")long id,
             @RequestPart("color") String color,
             @RequestPart("type") String type,
-            @RequestPart("deleteImage") boolean deleteImage,
             @RequestPart(value = "file" , required = false) MultipartFile file,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return clothesService.updateClothes(userDetails,id,ClothesColor.valueOf(color),ClothesType.valueOf(type),deleteImage,file);
+        return clothesService.updateClothes(userDetails,id,ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
     }
 
     /* 옷 정보 삭제 */
