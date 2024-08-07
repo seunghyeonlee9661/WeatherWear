@@ -14,6 +14,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Enumeration;
+
 /*
 작성자 : 이승현
 JWT를 검증하고 사용자가 로그인한 상태인지 확인하는 필터
@@ -33,6 +35,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         log.info("검증 시작 : " + req.getRequestURI());
+
+        // 헤더 정보 로그에 기록
+        Enumeration<String> headerNames = req.getHeaderNames();
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                String headerValue = req.getHeader(headerName);
+                logger.info("Header Name: "+headerName + ", Header Value: " + headerValue);
+            }
+        }
+
         // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER);
 
