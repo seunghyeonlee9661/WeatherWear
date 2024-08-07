@@ -35,8 +35,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         log.info("검증 시작 : " + req.getRequestURI());
         // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER);
+
         // accessToken 확인
         if (accessToken != null) {
+            log.info("토큰 : {}", accessToken);
             // accessToken 검증
             String accessTokenValue = jwtUtil.substringToken(accessToken); 
             if (jwtUtil.validateToken(accessTokenValue)) {
