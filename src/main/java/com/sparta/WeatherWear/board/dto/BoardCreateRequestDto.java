@@ -1,5 +1,7 @@
 package com.sparta.WeatherWear.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
@@ -13,12 +15,13 @@ import java.util.List;
 @Setter
 public class BoardCreateRequestDto {
 
-    private String addr;
+    private String address;
     private Long addressId;
     //
     private String title;
     private String contents;
-    private boolean isPrivate;
+
+//    private boolean isPrivate;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
     //

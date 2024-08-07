@@ -65,9 +65,13 @@ public class BoardService {
         System.out.println("userDetails.getUser().getId() = " + userDetails.getUser().getId());
         System.out.println("requestDto.getTitle() = " + requestDto.getTitle());
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
-        System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
+//        System.out.println("requestDto.isPrivate() = " + isPrivate);
         System.out.println("requestDto.getAddressId() = " + requestDto.getAddressId());
         System.out.println("requestDto.getViews() = " + requestDto.getViews());
+
+
+        // Board Entity -> db에 저장
+        boardRepository.save(newBoard);
 
         // 추가 - 태그 저장 메서드 실행
         for (ClothesRequestDTO clothesRequestDTO: requestDto.getClothesRequestDTO()) {
@@ -75,10 +79,6 @@ public class BoardService {
             System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
             boardTagRepository.save(new BoardTag(newBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType()));
         }
-
-        // Board Entity -> db에 저장
-        boardRepository.save(newBoard);
-
         // 추가 - 사진 저장 메서드 실행
         boardImageService.uploadImage(newBoard, images);
 

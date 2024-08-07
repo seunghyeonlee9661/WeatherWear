@@ -33,7 +33,7 @@ public class BoardCreateResponseDto {
     private LocalDateTime updateDate;
     //
     private Weather weather;
-    private String addr;
+    private String address;
     //
     private int boardLikes;
     //
@@ -58,7 +58,7 @@ public class BoardCreateResponseDto {
         this.updateDate = board.getUpdateDate();
         // 날씨
         this.weather = board.getWeather();
-        this.addr = board.getAddr();
+        this.address = board.getAddress();
         //
         this.boardLikes = board.getLikesSize();
 //        this.commentsSize = board.getCommentsSize();
@@ -88,7 +88,7 @@ public class BoardCreateResponseDto {
         this.updateDate = board.getUpdateDate();
         // 날씨
         this.weather = board.getWeather();
-        this.addr = board.getAddr();
+        this.address = board.getAddress();
         //
         this.boardLikes = board.getLikesSize();
 //        this.commentsSize = board.getCommentsSize();
@@ -114,7 +114,7 @@ public class BoardCreateResponseDto {
         this.updateDate = board.getUpdateDate();
         // 날씨
         this.weather = board.getWeather();
-        this.addr = board.getAddr();
+        this.address = board.getAddress();
         //
         this.boardLikes = board.getLikesSize();
 //        this.commentsSize = board.getCommentsSize();

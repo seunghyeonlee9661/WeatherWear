@@ -26,8 +26,8 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "addr", columnDefinition = "MEDIUMTEXT", nullable = false)
-    private String addr;
+    @Column(name = "address", columnDefinition = "MEDIUMTEXT", nullable = false)
+    private String address; // 주소
 
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String title;
@@ -35,7 +35,7 @@ public class Board extends Timestamped {
     @Column(name = "content", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
-    @Column(name = "isPrivate", nullable = false)
+    @Column(name = "isPrivate")
     private boolean isPrivate;
 
     @ManyToOne
@@ -48,7 +48,6 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    // enum 변경 예정
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> boardTags;
 
@@ -65,12 +64,12 @@ public class Board extends Timestamped {
         //
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
-        this.isPrivate = requestDto.isPrivate();
+//        this.isPrivate = isPrivate;
 
         //
         this.weather = weather;
         //
-        this.addr = requestDto.getAddr();
+        this.address = requestDto.getAddress();
         this.views = requestDto.getViews();
     }
 

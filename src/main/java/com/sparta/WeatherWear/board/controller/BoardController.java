@@ -21,11 +21,11 @@ public class BoardController {
     private final BoardService boardService;
 
     /* 게시물 작성 */
-    @PostMapping("/")
+    @PostMapping("/a")
     public ResponseEntity<ApiResponse<BoardCreateResponseDto>> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
-        return boardService.createBoard(requestDto, userDetails, images);
+        return boardService.createBoard(requestDto,userDetails, images);
 
     }
 
