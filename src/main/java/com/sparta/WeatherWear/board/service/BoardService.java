@@ -231,32 +231,35 @@ public class BoardService {
             boardImageRepository.deleteAll(existingImages);
 
             // 추가 - 사진 저장 메서드 실행
-//            boardImageService.uploadImage(updateBoard, image);
+            //boardImageService.uploadImage(updateBoard, image);
+
             BoardImage newBoardImage = boardImageService.uploadImage(updateBoard, image);
             // Board Entity에 추가
             board.getBoardImages().add(newBoardImage);
 
-
+            // 경로 확인용
             for (BoardImage boardImage : existingImages) {
                 System.out.println("boardImage_path = " + boardImage.getImagePath());
             }
+
         }
 
         // Handle tags
             boardTagRepository.deleteAll(updateBoard.getBoardTags()); // Remove existing tags
             for (ClothesRequestDTO clothesRequestDTO: requestDTO.getClothesRequestDTO()) {
+
                 System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
                 System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
+
                 BoardTag updateBoardTag = new BoardTag(updateBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType());
                 boardTagRepository.save(updateBoardTag);
+                
                 // Board Entity에 추가
                 updateBoard.getBoardTags().add(updateBoardTag);
              }
 
             // newBoard -> responseDto로 반환
             BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
-            // Creating the ApiResponse object
-        //ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board updated successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
             

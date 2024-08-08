@@ -5,6 +5,7 @@ import com.sparta.WeatherWear.board.service.BoardService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequestMapping("/api/boards")
 public class BoardController {
 
+    @Autowired
     private final BoardService boardService;
 
     /* 게시물 작성 */
