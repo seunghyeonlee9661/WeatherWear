@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.board.dto;
 import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.entity.Comment;
+import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.weather.entity.Weather;
@@ -23,6 +24,5 @@ public class BoardUpdateRequestDto {
     private String content;
     private boolean isPrivate;
     //
-    private ClothesColor color;
-    private ClothesType type;
+    private List<ClothesRequestDTO> clothesRequestDTO;
 }

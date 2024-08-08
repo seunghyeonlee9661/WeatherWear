@@ -63,7 +63,7 @@ public class BoardController {
 
     /* 게시물 수정 */
     @PutMapping("/")
-    public ResponseEntity<BoardCreateResponseDto> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
+    public ResponseEntity<?> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
         return boardService.updateBoard(requestDto, userDetails, image);

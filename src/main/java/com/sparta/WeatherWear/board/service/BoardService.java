@@ -143,6 +143,7 @@ public class BoardService {
         }
 
     }
+
     /* 게시물 user_id 전체 목록 조회 (페이징) */
     // 페이징 구현 추가 필요
     public ResponseEntity<List<BoardCreateResponseDto>> findBoardByUserId(Long userId) {
@@ -165,6 +166,7 @@ public class BoardService {
         // Returning the response entity with the appropriate HTTP status
         return new ResponseEntity<>(responseDtos, HttpStatus.OK);
     }
+
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
     public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails) {
@@ -189,9 +191,10 @@ public class BoardService {
         return new ResponseEntity<>(responseDtos, HttpStatus.OK);
 
     }
+
     /* 게시물 수정 */
     @Transactional
-    public ResponseEntity<BoardCreateResponseDto> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, MultipartFile image) throws IOException {
+    public ResponseEntity<?> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, MultipartFile image) throws IOException {
 
         // user 정보 가져오기 (id)
         Long userId = userDetails.getUser().getId();
@@ -203,50 +206,60 @@ public class BoardService {
             log.info("User의 Id 값이 없습니다.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        Board board = boardRepository.findById(requestDTO.getBoardId()).orElseThrow(()->
+                new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
+        );;
+        if(!boardUserId.equals(userId)) {
+            log.info("게시물을 작성한 사용자가 아닙니다.");
+            return new ResponseEntity<>("게시물을 작성한 사용자가 아닙니다", HttpStatus.BAD_REQUEST);
+        }
+
         // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
         Weather weather = weatherService.getWeatherByAddress(requestDTO.getAddressId());
-
         // 같으면 update 실행
-        if(boardUserId.equals(userId)) {
-            // 수정할 board을 가져오기
-            Board board = boardRepository.findById(requestDTO.getBoardId()).orElseThrow(()->
-                    new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
-            );;
-            // request 로 받아 온 값 넣기
-            Board updateBoard = board.update(requestDTO, weather);
-            
-            // 날씨 정보 & 사진 업데이트하기
 
-            // 사진 업데이트
-            if(image != null) {
-                // 기존 사진을 제거해야 한다
-                List<BoardImage> boardImages = updateBoard.getBoardImages();
-                boardImageRepository.deleteAll(boardImages);
+        // request 로 받아 온 값 넣기
+        Board updateBoard = board.update(requestDTO, weather);
 
-                // 추가 - 사진 저장 메서드 실행
-                boardImageService.uploadImage(updateBoard, image);
+        // 사진 업데이트
+        if(image != null && !image.isEmpty()) {
+            // 기존 사진을 제거해야 한다
+//            List<BoardImage> boardImages = updateBoard.getBoardImages();
+//            boardImageRepository.deleteAll(boardImages);
 
-                for (BoardImage boardImage : boardImages) {
-                    System.out.println("boardImage_path = " + boardImage.getImagePath());
-                }
+            List<BoardImage> existingImages = new ArrayList<>(board.getBoardImages());
+            boardImageRepository.deleteAll(existingImages);
+
+            // 추가 - 사진 저장 메서드 실행
+//            boardImageService.uploadImage(updateBoard, image);
+            BoardImage newBoardImage = boardImageService.uploadImage(updateBoard, image);
+            // Board Entity에 추가
+            board.getBoardImages().add(newBoardImage);
+
+
+            for (BoardImage boardImage : existingImages) {
+                System.out.println("boardImage_path = " + boardImage.getImagePath());
             }
+        }
 
-            // 추가 - 태그 저장 메서드 실행
-            boardTagRepository.save(new BoardTag(updateBoard, requestDTO.getColor(), requestDTO.getType()));
+        // Handle tags
+            boardTagRepository.deleteAll(updateBoard.getBoardTags()); // Remove existing tags
+            for (ClothesRequestDTO clothesRequestDTO: requestDTO.getClothesRequestDTO()) {
+                System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
+                System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
+                BoardTag updateBoardTag = new BoardTag(updateBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType());
+                boardTagRepository.save(updateBoardTag);
+                // Board Entity에 추가
+                updateBoard.getBoardTags().add(updateBoardTag);
+             }
 
             // newBoard -> responseDto로 반환
             BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
             // Creating the ApiResponse object
-//            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board updated successfully", responseDto);
-            // Returning the response entity with the appropriate HTTP status
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        //ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board updated successfully", responseDto);
+        // Returning the response entity with the appropriate HTTP status
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
             
-        }else {
-            log.info("User의 Id 값이 없습니다.");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        
     }
     /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
     public ResponseEntity<String> removeBoard(Long boardId, UserDetailsImpl userDetails) {
