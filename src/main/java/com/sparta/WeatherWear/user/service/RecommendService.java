@@ -72,7 +72,7 @@ public class RecommendService {
         //Todo : 사용자 추천 결과를 Redis에서 검색하고 없으면 만들어서 Redis에 넣기
         // 1. 그냥 매번 검색한다.
         // 2. Redis에 아이템과 게시물, 제품의 ID만 저장한다.
-        //
+        // 3. Redis에 결과 모두를 저장한다.
 
         /* 1. 날씨 기반 옷차림 추천 */
         recommendResponseDTOS.add(getClothesByWeather(user, weather));
@@ -93,19 +93,14 @@ public class RecommendService {
     /* 1. 날씨 기반 옷차림 추천 : 내 옷장 속 옷 아이템 추천 */
     @Transactional(readOnly = true)
     public List<? extends ResponseDTO> getClothesByWeather(User user, Weather weather) {
-        logger.info("날씨 기반 옷차림 추천");
-        logger.info("온도 : {}", weather.getTMP());
         // 초기값 설정: 가장 높은 온도의 옷 목록으로 시작
 
         List<ClothesType> types = new ArrayList<>();
         // 온도 범위를 기준으로 리스트 선택
         for (Map.Entry<Double, List<ClothesType>> entry : temperatureClothesMap.entrySet()) {
             Double tempKey = entry.getKey();
-            logger.info("온도 : {}", weather.getTMP());
-            logger.info("리스트 온도 : {}", tempKey);
             // 온도가 범위에 맞는 경우 목록을 선택
             if (weather.getTMP() >= tempKey) {
-                logger.info("온도가 tempKey보다 높음");
                 types = entry.getValue(); // 온도에 맞는 목록으로 업데이트
                 break;
             }

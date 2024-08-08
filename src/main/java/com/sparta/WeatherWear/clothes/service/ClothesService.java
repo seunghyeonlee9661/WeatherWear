@@ -85,7 +85,7 @@ public class ClothesService {
         // 파일이 있을 경우 저장하고 옷 정보에 추가합니다.
 
         String url = clothes.getImage();
-        if(!file.isEmpty()){
+        if(file != null && !file.isEmpty()){
             if(clothes.getImage() != null){
                 s3Service.deleteFileByUrl(clothes.getImage());
             }

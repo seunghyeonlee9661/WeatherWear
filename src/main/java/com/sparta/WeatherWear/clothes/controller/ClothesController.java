@@ -59,12 +59,12 @@ public class ClothesController {
     /* 옷 정보 수정 */
     @PutMapping("/clothes")
     public ResponseEntity<String> updateClothes(
-            @RequestPart("id")long id,
+            @RequestPart("id")String id,
             @RequestPart("color") String color,
             @RequestPart("type") String type,
             @RequestPart(value = "file" , required = false) MultipartFile file,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return clothesService.updateClothes(userDetails,id,ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
+        return clothesService.updateClothes(userDetails, Long.valueOf(id),ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
     }
 
     /* 옷 정보 삭제 */
