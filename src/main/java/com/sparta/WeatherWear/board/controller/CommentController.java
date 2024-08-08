@@ -41,7 +41,7 @@ public class CommentController {
 //    }
     /* 댓글 수정 */
     @PutMapping("/comments/{commentId}")
-    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> updateBoardComment(@RequestBody @Valid CommentUpdateRequesteDto requestDto, @PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> updateBoardComment(@RequestBody @Valid CommentUpdateRequesteDto requestDto, @PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.updateBoardComment(requestDto, commentId, userDetails);
     }
     /* 댓글 삭제 */

@@ -19,7 +19,6 @@ public class CommentCreateResponseDto {
 
     private Long BoardId;
     private String contents;
-    private int commentCount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
@@ -35,7 +34,6 @@ public class CommentCreateResponseDto {
         //
         this.BoardId = comment.getBoard().getId();
         this.contents = comment.getContents();
-        this.commentCount = comment.getCommentLikes().size();
         //시간
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();

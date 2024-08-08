@@ -74,7 +74,7 @@ public class CommentService {
         return commentCreateResponseDtos;
     }
     /* 댓글 수정 */
-    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> updateBoardComment(CommentUpdateRequesteDto requestDto, Long commentId, UserDetailsImpl userDetails) {
+    public ResponseEntity<?> updateBoardComment(CommentUpdateRequesteDto requestDto, Long commentId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 ()-> new IllegalArgumentException("댓글을 찾을 수 없습니다")
@@ -88,11 +88,11 @@ public class CommentService {
             // newBoard -> responseDto로 반환
             CommentCreateResponseDto responseDto = new CommentCreateResponseDto(updatedComment);
             // Creating the ApiResponse object
-            ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(200, "comment updated successfully", responseDto);
+//            ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(200, "comment updated successfully", responseDto);
             // Returning the response entity with the appropriate HTTP status
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>("수정 완료", HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("수정 권한이 없습니다.",HttpStatus.NO_CONTENT);
         }
 
     }
