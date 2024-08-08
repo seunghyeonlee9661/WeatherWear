@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.board.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.Comment;
+import com.sparta.WeatherWear.user.dto.UserSimpleDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,9 +14,9 @@ import java.util.List;
 @Setter
 public class CommentCreateResponseDto {
     private long id;
-    private Long UserId;
-    private String nickname;
-    private String image;
+    // 사용자 정보
+    private UserSimpleDto userSimpleDto = new UserSimpleDto();
+
     private Long BoardId;
     private String contents;
     private int commentCount;
@@ -27,9 +28,11 @@ public class CommentCreateResponseDto {
 
     public CommentCreateResponseDto(Comment comment) {
         this.id = comment.getId();
-        this.UserId = comment.getUser().getId();
-        this.nickname = comment.getUser().getNickname();
-        this.image = comment.getUser().getImage();
+        //
+        this.userSimpleDto.setUserId(comment.getUser().getId());
+        this.userSimpleDto.setNickname(comment.getUser().getNickname());
+        this.userSimpleDto.setImage(comment.getUser().getImage());
+        //
         this.BoardId = comment.getBoard().getId();
         this.contents = comment.getContents();
         this.commentCount = comment.getCommentLikes().size();
