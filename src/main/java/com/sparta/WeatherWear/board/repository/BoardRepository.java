@@ -2,9 +2,10 @@ package com.sparta.WeatherWear.board.repository;
 
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.user.entity.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
@@ -15,5 +16,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByWeather_SKYAndWeather_PTYAndWeather_TMPBetween(int sky, int pty, Double minTmp, Double maxTmp);
 
     @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
-    List<Board> findAllOrderedByCreatedAt();
+    Page<Board> findAllOrderedByCreatedAt(Pageable pageable);
 }

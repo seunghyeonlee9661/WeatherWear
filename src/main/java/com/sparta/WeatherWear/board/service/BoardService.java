@@ -19,6 +19,9 @@ import com.sparta.WeatherWear.weather.service.WeatherService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -159,8 +162,20 @@ public class BoardService {
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, String query, Long page) {
-        List<Board> boards = boardRepository.findAllOrderedByCreatedAt();
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long page) {
+
+        // Define the page size (e.g., 8 items per page)
+        int pageSize = 8;
+
+        // Create a Pageable object
+        Pageable pageable = PageRequest.of(page.intValue(), pageSize);
+
+        // Retrieve the paginated results
+        Page<Board> boardPage = boardRepository.findAllOrderedByCreatedAt(pageable);
+
+        // Get the current page content
+        List<Board> boards = boardPage.getContent();
+
         List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
 
         Long user = userDetails.getUser().getId();
@@ -177,10 +192,6 @@ public class BoardService {
                 responseDtos.add(new BoardCreateResponseDto(board));
             }
         }
-
-        // Query
-
-        // Page
 
         return new ResponseEntity<>(responseDtos, HttpStatus.OK);
 
