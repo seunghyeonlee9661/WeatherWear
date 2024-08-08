@@ -91,7 +91,7 @@ public class UserController {
 
     /* 추천 아이템들 불러오기 */
     @GetMapping("/recommends")
-    public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(HttpServletRequest request,@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
+    public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
         System.out.println("Service 접근 : 접근 인자 " +  userDetails.getUser().getNickname() + " | id = "+ id);
         return ResponseEntity.ok(recommendService.getRecommends(userDetails,id));
     }
@@ -101,6 +101,4 @@ public class UserController {
     public ResponseEntity<String> removeWishlistAtRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("product_id") Long product_id) {
         return recommendService.removeWishlistByProductId(userDetails,product_id);
     }
-
-
 }

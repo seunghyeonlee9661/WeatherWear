@@ -51,7 +51,7 @@ public class ClothesController {
     public ResponseEntity<String> createClothes(
             @RequestPart("color") String color,
             @RequestPart("type") String type,
-            @RequestPart(value = "file" , required = false) MultipartFile file,
+            @RequestPart(value = "file") MultipartFile file,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return clothesService.createClothes(userDetails,ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
     }
