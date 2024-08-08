@@ -7,11 +7,11 @@ import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 
+import com.sparta.WeatherWear.user.dto.UserSimpleDto;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +21,7 @@ public class BoardCreateResponseDto  {
 
     private long id;
     // 사용자 정보
-    private Long userId;
-    private String nickname;
-    private String image;
+    private UserSimpleDto userSimpleDto = new UserSimpleDto();
     //
     private String title;
     private String contents;
@@ -49,9 +47,9 @@ public class BoardCreateResponseDto  {
     public BoardCreateResponseDto(Board board) {
         this.id = board.getId();
         // 사용자
-        this.userId = board.getUser().getId();
-        this.nickname = board.getUser().getNickname();
-        this.image = board.getUser().getImage();
+        this.userSimpleDto.setUserId(board.getUser().getId());
+        this.userSimpleDto.setNickname(board.getUser().getNickname());
+        this.userSimpleDto.setImage(board.getUser().getImage());
         // 게시물
         this.title = board.getTitle();
         this.contents = board.getContent();
@@ -79,9 +77,9 @@ public class BoardCreateResponseDto  {
     public BoardCreateResponseDto(Board board, List<ClothesRequestDTO> clothesRequestDTO) {
         this.id = board.getId();
         // 사용자
-        this.userId = board.getUser().getId();
-        this.nickname = board.getUser().getNickname();
-        this.image = board.getUser().getImage();
+        this.userSimpleDto.setUserId(board.getUser().getId());
+        this.userSimpleDto.setNickname(board.getUser().getNickname());
+        this.userSimpleDto.setImage(board.getUser().getImage());
         // 게시물
         this.title = board.getTitle();
         this.contents = board.getContent();
@@ -104,9 +102,9 @@ public class BoardCreateResponseDto  {
     public BoardCreateResponseDto(Board board, int views) {
         this.id = board.getId();
         // 사용자
-        this.userId = board.getUser().getId();
-        this.nickname = board.getUser().getNickname();
-        this.image = board.getUser().getImage();
+        this.userSimpleDto.setUserId(board.getUser().getId());
+        this.userSimpleDto.setNickname(board.getUser().getNickname());
+        this.userSimpleDto.setImage(board.getUser().getImage());
         // 게시물
         this.title = board.getTitle();
         this.contents = board.getContent();
