@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -158,7 +159,7 @@ public class BoardService {
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, String query, Long page) {
         List<Board> boards = boardRepository.findAll();
         List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
 
@@ -167,7 +168,6 @@ public class BoardService {
             // 비공개인지 확인
             if(board.isPrivate() == true) {
                 // 아이디 비교
-                System.out.println("aaaa");
                 System.out.println("board.getUser().getId() = " + board.getUser().getId());
                 System.out.println("user = " + user );
                 if (user.equals(board.getUser().getId())) {

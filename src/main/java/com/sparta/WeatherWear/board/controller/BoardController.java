@@ -59,9 +59,9 @@ public class BoardController {
         & 최신순 추가 예정
         & (페이징) 추가 예정
     */
-    @GetMapping("/")
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return boardService.findBoardAll(userDetails);
+    @GetMapping("/{query}/{page}")
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String query, @PathVariable Long page) {
+        return boardService.findBoardAll(userDetails, query, page);
     }
 
     /* 게시물 수정 */
