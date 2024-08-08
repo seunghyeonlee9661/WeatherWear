@@ -70,17 +70,9 @@ public class Board extends Timestamped {
         this.weather = weather;
         //
         this.address = requestDto.getAddress();
-        this.views = requestDto.getViews();
+        this.views = 0;
     }
 
-    //    public Board update(BoardUpdateRequestDto requestDTO){
-//        this.title = requestDTO.getTitle();
-//        this.content = requestDTO.getContents();
-//        this.isPrivate = requestDTO.isPrivate();
-//        this.comments = requestDTO.getComments();
-//        this.boardTags = requestDTO.getBoardTags();
-//        return this;
-//    }
     public void addComment(Comment comment){
         this.comments.add(comment);
     }
@@ -103,7 +95,10 @@ public class Board extends Timestamped {
         return this;
     }
 
-//    public Board update(String boardImagePath) {
-////        this.boardImages.add(boardImagePath);
-//    }
+    public void clearBoardImages() {
+        this.boardImages = null;
+    }
+    public void clearBoardTags() {
+        this.boardTags = null;
+    }
 }

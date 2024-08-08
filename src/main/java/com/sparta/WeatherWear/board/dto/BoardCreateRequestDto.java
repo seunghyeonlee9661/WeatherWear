@@ -20,7 +20,5 @@ public class BoardCreateRequestDto {
     private boolean isPrivate;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
-    //
-    private int views;
 
 }

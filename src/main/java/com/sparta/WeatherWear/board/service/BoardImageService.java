@@ -56,4 +56,25 @@ public class BoardImageService {
 
         return dbFilePath;
     }
+
+    // 이미지 삭제 메서드
+    public void deleteImage(Long boardImageId) throws IOException {
+        BoardImage boardImage = boardImageRepository.findById(boardImageId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid board image ID: " + boardImageId));
+
+        // Delete the image file from the filesystem
+        deleteImageFile(boardImage.getImagePath());
+
+        // Remove the BoardImage entity from the database
+        boardImageRepository.delete(boardImage);
+    }
+
+    // 이미지 파일 실제 저장 공간에서 삭제
+    private void deleteImageFile(String dbFilePath) throws IOException {
+        // Convert the DB path to the filesystem path
+        String filePath = "src/main/resources/static" + dbFilePath;
+
+        Path path = Paths.get(filePath);
+        Files.deleteIfExists(path); // Delete the file if it exists
+    }
 }

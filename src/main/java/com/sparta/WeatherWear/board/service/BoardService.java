@@ -68,7 +68,7 @@ public class BoardService {
         System.out.println("requestDto.getContents() = " + requestDto.getContents());
         System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
         System.out.println("requestDto.getAddressId() = " + requestDto.getAddressId());
-        System.out.println("requestDto.getViews() = " + requestDto.getViews());
+//        System.out.println("requestDto.getViews() = " + requestDto.getViews());
 
 
         // Board Entity -> db에 저장
@@ -223,41 +223,40 @@ public class BoardService {
 
         // 사진 업데이트
         if(image != null && !image.isEmpty()) {
-            // 기존 사진을 제거해야 한다
-//            List<BoardImage> boardImages = updateBoard.getBoardImages();
-//            boardImageRepository.deleteAll(boardImages);
+            //1. 기존 사진을 제거해야 한다
+            
+            // Board Entity ImageList -> Null 설정
+            updateBoard.clearBoardImages();
 
-            // List -> Null로 만들기 - Board List 비우기
-            List<BoardImage> existingImages = updateBoard.getBoardImages();
-            // DB에서 지울 때 / byBoardId
-            boardImageRepository.deleteByBoardId(updateBoard.getId());
-            System.out.println("updateBoard.getId() = " + updateBoard.getId());
-
-            // 추가 - 사진 저장 메서드 실행
-            //boardImageService.uploadImage(updateBoard, image);
-
-            BoardImage newBoardImage = boardImageService.uploadImage(updateBoard, image);
-            // Board Entity에 추가
-            board.getBoardImages().add(newBoardImage);
-
-            // 경로 확인용
-            for (BoardImage boardImage : existingImages) {
-                System.out.println("boardImage_path = " + boardImage.getImagePath());
+            //2. DB에서 지울 때 / byBoardId
+            List<BoardImage> updateBoardImages = updateBoard.getBoardImages();
+            
+            // db 삭제 & 실제 저장 이미지 삭제
+            for (BoardImage boardImage : updateBoardImages) {
+                boardImageService.deleteImage(boardImage.getId());
             }
+
+            // 3. 사진 저장 메서드 실행
+            BoardImage newBoardImage = boardImageService.uploadImage(updateBoard, image);
+            // 4. Board Entity에 추가
+            board.getBoardImages().add(newBoardImage);
 
         }
 
-        // Handle tags
+        //1. Board Entity에서 태그 삭제
+            updateBoard.clearBoardTags();
+            // 2. db에서 태그 삭제
             boardTagRepository.deleteAll(updateBoard.getBoardTags()); // Remove existing tags
             for (ClothesRequestDTO clothesRequestDTO: requestDTO.getClothesRequestDTO()) {
 
                 System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
                 System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
 
+                // 3. 태그 추가
                 BoardTag updateBoardTag = new BoardTag(updateBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType());
                 boardTagRepository.save(updateBoardTag);
                 
-                // Board Entity에 추가
+                // 4. Board Entity에 추가
                 updateBoard.getBoardTags().add(updateBoardTag);
              }
 
