@@ -200,7 +200,7 @@ public class BoardService {
         Long userId = userDetails.getUser().getId();
 
         // 유저 아이디와 게시물의 id 가 같은지 확인
-        Long boardUserId = requestDTO.getUserId();
+        Long boardUserId = requestDTO.getBoardUserId();
 
         if(userId == null || boardUserId == null) {
             log.info("User의 Id 값이 없습니다.");

@@ -98,7 +98,7 @@ public class Board extends Timestamped {
     public Board update(BoardUpdateRequestDto requestDTO, Weather weather) {
         this.weather = weather;
         this.title = requestDTO.getTitle();
-        this.content = requestDTO.getContent();
+        this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
         return this;
     }

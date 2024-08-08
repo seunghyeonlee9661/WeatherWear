@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.board.entity.Comment;
@@ -17,11 +18,13 @@ import java.util.List;
 public class BoardUpdateRequestDto {
 
     private Long boardId;
-    private Long userId;
+    private Long boardUserId;
     private Long addressId;
     //
     private String title;
-    private String content;
+    private String contents;
+
+    @JsonProperty("isPrivate")
     private boolean isPrivate;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
