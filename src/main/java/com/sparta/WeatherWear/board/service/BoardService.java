@@ -115,15 +115,12 @@ public class BoardService {
         Long user = userDetails.getUser().getId();
         int views = board.getViews();
 
-        System.out.println("aaaa");
         // 비공개인지 확인
         if(board.isPrivate() == true){
             // 아이디 비교
-            System.out.println("bbbb");
             System.out.println("user = " + user);
             System.out.println("board.getUser().getId() = " + board.getUser().getId());
             if(user.equals(board.getUser().getId())){
-             System.out.println("cccc");
                 // newBoard -> responseDto로 반환
                 BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
                 // Creating the ApiResponse object
@@ -131,13 +128,11 @@ public class BoardService {
                 // Returning the response entity with the appropriate HTTP status
                 return new ResponseEntity<>(responseDto, HttpStatus.OK);
             }else {
-                System.out.println("ddddd");
                 return new ResponseEntity<>("선택한 게시물은 볼 수 없는 게시물입니다.",HttpStatus.NO_CONTENT);
             }
         }else {
             // 조회수 추가 & 저장
             views++;
-            System.out.println("eeeee");
 
             // newBoard -> responseDto로 반환
             BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
