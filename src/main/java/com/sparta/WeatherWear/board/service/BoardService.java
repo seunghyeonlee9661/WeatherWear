@@ -341,4 +341,9 @@ public class BoardService {
         int boardLikes = board.getBoardLikes().size();
         return new ResponseEntity<>(boardLikes, HttpStatus.OK);
     }
+
+    public ResponseEntity<?> findBoardAllByCity(UserDetailsImpl userDetails, String city, Long page) {
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

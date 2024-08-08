@@ -54,14 +54,20 @@ public class BoardController {
     /*
         <MainPage>
         게시물 전체 목록 조회 -> ootd 트렌드 페이지
-        &검색 필터링
-        & 아이디에 해당하는 값 있으면 수정 기능
-        & 최신순 추가 예정
-        & (페이징) 추가 예정
     */
-    @GetMapping("/page")
+    @GetMapping("/")
     public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam Long page) {
         return boardService.findBoardAll(userDetails, page);
+    }
+
+    /*
+        게시물 전체 목록 조회
+        &검색 필터링
+        검색 필터링 (도시, 날씨 , 옷 타입, 옷 컬러)
+    */
+    @GetMapping("/search")
+    public ResponseEntity<?> findBoardAllByCity(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String city, @RequestParam Long page) {
+        return boardService.findBoardAllByCity(userDetails, city, page);
     }
 
     /* 게시물 수정 */
