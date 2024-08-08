@@ -59,7 +59,7 @@ public class ClothesController {
     /* 옷 정보 수정 */
     @PutMapping("/clothes")
     public ResponseEntity<String> updateClothes(
-            @RequestPart("id")String id,
+            @RequestPart("id") String id,
             @RequestPart("color") String color,
             @RequestPart("type") String type,
             @RequestPart(value = "file" , required = false) MultipartFile file,
