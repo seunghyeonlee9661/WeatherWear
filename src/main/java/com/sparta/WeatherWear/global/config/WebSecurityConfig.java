@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.WeatherWear.global.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.filter.LoginRedirectFilter;
@@ -131,6 +132,8 @@ public class WebSecurityConfig {
     // ObjectMapper - 카카오 로그인에 활용
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
     }
 }

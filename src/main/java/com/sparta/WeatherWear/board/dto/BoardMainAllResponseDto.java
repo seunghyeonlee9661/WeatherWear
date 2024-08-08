@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;
@@ -16,7 +17,9 @@ public class BoardMainAllResponseDto {
     //
     private String title;
     private boolean isPrivate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime registDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateDate;
     //
     private Weather weather;

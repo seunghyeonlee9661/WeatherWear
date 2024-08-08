@@ -1,9 +1,10 @@
 package com.sparta.WeatherWear.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
-import com.sparta.WeatherWear.board.time.Timestamped;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 
 import com.sparta.WeatherWear.weather.entity.Weather;
@@ -27,7 +28,10 @@ public class BoardCreateResponseDto  {
     private String title;
     private String contents;
     private boolean isPrivate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
     //
     private Weather weather;
@@ -117,7 +121,6 @@ public class BoardCreateResponseDto  {
         this.address = board.getAddress();
         //
         this.boardLikesCount = board.getLikesSize();
-//        this.commentsSize = board.getCommentsSize();
         //
         // 보드의 태그 Response
         List<ClothesRequestDTO> requestDTOS = new ArrayList<>();

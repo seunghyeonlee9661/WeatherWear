@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.Comment;
 import lombok.Getter;
@@ -18,7 +19,10 @@ public class CommentCreateResponseDto {
     private Long BoardId;
     private String contents;
     private int commentCount;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public CommentCreateResponseDto(Comment comment) {
