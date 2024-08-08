@@ -22,6 +22,7 @@ public class BoardCreateResponseDto  {
     private long id;
     // 사용자 정보
     private UserSimpleDto userSimpleDto = new UserSimpleDto();
+
     //
     private String title;
     private String contents;
@@ -32,6 +33,7 @@ public class BoardCreateResponseDto  {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
     //
+//    Fixme : Weather의 경우에도 필요한 값만 넣어서 DTO로 만드시면 됩니다!
     private Weather weather;
     private String address;
     //
@@ -73,7 +75,9 @@ public class BoardCreateResponseDto  {
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = board.getViews();
     }
+
     // 처음 생성할 때
+    //Fixme : 게시물 생성에 대한 Response 빼시면 될거 같아요!
     public BoardCreateResponseDto(Board board, List<ClothesRequestDTO> clothesRequestDTO) {
         this.id = board.getId();
         // 사용자
@@ -99,6 +103,7 @@ public class BoardCreateResponseDto  {
     }
 
     // 게시물 조회 & 조회수 추가
+    //Fixme
     public BoardCreateResponseDto(Board board, int views) {
         this.id = board.getId();
         // 사용자
