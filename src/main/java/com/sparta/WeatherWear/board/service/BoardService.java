@@ -27,7 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /*
   작성자 : 하준영
  */
@@ -45,7 +48,7 @@ public class BoardService {
 
     /* 게시물 작성 */
     @Transactional
-    public ResponseEntity<BoardCreateResponseDto> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid MultipartFile image) throws IOException {
+    public ResponseEntity<?> createBoard(BoardCreateRequestDto requestDto, UserDetailsImpl userDetails, @Valid MultipartFile image) throws IOException {
 
         // user 정보 가져오기 (id)
         User user = userDetails.getUser();
@@ -54,21 +57,8 @@ public class BoardService {
         // 법정동 코드 띄어쓰기 제거 필요
         Weather weather = weatherService.getWeatherByAddress(requestDto.getAddressId());
 
-        //초기 조회수 0으로 설정
-//        if(requestDto.getViews() == 0){
-//
-//        }
-
         // request에서 받아온 값을 Board Entity로 만들기
         Board newBoard = new Board(requestDto, user, weather); // Weather 추가하기
-
-        // requestDto 확인
-        System.out.println("userDetails.getUser().getId() = " + userDetails.getUser().getId());
-        System.out.println("requestDto.getTitle() = " + requestDto.getTitle());
-        System.out.println("requestDto.getContents() = " + requestDto.getContents());
-        System.out.println("requestDto.isPrivate() = " + requestDto.isPrivate());
-        System.out.println("requestDto.getAddressId() = " + requestDto.getAddressId());
-//        System.out.println("requestDto.getViews() = " + requestDto.getViews());
 
 
         // Board Entity -> db에 저장
@@ -88,20 +78,17 @@ public class BoardService {
         // Board Entity에 추가
         newBoard.getBoardImages().add(boardImagePath);
 
-        // 사진 확인
-        System.out.println("boardImage_path = " + boardImagePath);
-
-        // 추가 - 좋아요 저장 메서드 실행
-//        BoardLike newBoardLike = new BoardLike(user,newBoard);
-//        boardLikeRepository.save(newBoardLike);
-        // Board Entity에 추가
-//        newBoard.getBoardLikes().add(newBoardLike);
-
 //        Board updateImageToBoard = newBoard.update(boardImagePath);
         // newBoard -> responseDto로 반환
-        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getClothesRequestDTO());
+//        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getClothesRequestDTO());
+//        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
 
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        // Prepare the response
+        Map<String, Long> response = new HashMap<>();
+        response.put("id", newBoard.getId());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+
 
     }
 
@@ -266,10 +253,14 @@ public class BoardService {
              }
 
             // newBoard -> responseDto로 반환
-            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
-        // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
-            
+//            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+
+        // Prepare the response
+        Map<String, Long> response = new HashMap<>();
+        response.put("id", updateBoard.getId());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
     /* 게시물 삭제 (게시물을 작성한 유저가 맞는지) */
     public ResponseEntity<String> removeBoard(Long boardId, UserDetailsImpl userDetails) {
@@ -292,7 +283,7 @@ public class BoardService {
             boardRepository.delete(board);
         }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("삭제 되었습니다",HttpStatus.OK);
 
 
     }
