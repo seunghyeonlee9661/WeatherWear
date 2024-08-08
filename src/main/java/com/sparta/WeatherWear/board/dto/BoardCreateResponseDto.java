@@ -37,7 +37,7 @@ public class BoardCreateResponseDto  {
     //
 //    private int commentsSize;
     //
-    private List<ClothesRequestDTO> clothesRequestDTO;
+    private List<ClothesRequestDTO> tegs;
     private List<String> boardImages;
     private int views;
 
@@ -65,7 +65,7 @@ public class BoardCreateResponseDto  {
              ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
              requestDTOS.add(requestDTO);
         }
-        this.clothesRequestDTO = requestDTOS;
+        this.tegs = requestDTOS;
         //
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = board.getViews();
@@ -91,7 +91,7 @@ public class BoardCreateResponseDto  {
 //        this.commentsSize = board.getCommentsSize();
 
         //
-        this.clothesRequestDTO = clothesRequestDTO;
+        this.tegs = clothesRequestDTO;
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = board.getViews();
     }
@@ -122,7 +122,7 @@ public class BoardCreateResponseDto  {
             ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
             requestDTOS.add(requestDTO);
         }
-        this.clothesRequestDTO = requestDTOS;
+        this.tegs = requestDTOS;
         //
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = views;
