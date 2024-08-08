@@ -2,8 +2,11 @@ package com.sparta.WeatherWear.board.service;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.entity.Board;
+import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.Comment;
+import com.sparta.WeatherWear.board.entity.CommentLike;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
+import com.sparta.WeatherWear.board.repository.CommentLikeRepository;
 import com.sparta.WeatherWear.board.repository.CommentRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.entity.User;
@@ -27,6 +30,7 @@ import java.util.List;
 @Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final BoardRepository  boardRepository;
 
     /* 댓글 생성 */
@@ -109,5 +113,41 @@ public class CommentService {
         return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
     }
 
+    public ResponseEntity<?> switchCommentLikes(Long commentId, UserDetailsImpl userDetails) {
 
+        User user = userDetails.getUser();
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                ()-> new IllegalArgumentException("댓글을 찾을 수 없습니다")
+        );
+
+        // 좋아요가 아예 없는 경우
+        CommentLike newCommentLike = new CommentLike(user, comment);
+        if(comment.getCommentLikes().isEmpty()) {
+            comment.getCommentLikes().add(newCommentLike);
+            commentLikeRepository.save(newCommentLike);
+            int commentLikes = comment.getCommentLikes().size();
+            return new ResponseEntity<>(commentLikes, HttpStatus.OK);
+        }
+        for(CommentLike commentLike : comment.getCommentLikes()) {
+            System.out.println("commentLike = " + commentLike);
+            System.out.println("commentLike.getUser() = " + commentLike.getUser());
+            System.out.println("commentLike.getComment() = " + commentLike.getComment());
+
+        }
+        // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
+        CommentLike existingLike = commentLikeRepository.findByUserAndComment(user, comment);
+
+        if (existingLike != null) {
+            // User has already liked the post; remove the like
+            comment.getCommentLikes().remove(existingLike);
+            commentLikeRepository.delete(existingLike);
+        } else {
+            // User has not liked the post; add the like
+            CommentLike newCommentLike2 = new CommentLike(user, comment);
+            comment.getCommentLikes().add(newCommentLike2);
+            commentLikeRepository.save(newCommentLike2);
+        }
+        int commentLikes = comment.getCommentLikes().size();
+        return new ResponseEntity<>(commentLikes, HttpStatus.OK);
+    }
 }

@@ -51,8 +51,8 @@ public class CommentController {
     }    
     
 //    /* 댓글 좋아요 변경 */
-//    @GetMapping("comments/likes/{commentId}")
-//    public ResponseEntity<String> deleteBoardComment(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return commentService.deleteBoardComment(boardId, userDetails);
-//    }
+    @GetMapping("/comments/likes/{commentId}")
+    public ResponseEntity<?> switchCommentLikes(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.switchCommentLikes(commentId, userDetails);
+    }
 }
