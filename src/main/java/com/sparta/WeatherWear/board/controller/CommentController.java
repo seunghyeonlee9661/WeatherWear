@@ -26,7 +26,7 @@ public class CommentController {
 
     /* 댓글 생성 */
     @PostMapping("/{boardId}/comments")
-    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.addComments(requestDto, boardId, userDetails);
     }    
     /* BoardId에 해당하는 댓글 모두 조회 */
@@ -51,7 +51,7 @@ public class CommentController {
     }    
     
 //    /* 댓글 좋아요 변경 */
-//    @DeleteMapping("/comments/{boardId}")
+//    @GetMapping("comments/likes/{commentId}")
 //    public ResponseEntity<String> deleteBoardComment(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        return commentService.deleteBoardComment(boardId, userDetails);
 //    }

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class Comment extends Timestamped {
     private String contents;
 
     @OneToMany(mappedBy = "comment")
-    private List<CommentLike> commentLikes;
+    private List<CommentLike> commentLikes = new ArrayList<>();
 
     public Comment(User user, Board board, String contents) {
         this.user = user;

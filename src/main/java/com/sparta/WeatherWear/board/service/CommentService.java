@@ -27,7 +27,7 @@ public class CommentService {
     private final BoardRepository  boardRepository;
 
     /* 댓글 생성 */
-    public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addComments(@Valid CommentCreateRequestDto requestDto, Long boardId, UserDetailsImpl userDetails) {
+    public ResponseEntity<?> addComments(@Valid CommentCreateRequestDto requestDto, Long boardId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("게시물을 찾을 수 없습니다")
@@ -39,9 +39,9 @@ public class CommentService {
         // newBoard -> responseDto로 반환
         CommentCreateResponseDto responseDto = new CommentCreateResponseDto(newComment);
         // Creating the ApiResponse object
-        ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(201, "comment created successfully", responseDto);
+//        ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(201, "comment created successfully", responseDto);
         // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     /* BoardId에 해당하는 댓글 모두 조회 */
