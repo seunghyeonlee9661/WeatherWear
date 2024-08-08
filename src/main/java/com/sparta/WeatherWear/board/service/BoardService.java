@@ -160,7 +160,7 @@ public class BoardService {
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
     public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, String query, Long page) {
-        List<Board> boards = boardRepository.findAll();
+        List<Board> boards = boardRepository.findAllOrderedByCreatedAt();
         List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
 
         Long user = userDetails.getUser().getId();
@@ -177,9 +177,11 @@ public class BoardService {
                 responseDtos.add(new BoardCreateResponseDto(board));
             }
         }
-        // Creating the ApiResponse object
-//        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
-        // Returning the response entity with the appropriate HTTP status
+
+        // Query
+
+        // Page
+
         return new ResponseEntity<>(responseDtos, HttpStatus.OK);
 
     }
