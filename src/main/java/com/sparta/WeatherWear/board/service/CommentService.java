@@ -32,16 +32,18 @@ public class CommentService {
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("게시물을 찾을 수 없습니다")
         );
+
+        if(requestDto.getContents().isEmpty()){
+            throw new IllegalArgumentException("수정할 내용이 없습니다");
+        }
+
         Comment newComment = new Comment(user,board,requestDto.getContents());
         commentRepository.save(newComment);
         board.addComment(newComment);
 
         // newBoard -> responseDto로 반환
-        CommentCreateResponseDto responseDto = new CommentCreateResponseDto(newComment);
-        // Creating the ApiResponse object
-//        ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(201, "comment created successfully", responseDto);
-        // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+//        CommentCreateResponseDto responseDto = new CommentCreateResponseDto(newComment);
+        return new ResponseEntity<>("댓글 생성 성공", HttpStatus.CREATED);
     }
 
     /* BoardId에 해당하는 댓글 모두 조회 */
