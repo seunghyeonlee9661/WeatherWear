@@ -21,7 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /*
   작성자 : 하준영
  */
@@ -148,6 +151,10 @@ public class CommentService {
             commentLikeRepository.save(newCommentLike2);
         }
         int commentLikes = comment.getCommentLikes().size();
-        return new ResponseEntity<>(commentLikes, HttpStatus.OK);
+
+        // Prepare the response
+        Map<String, Integer> response = new HashMap<>();
+        response.put("commentLikes", commentLikes);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

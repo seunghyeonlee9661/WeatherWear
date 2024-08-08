@@ -319,12 +319,7 @@ public class BoardService {
             int boardLikes = board.getBoardLikes().size();
             return new ResponseEntity<>(boardLikes, HttpStatus.OK);
         }
-        for(BoardLike boardLike : board.getBoardLikes()) {
-            System.out.println("boardLike = " + boardLike);
-            System.out.println("boardLike.getUser() = " + boardLike.getUser());
-            System.out.println("boardLike.getBoard() = " + boardLike.getBoard());
-            
-        }
+
         // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
         BoardLike existingLike = boardLikeRepository.findByUserAndBoard(user, board);
 
@@ -339,7 +334,11 @@ public class BoardService {
             boardLikeRepository.save(newBoardLike2);
         }
         int boardLikes = board.getBoardLikes().size();
-        return new ResponseEntity<>(boardLikes, HttpStatus.OK);
+
+        // Prepare the response
+        Map<String, Integer> response = new HashMap<>();
+        response.put("boardLikes", boardLikes);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public ResponseEntity<?> findBoardAllByCity(UserDetailsImpl userDetails, String city, Long page) {
