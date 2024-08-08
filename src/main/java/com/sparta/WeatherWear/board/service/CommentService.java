@@ -106,7 +106,7 @@ public class CommentService {
         if(user.getId().equals(comment.getUser().getId())) {
             commentRepository.deleteById(commentId);
         }
-        return new ResponseEntity<>("comment deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
     }
 
 
