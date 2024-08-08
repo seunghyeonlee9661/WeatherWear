@@ -94,6 +94,7 @@ public class BoardService {
 
 
     /* 게시물 id로 조회 */
+    @Transactional
     public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails) {
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
@@ -101,6 +102,7 @@ public class BoardService {
         // user 정보 가져오기 (id)
         Long user = userDetails.getUser().getId();
         int views = board.getViews();
+        System.out.println("views = " + views);
 
         // 비공개인지 확인
         if(board.isPrivate() == true){
@@ -120,7 +122,7 @@ public class BoardService {
         }else {
             // 조회수 추가 & 저장
             views++;
-
+            board.updateViews(views);
             // newBoard -> responseDto로 반환
             BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
             // Creating the ApiResponse object

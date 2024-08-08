@@ -101,4 +101,8 @@ public class Board extends Timestamped {
     public void clearBoardTags() {
         this.boardTags.clear();
     }
+
+    public void updateViews(int views) {
+        this.views = views;
+    }
 }
