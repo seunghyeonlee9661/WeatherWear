@@ -19,18 +19,18 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/boards/comments")
+@RequestMapping("/api/boards/")
 public class CommentController {
 
     private final CommentService commentService;
 
     /* 댓글 생성 */
-    @PostMapping("/{boardId}")
+    @PostMapping("/{boardId}/comments")
     public ResponseEntity<ApiResponse<CommentCreateResponseDto>> addBoardComments(@RequestBody @Valid CommentCreateRequestDto requestDto, @PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.addComments(requestDto, boardId, userDetails);
     }    
     /* BoardId에 해당하는 댓글 모두 조회 */
-    @GetMapping("/{boardId}")
+    @GetMapping("/{boardId}/comments")
     public List<CommentCreateResponseDto> findBoardCommentsByBoardId(@PathVariable Long boardId) {
         return commentService.findBoardCommentsByBoardId(boardId);
     }    
@@ -40,12 +40,12 @@ public class CommentController {
 //        return commentService.addComments(requestDto, boardId, userDetails);
 //    }
     /* 댓글 수정 */
-    @PutMapping("/{commentId}")
+    @PutMapping("/comments/{commentId}")
     public ResponseEntity<ApiResponse<CommentCreateResponseDto>> updateBoardComment(@RequestBody @Valid CommentUpdateRequesteDto requestDto, @PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.updateBoardComment(requestDto, commentId, userDetails);
     }
     /* 댓글 삭제 */
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<String> deleteBoardComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.deleteBoardComment(commentId, userDetails);
     }    
