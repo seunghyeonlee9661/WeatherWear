@@ -218,7 +218,7 @@ public class BoardService {
         Weather weather = weatherService.getWeatherByAddress(requestDTO.getAddressId());
         // 같으면 update 실행
 
-        // request 로 받아 온 값 넣기
+        // request 로 받아 온 값 넣기 -> 뒤로
         Board updateBoard = board.update(requestDTO, weather);
 
         // 사진 업데이트
@@ -227,8 +227,11 @@ public class BoardService {
 //            List<BoardImage> boardImages = updateBoard.getBoardImages();
 //            boardImageRepository.deleteAll(boardImages);
 
-            List<BoardImage> existingImages = new ArrayList<>(board.getBoardImages());
-            boardImageRepository.deleteAll(existingImages);
+            // List -> Null로 만들기 - Board List 비우기
+            List<BoardImage> existingImages = updateBoard.getBoardImages();
+            // DB에서 지울 때 / byBoardId
+            boardImageRepository.deleteByBoardId(updateBoard.getId());
+            System.out.println("updateBoard.getId() = " + updateBoard.getId());
 
             // 추가 - 사진 저장 메서드 실행
             //boardImageService.uploadImage(updateBoard, image);
