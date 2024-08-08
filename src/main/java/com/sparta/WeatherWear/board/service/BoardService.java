@@ -214,7 +214,7 @@ public class BoardService {
         // 같으면 update 실행
         if(boardUserId.equals(userId)) {
             // 수정할 board을 가져오기
-            Board board = boardRepository.findById(requestDTO.getUserId()).orElseThrow(()->
+            Board board = boardRepository.findById(requestDTO.getBoardId()).orElseThrow(()->
                     new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
             );;
             // request 로 받아 온 값 넣기

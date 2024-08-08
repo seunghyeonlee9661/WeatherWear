@@ -15,6 +15,7 @@ import java.util.List;
 @Setter
 public class BoardUpdateRequestDto {
 
+    private Long boardId;
     private Long userId;
     private Long addressId;
     //

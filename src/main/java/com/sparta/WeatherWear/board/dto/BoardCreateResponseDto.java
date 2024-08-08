@@ -35,7 +35,7 @@ public class BoardCreateResponseDto  {
     //
     private int boardLikes;
     //
-    private int commentsSize;
+//    private int commentsSize;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
     private List<String> boardImages;

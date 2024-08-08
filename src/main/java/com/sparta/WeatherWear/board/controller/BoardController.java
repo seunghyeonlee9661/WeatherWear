@@ -29,7 +29,7 @@ public class BoardController {
     @PostMapping("/a")
     public ResponseEntity<BoardCreateResponseDto> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                           @RequestPart(value = "images") MultipartFile image) throws IOException {
+                                                                           @RequestPart(value = "image") MultipartFile image) throws IOException {
         return boardService.createBoard(requestDto,userDetails, image);
 
     }
@@ -65,7 +65,7 @@ public class BoardController {
     @PutMapping("/")
     public ResponseEntity<BoardCreateResponseDto> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                           @RequestPart(value = "images", required = false) MultipartFile image) throws IOException {
+                                                                           @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
         return boardService.updateBoard(requestDto, userDetails, image);
     }
 
