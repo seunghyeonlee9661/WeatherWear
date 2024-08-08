@@ -10,6 +10,9 @@ import com.sparta.WeatherWear.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,14 +50,24 @@ public class CommentService {
     }
 
     /* BoardId에 해당하는 댓글 모두 조회 */
-    public List<CommentCreateResponseDto> findBoardCommentsByBoardId(Long boardId) {
+    public List<CommentCreateResponseDto> findBoardCommentsByBoardId(Long boardId, Long page) {
         Board board = boardRepository.findById(boardId).orElseThrow(
                 ()-> new IllegalArgumentException("게시물을 찾을 수 없습니다")
         );
 
-        List<CommentCreateResponseDto> commentCreateResponseDtos = new ArrayList<>();
+        // Define the page size (e.g., 8 items per page)
+        int pageSize = 8;
 
-        List<Comment> comments = commentRepository.findAllByBoardId(boardId);
+        // Create a Pageable object
+        Pageable pageable = PageRequest.of(page.intValue(), pageSize);
+
+        // Retrieve the paginated results
+        Page<Comment> commentPage = commentRepository.findAllOrderedByCreatedAt(pageable);
+
+        // Get the current page content
+        List<Comment> comments = commentPage.getContent();
+
+        List<CommentCreateResponseDto> commentCreateResponseDtos = new ArrayList<>();
         for (Comment comment : comments) {
             commentCreateResponseDtos.add(new CommentCreateResponseDto(comment));
         }
