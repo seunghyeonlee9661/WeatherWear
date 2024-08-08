@@ -27,8 +27,8 @@ public class BoardCreateResponseDto  {
     private String title;
     private String contents;
     private boolean isPrivate;
-//    private LocalDateTime registDate;
-//    private LocalDateTime updateDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     //
     private Weather weather;
     private String address;
@@ -52,8 +52,9 @@ public class BoardCreateResponseDto  {
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-//        this.registDate = board.getRegistDate();
-//        this.updateDate = board.getUpdateDate();
+        //시간
+        this.createdAt = board.getCreatedAt();
+        this.updatedAt = board.getUpdatedAt();
         // 날씨
         this.weather = board.getWeather();
         this.address = board.getAddress();
@@ -81,8 +82,9 @@ public class BoardCreateResponseDto  {
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-//        this.registDate = board.getRegistDate();
-//        this.updateDate = board.getUpdateDate();
+        //시간
+        this.createdAt = board.getCreatedAt();
+        this.updatedAt = board.getUpdatedAt();
         // 날씨
         this.weather = board.getWeather();
         this.address = board.getAddress();
@@ -107,8 +109,9 @@ public class BoardCreateResponseDto  {
         this.title = board.getTitle();
         this.contents = board.getContent();
         this.isPrivate = board.isPrivate();
-//        this.registDate = board.getRegistDate();
-//        this.updateDate = board.getUpdateDate();
+        //시간
+        this.createdAt = board.getCreatedAt();
+        this.updatedAt = board.getUpdatedAt();
         // 날씨
         this.weather = board.getWeather();
         this.address = board.getAddress();
