@@ -33,7 +33,7 @@ public class BoardCreateResponseDto  {
     private Weather weather;
     private String address;
     //
-    private int boardLikes;
+    private int boardLikesCount;
     //
 //    private int commentsSize;
     //
@@ -58,7 +58,7 @@ public class BoardCreateResponseDto  {
         this.weather = board.getWeather();
         this.address = board.getAddress();
         //
-        this.boardLikes = board.getLikesSize();
+        this.boardLikesCount = board.getLikesSize();
         // 보드의 태그 Response
         List<ClothesRequestDTO> requestDTOS = new ArrayList<>();
         for(BoardTag boardTag : board.getBoardTags()) {
@@ -87,7 +87,7 @@ public class BoardCreateResponseDto  {
         this.weather = board.getWeather();
         this.address = board.getAddress();
         //
-        this.boardLikes = board.getLikesSize();
+        this.boardLikesCount = board.getLikesSize();
 //        this.commentsSize = board.getCommentsSize();
 
         //
@@ -113,7 +113,7 @@ public class BoardCreateResponseDto  {
         this.weather = board.getWeather();
         this.address = board.getAddress();
         //
-        this.boardLikes = board.getLikesSize();
+        this.boardLikesCount = board.getLikesSize();
 //        this.commentsSize = board.getCommentsSize();
         //
         // 보드의 태그 Response
