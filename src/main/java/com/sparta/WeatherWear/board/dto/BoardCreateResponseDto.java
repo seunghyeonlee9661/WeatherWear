@@ -94,9 +94,7 @@ public class BoardCreateResponseDto  {
         this.address = board.getAddress();
         //
         this.boardLikesCount = board.getLikesSize();
-//        this.commentsSize = board.getCommentsSize();
-
-        //
+       //
         this.tegs = clothesRequestDTO;
         this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.views = board.getViews();
