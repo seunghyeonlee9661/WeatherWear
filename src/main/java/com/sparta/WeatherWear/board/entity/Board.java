@@ -52,7 +52,7 @@ public class Board extends Timestamped {
     private List<BoardTag> boardTags = new ArrayList<>();
 
     // Board 엔티티에 image 리스트 필드 추가
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardImage> boardImages = new ArrayList<>();
 
     // 이승현 : 조회수
@@ -96,9 +96,9 @@ public class Board extends Timestamped {
     }
 
     public void clearBoardImages() {
-        this.boardImages = null;
+        this.boardImages.clear();
     }
     public void clearBoardTags() {
-        this.boardTags = null;
+        this.boardTags.clear();
     }
 }

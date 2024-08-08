@@ -173,11 +173,14 @@ public class BoardService {
         List<Board> boards = boardRepository.findAll();
         List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
 
-        User user = userDetails.getUser();
+        Long user = userDetails.getUser().getId();
         for (Board board : boards) {
             // 비공개인지 확인
-            if(board.isPrivate() == false) {
+            if(board.isPrivate() == true) {
                 // 아이디 비교
+                System.out.println("aaaa");
+                System.out.println("board.getUser().getId() = " + board.getUser().getId());
+                System.out.println("user = " + user );
                 if (user.equals(board.getUser().getId())) {
                     responseDtos.add(new BoardCreateResponseDto(board));
                 }
@@ -223,18 +226,20 @@ public class BoardService {
 
         // 사진 업데이트
         if(image != null && !image.isEmpty()) {
-            //1. 기존 사진을 제거해야 한다
-            
-            // Board Entity ImageList -> Null 설정
-            updateBoard.clearBoardImages();
 
-            //2. DB에서 지울 때 / byBoardId
+//            //1. DB에서 지울 때 / byBoardId
             List<BoardImage> updateBoardImages = updateBoard.getBoardImages();
-            
-            // db 삭제 & 실제 저장 이미지 삭제
+//
+//            // db 삭제 & 실제 저장 이미지 삭제
             for (BoardImage boardImage : updateBoardImages) {
                 boardImageService.deleteImage(boardImage.getId());
+//                boardImageRepository.deleteByBoardId(boardImage.getId());
             }
+
+            //2. 기존 사진을 제거해야 한다
+
+            // Board Entity ImageList -> Null 설정
+            updateBoard.clearBoardImages();
 
             // 3. 사진 저장 메서드 실행
             BoardImage newBoardImage = boardImageService.uploadImage(updateBoard, image);
@@ -243,10 +248,10 @@ public class BoardService {
 
         }
 
-        //1. Board Entity에서 태그 삭제
-            updateBoard.clearBoardTags();
-            // 2. db에서 태그 삭제
+            // 1. db에서 태그 삭제
             boardTagRepository.deleteAll(updateBoard.getBoardTags()); // Remove existing tags
+            //2. Board Entity에서 태그 삭제
+            updateBoard.clearBoardTags();
             for (ClothesRequestDTO clothesRequestDTO: requestDTO.getClothesRequestDTO()) {
 
                 System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
