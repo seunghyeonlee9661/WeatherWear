@@ -25,13 +25,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 커서 기반 페이지네이션: lastId 이후의 게시물을 불러옵니다.
     @Query("SELECT b FROM Board b " +
-            "JOIN b.weather w " +
             "WHERE (:address IS NULL OR b.address LIKE CONCAT(:address, '%')) " +
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (:lastId IS NULL OR b.id < :lastId) " +
             "AND (b.isPrivate = false OR (b.isPrivate = true AND (:userId IS NOT NULL AND b.user.id = :userId))) " +
-            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.contents LIKE CONCAT('%', :keyword, '%')) " +
+            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     List<Board> findBoardsAfterId(@Param("lastId") Long lastId,
                                   @Param("address") String address,
@@ -41,14 +40,14 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                                   Pageable pageable,
                                   @Param("keyword") String keyword);
 
+
     // 최신 게시물 조회: 커서 값이 없을 경우
     @Query("SELECT b FROM Board b " +
-            "JOIN b.weather w " +
             "WHERE (:address IS NULL OR b.address LIKE CONCAT(:address, '%')) " +
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (b.isPrivate = false OR (b.isPrivate = true AND (:userId IS NOT NULL AND b.user.id = :userId))) " +
-            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.contents LIKE CONCAT('%', :keyword, '%')) " +
+            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     List<Board> findBoardsLatest(@Param("address") String address,
                                  @Param("color") ClothesColor color,
