@@ -52,24 +52,27 @@ public class Board extends Timestamped {
     private List<BoardTag> boardTags = new ArrayList<>();
 
     // Board 엔티티에 image 리스트 필드 추가
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BoardImage> boardImages = new ArrayList<>();
+//    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<BoardImage> boardImages = new ArrayList<>();
+
+    @Column(name = "image", nullable = false)
+    private String boardImage; // 이미지
 
     // 이승현 : 조회수
     @Column(name = "views", nullable = true)
     private int views;
 
-    public Board(BoardCreateRequestDto requestDto, User user, Weather weather) {
+    public Board(BoardCreateRequestDto requestDto, User user, Weather weather, String imageUrl) {
         this.user = user;
         //
         this.title = requestDto.getTitle();
         this.content = requestDto.getContents();
         this.isPrivate = requestDto.isPrivate();
-
         //
         this.weather = weather;
         //
         this.address = requestDto.getAddress();
+        this.boardImage = imageUrl;
         this.views = 0;
     }
 
@@ -95,9 +98,9 @@ public class Board extends Timestamped {
         return this;
     }
 
-    public void clearBoardImages() {
-        this.boardImages.clear();
-    }
+//    public void clearBoardImages() {
+//        this.boardImages.clear();
+//    }
     public void clearBoardTags() {
         this.boardTags.clear();
     }

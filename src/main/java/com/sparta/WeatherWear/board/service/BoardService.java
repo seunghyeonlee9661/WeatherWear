@@ -11,6 +11,8 @@ import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import com.sparta.WeatherWear.global.service.ImageTransformService;
+import com.sparta.WeatherWear.global.service.S3Service;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import com.sparta.WeatherWear.weather.service.WeatherService;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +50,8 @@ public class BoardService {
     private final BoardImageRepository boardImageRepository;
     private BoardRepository boardRepository;
     private BoardImageService boardImageService;
+    private ImageTransformService imageTransformService;
+    private S3Service s3Service;
 
     /* 게시물 작성 */
     @Transactional
@@ -56,29 +61,35 @@ public class BoardService {
         User user = userDetails.getUser();
 
         // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
-        // 법정동 코드 띄어쓰기 제거 필요
         Weather weather = weatherService.getWeatherByAddress(requestDto.getAddressId());
 
+        // image null 인지 확인
+        if(image == null || image.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미지를 첨부해주세요"); // null이면 오류
+        }
+        File webPFile = imageTransformService.convertToWebP(image); // imageWebp로 변환
+        String imageUrl = s3Service.uploadFile(webPFile); // 이미지 저장 후 url 확인
+
         // request에서 받아온 값을 Board Entity로 만들기
-        Board newBoard = new Board(requestDto, user, weather); // Weather 추가하기
+        Board newBoard = new Board(requestDto, user, weather,imageUrl); // Weather 추가하기
 
 
         // Board Entity -> db에 저장
         boardRepository.save(newBoard);
 
         // 추가 - 태그 저장 메서드 실행
-        for (ClothesRequestDTO clothesRequestDTO: requestDto.getClothesRequestDTO()) {
+        for (ClothesRequestDTO clothesRequestDTO: requestDto.getTags()) {
             System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
             System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
             BoardTag newBoardTag = new BoardTag(newBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType());
             boardTagRepository.save(newBoardTag);
             // Board Entity에 추가
-            newBoard.getBoardTags().add(newBoardTag); //FIXME 이거 없어도 연관관계 매핑 될겁니다.
+            newBoard.getBoardTags().add(newBoardTag);
         }
-        // 추가 - 사진 저장 메서드 실행
-        BoardImage boardImagePath = boardImageService.uploadImage(newBoard, image);
-        // Board Entity에 추가
-        newBoard.getBoardImages().add(boardImagePath);
+//        // 추가 - 사진 저장 메서드 실행
+//        BoardImage boardImagePath = boardImageService.uploadImage(newBoard, image);
+//        // Board Entity에 추가
+//        newBoard.getBoardImages().add(boardImagePath);
 
 //        Board updateImageToBoard = newBoard.update(boardImagePath);
         // newBoard -> responseDto로 반환
@@ -89,7 +100,6 @@ public class BoardService {
         Map<String, Long> response = new HashMap<>();
         response.put("id", newBoard.getId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-
     }
 
 
