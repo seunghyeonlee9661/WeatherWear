@@ -32,8 +32,6 @@ public class BoardMyAllResponseDto {
     private int views;
     
     //FIXME : Board 값을 받아 처리할 수 있도록 업데이트
-
-
     public BoardMyAllResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();

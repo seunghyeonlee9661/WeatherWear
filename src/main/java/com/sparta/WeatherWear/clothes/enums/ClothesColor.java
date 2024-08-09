@@ -4,5 +4,19 @@ package com.sparta.WeatherWear.clothes.enums;
 의류 색상 종류 Enum
 */
 public enum ClothesColor {
-    BLACK, WHITE, RED, BLUE, GREEN, YELLOW, PURPLE, ORANGE, PINK, BROWN, GRAY, CYAN, MAGENTA
+    WHITE,
+    GRAY,
+    BLACK,
+    RED,
+    YELLOW,
+    SAND,
+    BEIGE,
+    BROWN,
+    KHAKI,
+    GREEN,
+    CYAN,
+    BLUE,
+    INDIGO,
+    PURPLE,
+    PINK
 }
