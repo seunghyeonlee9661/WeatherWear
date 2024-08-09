@@ -108,4 +108,9 @@ public class Board extends Timestamped {
     public void updateViews(int views) {
         this.views = views;
     }
+
+    // Example method to get Address ID from Weather
+    public Long getAddressIdFromWeather() {
+        return this.weather.getAddress().getId();
+    }
 }

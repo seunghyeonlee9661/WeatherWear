@@ -2,6 +2,8 @@ package com.sparta.WeatherWear.board.controller;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +57,9 @@ public class BoardController {
         <MainPage>
         게시물 전체 목록 조회 -> ootd 트렌드 페이지
     */
-    @GetMapping("/")
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam Long lastId, @RequestParam String search) {
-        return boardService.findBoardAll(userDetails, lastId, search);
+    @GetMapping("")
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam Long lastId, @RequestParam long addressId, @RequestParam int sky, @RequestParam String color, @RequestParam String type) {
+        return boardService.findBoardAll(userDetails, lastId,addressId, sky, color, type);
     }
 
     /*
@@ -73,19 +75,19 @@ public class BoardController {
 
     // 날씨 검색
     @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByWeather(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String weather, @RequestParam Long page) {
+    public ResponseEntity<?> findBoardAllByWeather(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam Long weather, @RequestParam Long page) {
         return boardService.findBoardAllByWeather(userDetails, weather, page);
     }
 
     // 옷 컬러 검색
     @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByColor(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String color, @RequestParam Long page) {
+    public ResponseEntity<?> findBoardAllByColor(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesColor color, @RequestParam Long page) {
         return boardService.findBoardAllByColor(userDetails, color, page);
     }
 
     // 옷 타입 검색
     @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByType(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String type, @RequestParam Long page) {
+    public ResponseEntity<?> findBoardAllByType(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesType type, @RequestParam Long page) {
         return boardService.findBoardAllByType(userDetails, type, page);
     }
 

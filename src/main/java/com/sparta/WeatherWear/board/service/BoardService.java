@@ -2,14 +2,14 @@ package com.sparta.WeatherWear.board.service;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.entity.Board;
-import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.BoardTag;
-import com.sparta.WeatherWear.board.repository.BoardImageRepository;
 import com.sparta.WeatherWear.board.repository.BoardLikeRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.global.service.ImageTransformService;
 import com.sparta.WeatherWear.global.service.RedisService;
@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,7 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -163,7 +161,6 @@ public class BoardService {
 //
 //
 //        }
-
     }
 
     // 사용자 IP 확인하는 기능
@@ -175,35 +172,9 @@ public class BoardService {
         return ip;
     }
 
-    /* 게시물 user_id 전체 목록 조회 (페이징) */
-    // 페이징 구현 추가 필요
-    //FIXME : 여기서도 로그인한 사용자가 자기 게시물만 볼거니까 UserDetailsImpl로 id 처리하시면 됩니다. 근데 아마 이부분은 사용자 파트라서 제가 할거 같아요.
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardByUserId(Long userId) {
-        List<Board> boards = boardRepository.findByUserId(userId);
-
-        // 예외처리 추가 필요
-        if (boards.isEmpty()) {
-            log.info("해당 유저가 없거나 유저가 작성한 게시물이 없습니다");
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        // newBoard -> responseDto로 반환
-        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
-
-        for (Board board : boards) {
-            responseDtos.add(new BoardCreateResponseDto(board));
-        }
-        // Creating the ApiResponse object
-//        ApiResponse<List<BoardCreateResponseDto>> response = new ApiResponse<>(200, "Board responsed successfully", responseDtos);
-        // Returning the response entity with the appropriate HTTP status
-        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
-    }
-
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
-    //FIXME : 커서형 페이지네이션을 하시게되면 파라미터로 커서 id(마지막 board ID)를 받으실 수 있으니 참고 바랍니다!
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long lastId, String search) {
-    //FIXME : 여기서 아마 쿼리를 잘 짜시면 비굥개이면서 작성자 아이디가 내가 아닌 게시물 걸러내실 수 있을겁니다. GPT 추천드립니다.
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long lastId, long addressId, int sky, String color, String type ) {
         // Define the page size (e.g., 8 items per page)
         int pageSize = 8;
         // 페이저블 객체 : ID를 기반으로 내림차순
@@ -218,11 +189,12 @@ public class BoardService {
         // 결과값을 Repository에서 받아옵니다.
         List<Board> boards;
         if (lastId == null) {
-            // latest (가장 최근의 게시물부터) 조회
-            boards = boardRepository.findBoardsLatest(search,userId, pageable);
+            // 최신 게시물 조회
+            boards = boardRepository.findBoardsLatest(addressId,sky,color,type,userId,pageable);
         } else {
             // lastId를 기준으로 커서 기반 페이지네이션
-            boards = boardRepository.findBoardsAfterId(lastId, search,userId, pageable);
+            boards = boardRepository.findBoardsAfterId(lastId,addressId,sky,color,type,userId,pageable
+            );
         }
 
         return ResponseEntity.ok(boards.stream().map(BoardCreateResponseDto::new).collect(Collectors.toList()));
@@ -362,8 +334,10 @@ public class BoardService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 조회 방식 설정 필요 (최신순)
     public ResponseEntity<?> findBoardAllByCity(UserDetailsImpl userDetails, String city, Long page) {
 //        address
+        User user = userDetails.getUser();
 
         List<Board> allBoardByCity = boardRepository.findAllByAddress(city);
 
@@ -373,27 +347,106 @@ public class BoardService {
         for (Board board : allBoardByCity) {
 
             // isPrivate 확인
+            if (board.isPrivate()) {
+                if (user == null) { // 비로그인 사용자 -> 비공개
+                    continue;
+                }else {
+                    if (user.getId().equals(board.getUser().getId())) {
+                        responseDtos.add(new BoardCreateResponseDto(board));
+                    }
+                }
+            }else {
+                responseDtos.add(new BoardCreateResponseDto(board));
+            }
+
+        }
+            return new ResponseEntity<>(responseDtos, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> findBoardAllByWeather(UserDetailsImpl userDetails, Long weather, Long page) {
+//        weather / address / id
+        User user = userDetails.getUser();
+        List<Board> allBoardByWeather = boardRepository.findAllByWeather_Address_Id(weather);
+
+        // newBoard -> responseDto로 반환
+        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+
+        for (Board board : allBoardByWeather) {
+
+            // isPrivate 확인
+            // isPrivate 확인
+            if (board.isPrivate()) {
+                if (user == null) { // 비로그인 사용자 -> 비공개
+                    continue;
+                }else {
+                    if (user.getId().equals(board.getUser().getId())) {
+                        responseDtos.add(new BoardCreateResponseDto(board));
+                    }
+                }
+            }else {
+                responseDtos.add(new BoardCreateResponseDto(board));
+            }
+            responseDtos.add(new BoardCreateResponseDto(board));
+        }
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> findBoardAllByColor(UserDetailsImpl userDetails, ClothesColor color, Long page) {
+//        color
+        User user = userDetails.getUser();
+        List<Board> allBoardByWeather = boardRepository.findDistinctByBoardTags_Color(color);
+
+        // newBoard -> responseDto로 반환
+        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+
+        for (Board board : allBoardByWeather) {
+
+            // isPrivate 확인
+            if (board.isPrivate()) {
+                if (user == null) { // 비로그인 사용자 -> 비공개
+                    continue;
+                }else {
+                    if (user.getId().equals(board.getUser().getId())) {
+                        responseDtos.add(new BoardCreateResponseDto(board));
+                    }
+                }
+            }else {
+                responseDtos.add(new BoardCreateResponseDto(board));
+            }
 
             responseDtos.add(new BoardCreateResponseDto(board));
         }
 
-        return new ResponseEntity<>(responseDtos,HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> findBoardAllByWeather(UserDetailsImpl userDetails, String weather, Long page) {
-//        weather / address / id
-
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public ResponseEntity<?> findBoardAllByColor(UserDetailsImpl userDetails, String color, Long page) {
-//        color
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> findBoardAllByType(UserDetailsImpl userDetails, String type, Long page) {
+    public ResponseEntity<?> findBoardAllByType(UserDetailsImpl userDetails, ClothesType type, Long page) {
 //            type
+        User user = userDetails.getUser();
+        List<Board> allBoardByWeather = boardRepository.findDistinctByBoardTags_Type(type);
+
+        // newBoard -> responseDto로 반환
+        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+
+        for (Board board : allBoardByWeather) {
+
+            // isPrivate 확인
+            if (board.isPrivate()) {
+                if (user == null) { // 비로그인 사용자 -> 비공개
+                    continue;
+                }else {
+                    if (user.getId().equals(board.getUser().getId())) {
+                        responseDtos.add(new BoardCreateResponseDto(board));
+                    }
+                }
+            }else {
+                responseDtos.add(new BoardCreateResponseDto(board));
+            }
+
+            responseDtos.add(new BoardCreateResponseDto(board));
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
