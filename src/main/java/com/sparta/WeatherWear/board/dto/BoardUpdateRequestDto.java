@@ -12,6 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor // 기본 생성자 추가
 public class BoardUpdateRequestDto {
 
     private Long boardId;
