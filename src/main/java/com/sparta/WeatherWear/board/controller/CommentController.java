@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.board.controller;
 
-import com.sparta.WeatherWear.board.dto.ApiResponse;
 import com.sparta.WeatherWear.board.dto.CommentCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.CommentCreateResponseDto;
 import com.sparta.WeatherWear.board.dto.CommentUpdateRequesteDto;

@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.user.service;
 
-import com.sparta.WeatherWear.board.dto.BoardListResponseDTO;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.global.service.ImageTransformService;
