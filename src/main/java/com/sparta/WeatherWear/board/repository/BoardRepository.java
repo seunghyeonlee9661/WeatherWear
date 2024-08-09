@@ -28,7 +28,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM Board b " +
             "JOIN b.weather w " +
             "WHERE (:addressId IS NULL OR w.address.id = :addressId) " +
-            "AND (:sky IS NULL OR w.sky = :sky) " +
+            "AND (:sky IS NULL OR w.SKY = :sky) " +
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (:lastId IS NULL OR b.id < :lastId) " +
@@ -46,7 +46,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM Board b " +
             "JOIN b.weather w " +
             "WHERE (:addressId IS NULL OR w.address.id = :addressId) " +
-            "AND (:sky IS NULL OR w.sky = :sky) " +
+            "AND (:sky IS NULL OR w.SKY = :sky) " +
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (b.isPrivate = false OR (b.isPrivate = true AND (:userId IS NOT NULL AND b.user.id = :userId))) " +
