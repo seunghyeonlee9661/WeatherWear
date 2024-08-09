@@ -15,6 +15,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -38,7 +39,7 @@ public class BoardCreateResponseDto  {
     //
     private int boardLikesCount; // 좋아요 수
     //
-    private List<ClothesRequestDTO> tags; // 태그 목록
+    private List<TagResponseDTO> tags; // 태그 목록
     private String image; // 게시물 이미지
     private int views; // 조회수
 
@@ -61,13 +62,7 @@ public class BoardCreateResponseDto  {
         this.address = board.getAddress();
         //
         this.boardLikesCount = board.getLikesSize();
-        // 보드의 태그 Response
-        List<ClothesRequestDTO> requestDTOS = new ArrayList<>();
-        for(BoardTag boardTag : board.getBoardTags()) {
-             ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
-             requestDTOS.add(requestDTO);
-        }
-        this.tags = requestDTOS;
+        this.tags = board.getBoardTags().stream().map(TagResponseDTO::new).collect(Collectors.toList());
         //
 //        this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.image = board.getBoardImage();
@@ -95,12 +90,7 @@ public class BoardCreateResponseDto  {
         this.boardLikesCount = board.getLikesSize();
         //
         // 보드의 태그 Response
-        List<ClothesRequestDTO> requestDTOS = new ArrayList<>();
-        for(BoardTag boardTag : board.getBoardTags()) {
-            ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
-            requestDTOS.add(requestDTO);
-        }
-        this.tags = requestDTOS;
+        this.tags = board.getBoardTags().stream().map(TagResponseDTO::new).collect(Collectors.toList());
         //
         this.image = board.getBoardImage();
         this.views = views;

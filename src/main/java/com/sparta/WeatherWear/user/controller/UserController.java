@@ -12,6 +12,7 @@ import com.sparta.WeatherWear.user.service.KakaoLoginService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +44,12 @@ public class UserController {
 
     /* 사용자 게시물 요청 */
     @GetMapping("/users/boards")
-    public ResponseEntity<List<BoardCreateResponseDto>> findUserBoard(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.findUserBoard(userDetails);
+    public ResponseEntity<Page<BoardCreateResponseDto>> findUserBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                      @RequestParam(value= "page", required = false, defaultValue="0") int page,
+                                                                      @RequestParam(value= "pty",required = false) Integer pty,
+                                                                      @RequestParam(value= "sky",required = false) Integer sky,
+                                                                      @RequestParam(value= "keyword",required = false) String keyword){
+        return userService.findUserBoard(userDetails,page,pty,sky,keyword);
     }
 
     /* 사용자 정보 추가 */
