@@ -46,20 +46,11 @@ public class BoardController {
         상세 조회
         게시물 id로 조회 
     */
-//    @GetMapping("/{boardId}")
-//    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
-//        return boardService.findBoardById(boardId, userDetails,request);
-//    }
     @GetMapping("/{boardId}")
     public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         return boardService.findBoardById(boardId, userDetails,request);
     }
 
-//    /* 게시물 user_id 전체 목록 조회 (페이징) */
-//    @GetMapping("/by-user-id/{userId}")
-//    public ResponseEntity<List<BoardCreateResponseDto>> findBoardByUserId(@PathVariable Long userId) {
-//        return boardService.findBoardByUserId(userId);
-//    }
 
     /*
         <MainPage>
@@ -76,35 +67,6 @@ public class BoardController {
         return boardService.findBoardAll(userDetails, lastId, address, color, type, keyword);
     }
 
-
-    /*
-        게시물 전체 목록 조회
-        &검색 필터링
-        검색 필터링 (도시, 날씨 , 옷 타입, 옷 컬러)
-    */
-//    // 도시 검색
-//    @GetMapping("/search")
-//    public ResponseEntity<?> findBoardAllByCity(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String city, @RequestParam Long page) {
-//        return boardService.findBoardAllByCity(userDetails, city, page);
-//    }
-//
-//    // 날씨 검색
-//    @GetMapping("/search")
-//    public ResponseEntity<?> findBoardAllByWeather(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam Long weather, @RequestParam Long page) {
-//        return boardService.findBoardAllByWeather(userDetails, weather, page);
-//    }
-//
-//    // 옷 컬러 검색
-//    @GetMapping("/search")
-//    public ResponseEntity<?> findBoardAllByColor(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesColor color, @RequestParam Long page) {
-//        return boardService.findBoardAllByColor(userDetails, color, page);
-//    }
-//
-//    // 옷 타입 검색
-//    @GetMapping("/search")
-//    public ResponseEntity<?> findBoardAllByType(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesType type, @RequestParam Long page) {
-//        return boardService.findBoardAllByType(userDetails, type, page);
-//    }
 
     /* 게시물 수정 */
 //    @PutMapping("/")
@@ -139,31 +101,6 @@ public class BoardController {
         return boardService.switchBoardLikes(boardId, userDetails);
     }
 
-
-//    /* 게시물 이미지 전체 불러오기 */
-//    @GetMapping("/images/{boardId}")
-//    public ResponseEntity<String> userBoardImages(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return boardService.removeBoard(boardId, userDetails);
-//    }
-
-
-//    /* 특정 회원의 게시물 이미지 전체 불러오기 */
-//    @GetMapping("/images/{user_id}")
-//    public ResponseEntity<String> userBoardImagesById(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return boardService.removeBoard(board_id, userDetails);
-//    }
-//
-//    /* 게시물 태그 전체 불러오기 */
-//    @GetMapping("/tags/")
-//    public ResponseEntity<String> userBoardTags(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return boardService.removeBoard(board_id, userDetails);
-//    }
-
-//    /* 특정 회원의 게시물 태그 전체 불러오기 */
-//    @DeleteMapping("/tags/{user_id}")
-//    public ResponseEntity<String> userBoardTagsById(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return boardService.removeBoard(board_id, userDetails);
-//    }
 
 
 }

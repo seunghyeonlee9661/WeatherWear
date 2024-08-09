@@ -11,6 +11,7 @@ public class SimpleWeatherResponseDTO {
     private int SKY;  // 하늘상태 : 맑음(1), 구름많음(3), 흐림(4)
     private Double TMP;  // 1 시간 기온 (°C)
     private Double WSD;  // 풍속 (m/s) : -4(약)/4-8.9(약간강)/9-13.9(강)/14-(매우강)
+    private Long addressId; // 법정동 코드
 
     public SimpleWeatherResponseDTO(Weather weather) {
         this.POP = weather.getPOP();
@@ -19,5 +20,6 @@ public class SimpleWeatherResponseDTO {
         this.SKY = weather.getSKY();
         this.TMP = weather.getTMP();
         this.WSD = weather.getWSD();
+        this.addressId = weather.getAddress().getId();
     }
 }
