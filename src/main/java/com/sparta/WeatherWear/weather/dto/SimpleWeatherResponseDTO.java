@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.weather.dto;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;
 
+@Getter
 public class SimpleWeatherResponseDTO {
     private Double POP;  // 강수확률 : %
     private int PTY;  // 강수형태 : 없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4)
