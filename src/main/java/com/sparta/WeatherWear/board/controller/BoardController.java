@@ -18,9 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
   /*
@@ -37,39 +35,10 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("")
-    public ResponseEntity<?> createBoard(@RequestPart("data") String data,
-                                         @RequestPart(value = "file") MultipartFile image,
-//                                             @NotBlank(message = "주소값이 없습니다.") String address,
-//                                         @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") String addressId,
-//                                         @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
-//                                         @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
-//                                         @RequestPart("isPrivate") boolean isPrivate,
-//                                         @RequestPart("tags") List<ClothesRequestDTO> tags,
-                                         @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                         HttpServletRequest request) throws IOException {
-        // Log raw request body for debugging
-        StringBuilder requestBody = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                requestBody.append(line);
-            }
-        }
-
-        System.out.println("Raw Request Body: " + requestBody.toString());
-        System.out.println("Data Part: " + data);
-
-        // You can also manually parse JSON if needed
-        ObjectMapper objectMapper = new ObjectMapper();
-        BoardCreateRequestDto boardCreateRequestDto = objectMapper.readValue(data, BoardCreateRequestDto.class);
-        System.out.println("Parsed DTO: " + boardCreateRequestDto);
-
-//        BoardCreateRequestDto requestDto = new BoardCreateRequestDto(address,Long.valueOf(addressId),title,contents,isPrivate,tags);
-//        System.out.println(requestDto.getAddress());
-//        System.out.println(requestDto.getAddressId());
-//        System.out.println(requestDto.getTags());
-//        System.out.println(requestDto.getContents());
-//        System.out.println(requestDto.getTitle());
+    public ResponseEntity<?> createBoard(@RequestPart("data") String data, // data 스트링
+                                         @RequestPart(value = "file") MultipartFile image, // 파일 정보
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        BoardCreateRequestDto boardCreateRequestDto = new ObjectMapper().readValue(data, BoardCreateRequestDto.class); // json 형식을 DTO로 파싱합니다.
         return boardService.createBoard(boardCreateRequestDto,userDetails, image);
     }
 
