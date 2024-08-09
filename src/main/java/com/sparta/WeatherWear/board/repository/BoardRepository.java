@@ -23,39 +23,37 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAllOrderedByCreatedAt(Pageable pageable);
 
 
-
-    // 페이지네이션: 게시물 커서를 기반으로 페이지 데이터를 불러오는 기능
+    // 커서 기반 페이지네이션: lastId 이후의 게시물을 불러옵니다.
     @Query("SELECT b FROM Board b " +
             "JOIN b.weather w " +
-            "WHERE (:addressId IS NULL OR w.address.id = :addressId) " +
-            "AND (:sky IS NULL OR w.SKY = :sky) " +
+            "WHERE (:address IS NULL OR w.address.name LIKE CONCAT(:address, '%')) " +
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (:lastId IS NULL OR b.id < :lastId) " +
             "AND (b.isPrivate = false OR (b.isPrivate = true AND (:userId IS NOT NULL AND b.user.id = :userId))) " +
+            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.contents LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     List<Board> findBoardsAfterId(@Param("lastId") Long lastId,
-                                  @Param("addressId") Long addressId,
-                                  @Param("sky") Integer sky,
+                                  @Param("address") String address,
                                   @Param("color") ClothesColor color,
                                   @Param("type") ClothesType type,
                                   @Param("userId") Long userId,
-                                  Pageable pageable);
+                                  Pageable pageable,
+                                  @Param("keyword") String keyword);
 
-    // 커서 값이 없을 경우: 최근 아이템 불러오는 기능
+    // 최신 게시물 조회: 커서 값이 없을 경우
     @Query("SELECT b FROM Board b " +
             "JOIN b.weather w " +
-            "WHERE (:addressId IS NULL OR w.address.id = :addressId) " +
-            "AND (:sky IS NULL OR w.SKY = :sky) " +
+            "WHERE (:address IS NULL OR w.address.name LIKE CONCAT(:address, '%')) " +
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (b.isPrivate = false OR (b.isPrivate = true AND (:userId IS NOT NULL AND b.user.id = :userId))) " +
+            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.contents LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
-    List<Board> findBoardsLatest(@Param("addressId") Long addressId,
-                                 @Param("sky") Integer sky,
+    List<Board> findBoardsLatest(@Param("address") String address,
                                  @Param("color") ClothesColor color,
                                  @Param("type") ClothesType type,
                                  @Param("userId") Long userId,
-                                 Pageable pageable);
-
+                                 Pageable pageable,
+                                 @Param("keyword") String keyword);
 }

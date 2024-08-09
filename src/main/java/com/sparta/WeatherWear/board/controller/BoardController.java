@@ -68,11 +68,12 @@ public class BoardController {
     @GetMapping("")
     public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                      @RequestParam(required = false) Long lastId,
-                                                                     @RequestParam(required = false) Long addressId,
-                                                                     @RequestParam(required = false) Integer sky,
+                                                                     @RequestParam(required = false) String address,
                                                                      @RequestParam(required = false) String color,
-                                                                     @RequestParam(required = false) String type) {
-        return boardService.findBoardAll(userDetails, lastId,addressId, sky, color, type);
+                                                                     @RequestParam(required = false) String type,
+                                                                     @RequestParam(required = false) String keyword
+                                                                     ) {
+        return boardService.findBoardAll(userDetails, lastId, address, color, type, keyword);
     }
 
 
