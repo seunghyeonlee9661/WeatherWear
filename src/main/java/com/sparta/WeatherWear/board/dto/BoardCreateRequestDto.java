@@ -16,7 +16,6 @@ public class BoardCreateRequestDto {
     private Long addressId;
     private String title;
     private String contents;
-    @JsonProperty("isPrivate")
     private boolean isPrivate;
     private List<ClothesRequestDTO> tags;
 
