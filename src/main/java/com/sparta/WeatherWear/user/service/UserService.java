@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.user.service;
 
+import com.sparta.WeatherWear.board.dto.BoardMyAllResponseDto;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.global.service.ImageTransformService;
@@ -35,9 +36,9 @@ public class UserService {
     private final ImageTransformService imageTransformService;
 
 
-    public ResponseEntity<List<BoardListResponseDTO>> findUserBoard(UserDetailsImpl userDetails){
+    public ResponseEntity<List<BoardMyAllResponseDto>> findUserBoard(UserDetailsImpl userDetails){
         List<Board> boardList = boardRepository.findByUserId(userDetails.getUser().getId());
-        return ResponseEntity.ok(boardList.stream().map(BoardListResponseDTO::new).toList());
+        return ResponseEntity.ok(boardList.stream().map(BoardMyAllResponseDto::new).toList());
     }
 
 
