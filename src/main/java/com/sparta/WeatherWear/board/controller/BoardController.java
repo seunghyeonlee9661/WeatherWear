@@ -34,8 +34,7 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("")
-    public ResponseEntity<?> createBoard(
-                                         @RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
+    public ResponseEntity<?> createBoard(@RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
                                          @RequestPart("address_id") @NotNull(message = "행정동 코드값이 없습니다.") Long addressId,
                                          @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
                                          @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
