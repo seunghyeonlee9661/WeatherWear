@@ -37,6 +37,7 @@ public class BoardController {
     public ResponseEntity<?> createBoard(
                                          @RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
                                          @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") Long addressId,
+
                                          @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
                                          @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
                                          @RequestPart("isPrivate") boolean isPrivate,
