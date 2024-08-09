@@ -38,7 +38,7 @@ public class BoardController {
     /* 게시물 작성 */
     @PostMapping("")
     public ResponseEntity<?> createBoard(@RequestPart("data") String data,
-                                         @RequestPart(value = "image") MultipartFile image,
+                                         @RequestPart(value = "file") MultipartFile image,
 //                                             @NotBlank(message = "주소값이 없습니다.") String address,
 //                                         @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") String addressId,
 //                                         @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
