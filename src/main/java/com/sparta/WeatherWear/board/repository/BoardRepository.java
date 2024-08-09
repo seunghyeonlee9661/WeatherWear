@@ -27,8 +27,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findBoardsAfterId(@Param("lastId") Long lastId,
                                   @Param("addressId") Long addressId,
                                   @Param("sky") Integer sky,
-                                  @Param("color") String color,
-                                  @Param("type") String type,
+                                  @Param("color") ClothesColor color,
+                                  @Param("type") ClothesType type,
                                   @Param("userId") Long userId,
                                   Pageable pageable);
 
@@ -43,8 +43,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "ORDER BY b.id DESC")
     List<Board> findBoardsLatest(@Param("addressId") Long addressId,
                                  @Param("sky") Integer sky,
-                                 @Param("color") String color,
-                                 @Param("type") String type,
+                                 @Param("color") ClothesColor color,
+                                 @Param("type") ClothesType type,
                                  @Param("userId") Long userId,
                                  Pageable pageable);
 
