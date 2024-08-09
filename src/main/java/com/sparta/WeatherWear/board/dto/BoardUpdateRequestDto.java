@@ -17,6 +17,7 @@ public class BoardUpdateRequestDto {
 
     private Long boardId;
     private Long boardUserId;
+    private String address;
     private Long addressId;
     //
     private String title;
