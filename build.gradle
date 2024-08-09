@@ -22,8 +22,6 @@ configurations {
 	}
 }
 
-developmentOnly("org.springframework.boot:spring-boot-devtools")
-
 repositories {
 	mavenCentral()
 }
