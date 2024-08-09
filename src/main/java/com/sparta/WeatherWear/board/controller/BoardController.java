@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.board.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
@@ -17,7 +18,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
   /*
@@ -34,7 +37,8 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("")
-    public ResponseEntity<?> createBoard(@RequestPart("data") BoardCreateRequestDto requestDto,
+    public ResponseEntity<?> createBoard(@RequestPart("data") String data,
+                                         @RequestPart(value = "image") MultipartFile image,
 //                                             @NotBlank(message = "주소값이 없습니다.") String address,
 //                                         @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") String addressId,
 //                                         @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
@@ -42,14 +46,31 @@ public class BoardController {
 //                                         @RequestPart("isPrivate") boolean isPrivate,
 //                                         @RequestPart("tags") List<ClothesRequestDTO> tags,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                         @RequestPart(value = "image") MultipartFile image) throws IOException {
+                                         HttpServletRequest request) throws IOException {
+        // Log raw request body for debugging
+        StringBuilder requestBody = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                requestBody.append(line);
+            }
+        }
+
+        System.out.println("Raw Request Body: " + requestBody.toString());
+        System.out.println("Data Part: " + data);
+
+        // You can also manually parse JSON if needed
+        ObjectMapper objectMapper = new ObjectMapper();
+        BoardCreateRequestDto boardCreateRequestDto = objectMapper.readValue(data, BoardCreateRequestDto.class);
+        System.out.println("Parsed DTO: " + boardCreateRequestDto);
+
 //        BoardCreateRequestDto requestDto = new BoardCreateRequestDto(address,Long.valueOf(addressId),title,contents,isPrivate,tags);
-        System.out.println(requestDto.getAddress());
-        System.out.println(requestDto.getAddressId());
-        System.out.println(requestDto.getTags());
-        System.out.println(requestDto.getContents());
-        System.out.println(requestDto.getTitle());
-        return boardService.createBoard(requestDto,userDetails, image);
+//        System.out.println(requestDto.getAddress());
+//        System.out.println(requestDto.getAddressId());
+//        System.out.println(requestDto.getTags());
+//        System.out.println(requestDto.getContents());
+//        System.out.println(requestDto.getTitle());
+        return boardService.createBoard(boardCreateRequestDto,userDetails, image);
     }
 
     /*
