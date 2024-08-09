@@ -6,23 +6,29 @@ import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.filter.LoginRedirectFilter;
 import com.sparta.WeatherWear.global.handler.AccessDeniedHandler;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
-import com.sparta.WeatherWear.global.handler.AuthenticationSuccessHandler;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
-import com.sparta.WeatherWear.user.repository.UserRepository;
+import com.sparta.WeatherWear.global.service.RedisService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.IOException;
 
 /*
 작성자 : 이승현
@@ -38,12 +44,11 @@ public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private final UserRepository userRepository;
+    private final RedisService redisService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final LoginRedirectFilter loginRedirectFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -71,33 +76,23 @@ public class WebSecurityConfig {
         http.csrf((csrf) -> csrf.disable());
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         // 접근 가능 범위 설정
-        http.authorizeHttpRequests((authorizeHttpRequests) ->
+        http.authorizeHttpRequests(authorizeHttpRequests ->
                 authorizeHttpRequests
-                        .anyRequest().permitAll()
+                        // resources 접근 허용 설정
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        // 로그인 없이 접근 가능한 경로들
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/login").permitAll() // 로그인
+                        .requestMatchers("/api/login").permitAll() // 로그인
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // 회원가입
+                        .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
+                        .requestMatchers(HttpMethod.GET, "/api/kakao/callback").permitAll() // 카카오 로그인 콜백
+                        .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 불러오기
+                        // 그 외 모든 요청 인증 처리
+                        .anyRequest().authenticated()
         );
-        // 로그인 관련 경로 설정
-//        http.authorizeHttpRequests((authorizeHttpRequests) ->
-//                authorizeHttpRequests
-//                        // resources 접근 허용 설정
-//                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-//                        // 로그인 없이 접근 가능한 경로
-//                        .requestMatchers(
-//                                "/api/login", // 로그인
-//                                "/api/signup"
-//                        ).permitAll()
-//                        .requestMatchers(
-//                                HttpMethod.GET,
-//                                "/api/teacher", // 강사 정보 불러오기
-//                                "/api/teachers", // 강사 목록 불러오기
-//                                "/api/lecture", // 강의 정보 불러오기
-//                                "/api/lectures", // 강의 목록 불러오기
-//                                "/api/products", // 제품 목록 불러오기
-//                                "/api/product" // 제품 정보 불러오기
-//                        ).permitAll()
-//                        // 그 외 모든 요청 인증처리
-//                        .anyRequest().authenticated()
-//        );
 
         // 에러 처리를 위한 핸들러 설정
         http.exceptionHandling((exceptionHandling) -> {
@@ -109,9 +104,17 @@ public class WebSecurityConfig {
         http.formLogin((formLogin) -> formLogin.
                 loginPage("/login") // 로그인 페이지 url
                 .loginProcessingUrl("/api/login") // 로그인 요청 url
-                .successHandler(authenticationSuccessHandler) // 로그인 성공을 처리하는 핸들러
                 .permitAll()
         );
+
+        // 로그아웃 처리 진행
+        http.logout(logout -> logout
+                .logoutUrl("/api/logout")
+                .addLogoutHandler(this::handleLogout)
+                .logoutSuccessHandler(this::handleLogoutSuccess)
+                .permitAll()
+        );
+
 
         // JWT 검증 및 인가 필터
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
@@ -136,4 +139,18 @@ public class WebSecurityConfig {
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
+
+    private void handleLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        String accessToken = jwtUtil.getTokenFromRequest(request, JwtUtil.AUTHORIZATION_HEADER);
+        if (accessToken != null && jwtUtil.validateToken(jwtUtil.substringToken(accessToken))) {
+            redisService.deleteRefreshToken(jwtUtil.substringToken(accessToken));
+        }// 쿠키 클리어
+        jwtUtil.removeJwtCookie(response);
+    }
+
+    private void handleLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("Logout successful");
+    }
+
 }

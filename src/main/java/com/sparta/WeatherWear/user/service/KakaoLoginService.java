@@ -52,7 +52,6 @@ public class KakaoLoginService {
 
         // 카카오 유저를 찾아서 없을 경우 회원 가입 진행
         User kakaoUser = registerKakaoUser(kakaoUserInfo);
-
         // JWT 토큰 쿠키에 추가
         String jwtAccessToken = jwtUtil.createAccessToken(kakaoUser);
         jwtUtil.addTokenToCookie(jwtAccessToken,response);

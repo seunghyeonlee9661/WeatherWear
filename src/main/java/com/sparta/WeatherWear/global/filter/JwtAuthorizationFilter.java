@@ -2,8 +2,6 @@ package com.sparta.WeatherWear.global.filter;
 
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
-import com.sparta.WeatherWear.user.entity.User;
-import com.sparta.WeatherWear.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,11 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 /*
 작성자 : 이승현
 JWT를 검증하고 사용자가 로그인한 상태인지 확인하는 필터
@@ -38,6 +36,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         log.info("검증 시작 : " + req.getRequestURI());
         // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER);
+
         // accessToken 확인
         if (accessToken != null) {
             // accessToken 검증

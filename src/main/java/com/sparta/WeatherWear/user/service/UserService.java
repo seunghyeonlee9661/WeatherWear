@@ -1,37 +1,46 @@
 package com.sparta.WeatherWear.user.service;
 
-import com.sparta.WeatherWear.global.service.ImageService;
+import com.sparta.WeatherWear.board.dto.BoardListResponseDTO;
+import com.sparta.WeatherWear.board.entity.Board;
+import com.sparta.WeatherWear.board.repository.BoardRepository;
+import com.sparta.WeatherWear.global.service.ImageTransformService;
+import com.sparta.WeatherWear.global.service.S3Service;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /*
 작성자 : 이승현
 사용자 관련 서비스 처리
 */
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ImageService imageService;
+    private final S3Service s3Service;
+    private final ImageTransformService imageTransformService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ImageService imageService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.imageService = imageService;
+
+    public ResponseEntity<List<BoardListResponseDTO>> findUserBoard(UserDetailsImpl userDetails){
+        List<Board> boardList = boardRepository.findByUserId(userDetails.getUser().getId());
+        return ResponseEntity.ok(boardList.stream().map(BoardListResponseDTO::new).toList());
     }
 
-    /*______________________User_______________________*/
 
     /* 회원가입 */
     @Transactional
@@ -45,14 +54,11 @@ public class UserService {
 
     /* 회원 탈퇴*/
     @Transactional
-    public ResponseEntity<String> removeUser(UserDetailsImpl userDetails, String password) throws IOException {
+    public ResponseEntity<String> removeUser(UserDetailsImpl userDetails) throws IOException {
         User user = userDetails.getUser();
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
-        }
         // 카카오 계정이 아니고, 이미지가 있는 경우에만 이미지 삭제
         if (user.getKakaoId() == null && user.getImage() != null) {
-            imageService.deleteImage(user.getImage());
+            s3Service.deleteFileByUrl(user.getImage());
         }
         userRepository.delete(user);
         return ResponseEntity.ok().body("User deleted successfully");
@@ -60,22 +66,24 @@ public class UserService {
 
     /* 회원 수정 */
     @Transactional
-    public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,String url, MultipartFile file) throws IOException {
+    public ResponseEntity<String> updateUserInfo(UserDetailsImpl userDetails, String nickname,boolean deleteImage, MultipartFile file) throws IOException {
         User user = userDetails.getUser();
         // 사용자의 기존 nickname과 다르면서 현재 다른 사람이 nickname을 쓰고 있는 경우 : nickname 중복
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
-        if (url.isEmpty()) {
-            if (file.isEmpty()) { // 사용자가 기존 사진 삭제한 경우
-                if (user.getKakaoId() == null && user.getImage() != null) imageService.deleteImage(user.getImage());
+
+        String url = user.getImage();
+        if(file == null || file.isEmpty()){
+            if(deleteImage) {
                 url = null;
-            } else { // 사용자가 새롭게 사진을 올리는 경우
-                url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);
+                s3Service.deleteFileByUrl(user.getImage());
             }
-        } else { // imageUrl: prevImageUrl
-            if (!file.isEmpty()) url = imageService.uploadImagefile("user/", String.valueOf(user.getId()), file);// 사용자가 이미지를 수정하는 경우
+        }else{
+            if(user.getImage() != null) s3Service.deleteFileByUrl(user.getImage());
+            File webPFile = imageTransformService.convertToWebP(file);
+            url = s3Service.uploadFile(webPFile);
         }
         user.updateInfo(nickname,url);
-        userRepository.save(user);
+        userRepository.save(user); // Transactional 왜 안되는지 확인해야됨!!!
         return ResponseEntity.ok().body("User updated successfully");
     }
 
@@ -84,11 +92,17 @@ public class UserService {
     public ResponseEntity<String> updateUserPassword(UserDetailsImpl userDetails, UserPasswordUpdateRequestDTO userPasswordUpdateRequestDTO) {
         User user = userDetails.getUser();
         if(!userPasswordUpdateRequestDTO.getNewPassword().equals(userPasswordUpdateRequestDTO.getNewPasswordCheck()))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호 확인이 일치하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("새 비밀번호 확인이 일치하지 않습니다.");
         if(!passwordEncoder.matches(userPasswordUpdateRequestDTO.getCurrentPassword(),user.getPassword()))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 올바르지 않습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 올바르지 않습니다.");
         user.updatePassword(passwordEncoder.encode(userPasswordUpdateRequestDTO.getNewPassword()));
         userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");
+    }
+
+    public ResponseEntity<String> logout(UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+
+        return ResponseEntity.ok().body("User logout successfully");
     }
 }

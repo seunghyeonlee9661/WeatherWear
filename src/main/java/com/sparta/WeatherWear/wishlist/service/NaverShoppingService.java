@@ -42,7 +42,6 @@ public class NaverShoppingService {
                 String responseBody = response.getBody();
                 // JSON 응답에서 "items" 필드 추출
                 String itemsJson = objectMapper.readTree(responseBody).get("items").toString();
-                log.info(itemsJson);
 
                 // JSON 배열을 List<NaverProductRequestDTO>로 변환
                 return objectMapper.readValue(itemsJson, new TypeReference<List<WishlistRequestDTO>>() {})

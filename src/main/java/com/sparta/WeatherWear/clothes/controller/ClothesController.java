@@ -2,6 +2,8 @@ package com.sparta.WeatherWear.clothes.controller;
 
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.clothes.service.ClothesService;
 import com.sparta.WeatherWear.wishlist.dto.NaverProductResponseDTO;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
@@ -46,8 +48,23 @@ public class ClothesController {
 
     /* 옷 정보 추가 */
     @PostMapping("/clothes")
-    public ResponseEntity<String> createClothes(@RequestPart("clothesRequestDTO") @Validated ClothesRequestDTO clothesRequestDTO,@RequestPart(value = "file" , required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return clothesService.createClothes(userDetails,clothesRequestDTO,file);
+    public ResponseEntity<String> createClothes(
+            @RequestPart("color") String color,
+            @RequestPart("type") String type,
+            @RequestPart(value = "file") MultipartFile file,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return clothesService.createClothes(userDetails,ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
+    }
+
+    /* 옷 정보 수정 */
+    @PutMapping("/clothes")
+    public ResponseEntity<String> updateClothes(
+            @RequestPart("id") String id,
+            @RequestPart("color") String color,
+            @RequestPart("type") String type,
+            @RequestPart(value = "file" , required = false) MultipartFile file,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return clothesService.updateClothes(userDetails, Long.valueOf(id),ClothesColor.valueOf(color),ClothesType.valueOf(type),file);
     }
 
     /* 옷 정보 삭제 */
