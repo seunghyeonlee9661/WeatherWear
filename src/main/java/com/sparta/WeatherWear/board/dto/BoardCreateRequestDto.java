@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 public class BoardCreateRequestDto {
 
     private String address;
