@@ -69,7 +69,6 @@ public class BoardCreateResponseDto  {
         }
         this.tags = requestDTOS;
         //
-//        this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
         this.image = board.getBoardImage();
         this.views = board.getViews();
     }
