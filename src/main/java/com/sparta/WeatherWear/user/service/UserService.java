@@ -1,6 +1,7 @@
 package com.sparta.WeatherWear.user.service;
 
 import com.sparta.WeatherWear.board.dto.BoardCreateResponseDto;
+import com.sparta.WeatherWear.board.dto.SimpleBoardResponseDTO;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.global.service.ImageTransformService;
@@ -40,10 +41,10 @@ public class UserService {
     private final ImageTransformService imageTransformService;
 
 
-    public ResponseEntity<Page<BoardCreateResponseDto>> findUserBoard(UserDetailsImpl userDetails,int page, Integer pty, Integer sky, String keyword){
+    public ResponseEntity<Page<SimpleBoardResponseDTO>> findUserBoard(UserDetailsImpl userDetails, int page, Integer pty, Integer sky, String keyword){
         Pageable pageable = PageRequest.of(page, 8, Sort.by(Sort.Order.desc("id")));
         Page<Board> boardPage  = boardRepository.findByUserId(userDetails.getUser().getId(),pty,sky,keyword,pageable);
-        return ResponseEntity.ok(boardPage.map(BoardCreateResponseDto::new));
+        return ResponseEntity.ok(boardPage.map(SimpleBoardResponseDTO::new));
     }
 
 
