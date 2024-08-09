@@ -62,6 +62,7 @@ public class BoardController {
         return boardService.findBoardAll(userDetails, lastId,addressId, sky, color, type);
     }
 
+
     /*
         게시물 전체 목록 조회
         &검색 필터링
