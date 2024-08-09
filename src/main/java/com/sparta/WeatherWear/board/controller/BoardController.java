@@ -67,29 +67,29 @@ public class BoardController {
         &검색 필터링
         검색 필터링 (도시, 날씨 , 옷 타입, 옷 컬러)
     */
-    // 도시 검색
-    @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByCity(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String city, @RequestParam Long page) {
-        return boardService.findBoardAllByCity(userDetails, city, page);
-    }
-
-    // 날씨 검색
-    @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByWeather(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam Long weather, @RequestParam Long page) {
-        return boardService.findBoardAllByWeather(userDetails, weather, page);
-    }
-
-    // 옷 컬러 검색
-    @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByColor(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesColor color, @RequestParam Long page) {
-        return boardService.findBoardAllByColor(userDetails, color, page);
-    }
-
-    // 옷 타입 검색
-    @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByType(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesType type, @RequestParam Long page) {
-        return boardService.findBoardAllByType(userDetails, type, page);
-    }
+//    // 도시 검색
+//    @GetMapping("/search")
+//    public ResponseEntity<?> findBoardAllByCity(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String city, @RequestParam Long page) {
+//        return boardService.findBoardAllByCity(userDetails, city, page);
+//    }
+//
+//    // 날씨 검색
+//    @GetMapping("/search")
+//    public ResponseEntity<?> findBoardAllByWeather(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam Long weather, @RequestParam Long page) {
+//        return boardService.findBoardAllByWeather(userDetails, weather, page);
+//    }
+//
+//    // 옷 컬러 검색
+//    @GetMapping("/search")
+//    public ResponseEntity<?> findBoardAllByColor(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesColor color, @RequestParam Long page) {
+//        return boardService.findBoardAllByColor(userDetails, color, page);
+//    }
+//
+//    // 옷 타입 검색
+//    @GetMapping("/search")
+//    public ResponseEntity<?> findBoardAllByType(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam ClothesType type, @RequestParam Long page) {
+//        return boardService.findBoardAllByType(userDetails, type, page);
+//    }
 
     /* 게시물 수정 */
     @PutMapping("/")

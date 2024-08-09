@@ -334,119 +334,119 @@ public class BoardService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 조회 방식 설정 필요 (최신순)
-    public ResponseEntity<?> findBoardAllByCity(UserDetailsImpl userDetails, String city, Long page) {
-//        address
-        User user = userDetails.getUser();
-
-        List<Board> allBoardByCity = boardRepository.findAllByAddress(city);
-
-        // newBoard -> responseDto로 반환
-        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
-
-        for (Board board : allBoardByCity) {
-
-            // isPrivate 확인
-            if (board.isPrivate()) {
-                if (user == null) { // 비로그인 사용자 -> 비공개
-                    continue;
-                }else {
-                    if (user.getId().equals(board.getUser().getId())) {
-                        responseDtos.add(new BoardCreateResponseDto(board));
-                    }
-                }
-            }else {
-                responseDtos.add(new BoardCreateResponseDto(board));
-            }
-
-        }
-            return new ResponseEntity<>(responseDtos, HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> findBoardAllByWeather(UserDetailsImpl userDetails, Long weather, Long page) {
-//        weather / address / id
-        User user = userDetails.getUser();
-        List<Board> allBoardByWeather = boardRepository.findAllByWeather_Address_Id(weather);
-
-        // newBoard -> responseDto로 반환
-        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
-
-        for (Board board : allBoardByWeather) {
-
-            // isPrivate 확인
-            // isPrivate 확인
-            if (board.isPrivate()) {
-                if (user == null) { // 비로그인 사용자 -> 비공개
-                    continue;
-                }else {
-                    if (user.getId().equals(board.getUser().getId())) {
-                        responseDtos.add(new BoardCreateResponseDto(board));
-                    }
-                }
-            }else {
-                responseDtos.add(new BoardCreateResponseDto(board));
-            }
-            responseDtos.add(new BoardCreateResponseDto(board));
-        }
-
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> findBoardAllByColor(UserDetailsImpl userDetails, ClothesColor color, Long page) {
-//        color
-        User user = userDetails.getUser();
-        List<Board> allBoardByWeather = boardRepository.findDistinctByBoardTags_Color(color);
-
-        // newBoard -> responseDto로 반환
-        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
-
-        for (Board board : allBoardByWeather) {
-
-            // isPrivate 확인
-            if (board.isPrivate()) {
-                if (user == null) { // 비로그인 사용자 -> 비공개
-                    continue;
-                }else {
-                    if (user.getId().equals(board.getUser().getId())) {
-                        responseDtos.add(new BoardCreateResponseDto(board));
-                    }
-                }
-            }else {
-                responseDtos.add(new BoardCreateResponseDto(board));
-            }
-
-            responseDtos.add(new BoardCreateResponseDto(board));
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> findBoardAllByType(UserDetailsImpl userDetails, ClothesType type, Long page) {
-//            type
-        User user = userDetails.getUser();
-        List<Board> allBoardByWeather = boardRepository.findDistinctByBoardTags_Type(type);
-
-        // newBoard -> responseDto로 반환
-        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
-
-        for (Board board : allBoardByWeather) {
-
-            // isPrivate 확인
-            if (board.isPrivate()) {
-                if (user == null) { // 비로그인 사용자 -> 비공개
-                    continue;
-                }else {
-                    if (user.getId().equals(board.getUser().getId())) {
-                        responseDtos.add(new BoardCreateResponseDto(board));
-                    }
-                }
-            }else {
-                responseDtos.add(new BoardCreateResponseDto(board));
-            }
-
-            responseDtos.add(new BoardCreateResponseDto(board));
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    // 조회 방식 설정 필요 (최신순)
+//    public ResponseEntity<?> findBoardAllByCity(UserDetailsImpl userDetails, String city, Long page) {
+////        address
+//        User user = userDetails.getUser();
+//
+//        List<Board> allBoardByCity = boardRepository.findAllByAddress(city);
+//
+//        // newBoard -> responseDto로 반환
+//        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+//
+//        for (Board board : allBoardByCity) {
+//
+//            // isPrivate 확인
+//            if (board.isPrivate()) {
+//                if (user == null) { // 비로그인 사용자 -> 비공개
+//                    continue;
+//                }else {
+//                    if (user.getId().equals(board.getUser().getId())) {
+//                        responseDtos.add(new BoardCreateResponseDto(board));
+//                    }
+//                }
+//            }else {
+//                responseDtos.add(new BoardCreateResponseDto(board));
+//            }
+//
+//        }
+//            return new ResponseEntity<>(responseDtos, HttpStatus.OK);
+//    }
+//
+//    public ResponseEntity<?> findBoardAllByWeather(UserDetailsImpl userDetails, Long weather, Long page) {
+////        weather / address / id
+//        User user = userDetails.getUser();
+//        List<Board> allBoardByWeather = boardRepository.findAllByWeather_Address_Id(weather);
+//
+//        // newBoard -> responseDto로 반환
+//        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+//
+//        for (Board board : allBoardByWeather) {
+//
+//            // isPrivate 확인
+//            // isPrivate 확인
+//            if (board.isPrivate()) {
+//                if (user == null) { // 비로그인 사용자 -> 비공개
+//                    continue;
+//                }else {
+//                    if (user.getId().equals(board.getUser().getId())) {
+//                        responseDtos.add(new BoardCreateResponseDto(board));
+//                    }
+//                }
+//            }else {
+//                responseDtos.add(new BoardCreateResponseDto(board));
+//            }
+//            responseDtos.add(new BoardCreateResponseDto(board));
+//        }
+//
+//
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+//
+//    public ResponseEntity<?> findBoardAllByColor(UserDetailsImpl userDetails, ClothesColor color, Long page) {
+////        color
+//        User user = userDetails.getUser();
+//        List<Board> allBoardByWeather = boardRepository.findDistinctByBoardTags_Color(color);
+//
+//        // newBoard -> responseDto로 반환
+//        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+//
+//        for (Board board : allBoardByWeather) {
+//
+//            // isPrivate 확인
+//            if (board.isPrivate()) {
+//                if (user == null) { // 비로그인 사용자 -> 비공개
+//                    continue;
+//                }else {
+//                    if (user.getId().equals(board.getUser().getId())) {
+//                        responseDtos.add(new BoardCreateResponseDto(board));
+//                    }
+//                }
+//            }else {
+//                responseDtos.add(new BoardCreateResponseDto(board));
+//            }
+//
+//            responseDtos.add(new BoardCreateResponseDto(board));
+//        }
+//
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+//
+//    public ResponseEntity<?> findBoardAllByType(UserDetailsImpl userDetails, ClothesType type, Long page) {
+////            type
+//        User user = userDetails.getUser();
+//        List<Board> allBoardByWeather = boardRepository.findDistinctByBoardTags_Type(type);
+//
+//        // newBoard -> responseDto로 반환
+//        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+//
+//        for (Board board : allBoardByWeather) {
+//
+//            // isPrivate 확인
+//            if (board.isPrivate()) {
+//                if (user == null) { // 비로그인 사용자 -> 비공개
+//                    continue;
+//                }else {
+//                    if (user.getId().equals(board.getUser().getId())) {
+//                        responseDtos.add(new BoardCreateResponseDto(board));
+//                    }
+//                }
+//            }else {
+//                responseDtos.add(new BoardCreateResponseDto(board));
+//            }
+//
+//            responseDtos.add(new BoardCreateResponseDto(board));
+//        }
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 }

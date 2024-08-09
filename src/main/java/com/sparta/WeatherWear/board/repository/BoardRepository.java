@@ -48,19 +48,19 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                                  @Param("userId") Long userId,
                                  Pageable pageable);
 
-
-    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
-    Page<Board> findAllOrderedByCreatedAt(Pageable pageable);
-
-    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
-    List<Board> findAllByAddress(String city);
-
-    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
-    List<Board> findAllByWeather_Address_Id(Long weather);
-
-    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
-    List<Board> findDistinctByBoardTags_Color(ClothesColor color);
-
-    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
-    List<Board> findDistinctByBoardTags_Type(ClothesType type);
+//
+//    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
+//    Page<Board> findAllOrderedByCreatedAt(Pageable pageable);
+//
+//    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
+//    List<Board> findAllByAddress(String city);
+//
+//    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
+//    List<Board> findAllByWeather_Address_Id(Long weather);
+//
+//    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
+//    List<Board> findDistinctByBoardTags_Color(ClothesColor color);
+//
+//    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
+//    List<Board> findDistinctByBoardTags_Type(ClothesType type);
 }
