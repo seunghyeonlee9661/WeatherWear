@@ -6,6 +6,7 @@ import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,7 +23,7 @@ public class BoardUpdateRequestDto {
     @JsonProperty("isPrivate")
     private boolean isPrivate;
     //
-    private List<ClothesRequestDTO> clothesRequestDTO;
+    private List<ClothesRequestDTO> tags;
 
     public BoardUpdateRequestDto(Long boardId, String address, Long addressId, String title, String contents, boolean isPrivate, List<ClothesRequestDTO> tags) {
         this.boardId = boardId;
@@ -30,7 +31,7 @@ public class BoardUpdateRequestDto {
         this.title = title;
         this.contents = contents;
         this.isPrivate = isPrivate;
-        this.clothesRequestDTO = tags;
+        this.tags = tags;
 
     }
 }
