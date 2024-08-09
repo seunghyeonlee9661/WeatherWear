@@ -11,6 +11,10 @@ import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,9 +40,10 @@ public class UserService {
     private final ImageTransformService imageTransformService;
 
 
-    public ResponseEntity<List<BoardCreateResponseDto>> findUserBoard(UserDetailsImpl userDetails){
-        List<Board> boardList = boardRepository.findByUserId(userDetails.getUser().getId());
-        return ResponseEntity.ok(boardList.stream().map(BoardCreateResponseDto::new).toList());
+    public ResponseEntity<Page<BoardCreateResponseDto>> findUserBoard(UserDetailsImpl userDetails,int page, Integer pty, Integer sky, String keyword){
+        Pageable pageable = PageRequest.of(page, 8, Sort.by(Sort.Order.desc("id")));
+        Page<Board> boardPage  = boardRepository.findByUserId(userDetails.getUser().getId(),pty,sky,keyword,pageable);
+        return ResponseEntity.ok(boardPage.map(BoardCreateResponseDto::new));
     }
 
 

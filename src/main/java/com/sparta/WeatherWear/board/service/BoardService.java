@@ -174,7 +174,7 @@ public class BoardService {
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long lastId, Long addressId, Integer sky, String color, String type ) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long lastId, String address, String color, String type,String keyword ) {
         // Define the page size (e.g., 8 items per page)
         int pageSize = 8;
         // 페이저블 객체 : ID를 기반으로 내림차순
@@ -195,11 +195,10 @@ public class BoardService {
         List<Board> boards;
         if (lastId == null) {
             // 최신 게시물 조회
-            boards = boardRepository.findBoardsLatest(addressId,sky,clothesColor,clothesType,userId,pageable);
+            boards = boardRepository.findBoardsLatest(address,clothesColor,clothesType,userId,pageable,keyword);
         } else {
             // lastId를 기준으로 커서 기반 페이지네이션
-            boards = boardRepository.findBoardsAfterId(lastId,addressId,sky,clothesColor,clothesType,userId,pageable
-            );
+            boards = boardRepository.findBoardsAfterId(lastId,address,clothesColor,clothesType,userId,pageable,keyword);
         }
 
         return ResponseEntity.ok(boards.stream().map(BoardCreateResponseDto::new).collect(Collectors.toList()));
