@@ -2,7 +2,6 @@ package com.sparta.WeatherWear.board.service;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.entity.Board;
-import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.Comment;
 import com.sparta.WeatherWear.board.entity.CommentLike;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
@@ -57,22 +56,13 @@ public class CommentService {
     }
 
     /* BoardId에 해당하는 댓글 모두 조회 */
-    public List<CommentCreateResponseDto> findBoardCommentsByBoardId(Long boardId, Long page) {
+    public List<CommentCreateResponseDto> findBoardCommentsByBoardId(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(
                 ()-> new IllegalArgumentException("게시물을 찾을 수 없습니다")
         );
 
-        // Define the page size (e.g., 8 items per page)
-        int pageSize = 8;
-
-        // Create a Pageable object
-        Pageable pageable = PageRequest.of(page.intValue(), pageSize);
-
-        // Retrieve the paginated results
-        Page<Comment> commentPage = commentRepository.findAllOrderedByCreatedAt(pageable);
-
         // Get the current page content
-        List<Comment> comments = commentPage.getContent();
+        List<Comment> comments = commentRepository.findAllOrderedByCreatedAt();
 
         List<CommentCreateResponseDto> commentCreateResponseDtos = new ArrayList<>();
         for (Comment comment : comments) {

@@ -30,8 +30,8 @@ public class CommentController {
     }    
     /* BoardId에 해당하는 댓글 모두 조회 */
     @GetMapping("/{boardId}/comments")
-    public List<CommentCreateResponseDto> findBoardCommentsByBoardId(@PathVariable Long boardId, @RequestParam Long page) {
-        return commentService.findBoardCommentsByBoardId(boardId,page);
+    public List<CommentCreateResponseDto> findBoardCommentsByBoardId(@PathVariable Long boardId) {
+        return commentService.findBoardCommentsByBoardId(boardId);
     }    
 //    /* User가 작성한 댓글 모두 조회  */
 //    @PostMapping("/comments/{boardId}")
