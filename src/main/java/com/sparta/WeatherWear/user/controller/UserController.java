@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.WeatherWear.board.dto.BoardMyAllResponseDto;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.dto.UserPasswordUpdateRequestDTO;

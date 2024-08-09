@@ -7,7 +7,9 @@ import com.sparta.WeatherWear.board.entity.BoardImage;
 import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 
+import com.sparta.WeatherWear.user.dto.SimpleUserDTO;
 import com.sparta.WeatherWear.user.dto.UserSimpleDto;
+import com.sparta.WeatherWear.weather.dto.SimpleWeatherResponseDTO;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,38 +22,35 @@ import java.util.List;
 public class BoardCreateResponseDto  {
 
     private long id;
-    // 사용자 정보
-    private UserSimpleDto userSimpleDto = new UserSimpleDto();
-
-    //
-    private String title;
-    private String contents;
-    private boolean isPrivate;
+    private SimpleUserDTO user; // 사용자 정보
+    private String title; // 제목
+    private String contents; // 내용
+    private boolean isPrivate; // private 여부
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; // 생성일자
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt; // 수정일자
+
+
+    private SimpleWeatherResponseDTO weather; // 날씨 정보
+    private String address; // 주소
     //
-//    Fixme : Weather의 경우에도 필요한 값만 넣어서 DTO로 만드시면 됩니다!
-    private Weather weather;
-    private String address;
-    //
-    private int boardLikesCount;
+    private int boardLikesCount; // 좋아요 수
     //
 //    private int commentsSize;
     //
-    private List<ClothesRequestDTO> tegs;
-    private String boardImage;
-    private int views;
+    private List<ClothesRequestDTO> tags; // 태그 목록
+    private String boardImage; // 게시물 이미지
+    private int views; // 조회수
+
+    private boolean checkLike; // 현재 사용자의 좋아요 여부
 
     // 게시물 찾을 때
     public BoardCreateResponseDto(Board board) {
         this.id = board.getId();
         // 사용자
-        this.userSimpleDto.setUserId(board.getUser().getId());
-        this.userSimpleDto.setNickname(board.getUser().getNickname());
-        this.userSimpleDto.setImage(board.getUser().getImage());
+        this.user = new SimpleUserDTO(board.getUser());
         // 게시물
         this.title = board.getTitle();
         this.contents = board.getContent();
@@ -60,7 +59,7 @@ public class BoardCreateResponseDto  {
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
         // 날씨
-        this.weather = board.getWeather();
+        this.weather = new SimpleWeatherResponseDTO(board.getWeather());
         this.address = board.getAddress();
         //
         this.boardLikesCount = board.getLikesSize();
@@ -70,46 +69,44 @@ public class BoardCreateResponseDto  {
              ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
              requestDTOS.add(requestDTO);
         }
-        this.tegs = requestDTOS;
+        this.tags = requestDTOS;
         //
 //        this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
+        this.boardImage = board.getBoardImage();
         this.views = board.getViews();
     }
 
-    // 처음 생성할 때
-    //Fixme : 게시물 생성에 대한 Response 빼시면 될거 같아요!
-    public BoardCreateResponseDto(Board board, List<ClothesRequestDTO> clothesRequestDTO) {
-        this.id = board.getId();
-        // 사용자
-        this.userSimpleDto.setUserId(board.getUser().getId());
-        this.userSimpleDto.setNickname(board.getUser().getNickname());
-        this.userSimpleDto.setImage(board.getUser().getImage());
-        // 게시물
-        this.title = board.getTitle();
-        this.contents = board.getContent();
-        this.isPrivate = board.isPrivate();
-        //시간
-        this.createdAt = board.getCreatedAt();
-        this.updatedAt = board.getUpdatedAt();
-        // 날씨
-        this.weather = board.getWeather();
-        this.address = board.getAddress();
-        //
-        this.boardLikesCount = board.getLikesSize();
-       //
-        this.tegs = clothesRequestDTO;
-//        this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
-        this.views = board.getViews();
-    }
+//    // 처음 생성할 때
+//    //Fixme : 게시물 생성에 대한 Response 빼시면 될거 같아요!
+//    public BoardCreateResponseDto(Board board, List<ClothesRequestDTO> clothesRequestDTO) {
+//        this.id = board.getId();
+//        // 사용자
+//        this.user = new SimpleUserDTO(board.getUser());
+//        // 게시물
+//        this.title = board.getTitle();
+//        this.contents = board.getContent();
+//        this.isPrivate = board.isPrivate();
+//        //시간
+//        this.createdAt = board.getCreatedAt();
+//        this.updatedAt = board.getUpdatedAt();
+//        // 날씨
+//        this.weather = board.getWeather();
+//        this.address = board.getAddress();
+//        //
+//        this.boardLikesCount = board.getLikesSize();
+//       //
+//        this.tags = clothesRequestDTO;
+////        this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
+//        this.boardImage = board.getBoardImage();
+//        this.views = board.getViews();
+//    }
 
     // 게시물 조회 & 조회수 추가
     //Fixme
     public BoardCreateResponseDto(Board board, int views) {
         this.id = board.getId();
         // 사용자
-        this.userSimpleDto.setUserId(board.getUser().getId());
-        this.userSimpleDto.setNickname(board.getUser().getNickname());
-        this.userSimpleDto.setImage(board.getUser().getImage());
+        this.user = new SimpleUserDTO(board.getUser());
         // 게시물
         this.title = board.getTitle();
         this.contents = board.getContent();
@@ -118,7 +115,7 @@ public class BoardCreateResponseDto  {
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
         // 날씨
-        this.weather = board.getWeather();
+        this.weather = new SimpleWeatherResponseDTO(board.getWeather());
         this.address = board.getAddress();
         //
         this.boardLikesCount = board.getLikesSize();
@@ -129,9 +126,10 @@ public class BoardCreateResponseDto  {
             ClothesRequestDTO requestDTO = new ClothesRequestDTO(boardTag.getColor(),boardTag.getType());
             requestDTOS.add(requestDTO);
         }
-        this.tegs = requestDTOS;
+        this.tags = requestDTOS;
         //
 //        this.boardImages = board.getBoardImages().stream().map(BoardImage::getImagePath).toList(); // 경로만 가져오기
+        this.boardImage = board.getBoardImage();
         this.views = views;
     }
 }

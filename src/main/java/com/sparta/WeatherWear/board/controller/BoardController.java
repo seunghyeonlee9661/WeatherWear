@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.board.controller;
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,21 +28,21 @@ public class BoardController {
     private final BoardService boardService;
 
     /* 게시물 작성 */
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
-                                                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                           @RequestPart(value = "image") MultipartFile image) throws IOException {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                         @RequestPart(value = "image") MultipartFile image) throws IOException {
         return boardService.createBoard(requestDto,userDetails, image);
 
     }
-    
+
     /*
         상세 조회
         게시물 id로 조회 
     */
     @GetMapping("/{boardId}")
-    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return boardService.findBoardById(boardId, userDetails);
+    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        return boardService.findBoardById(boardId, userDetails,request);
     }
 
 //    /* 게시물 user_id 전체 목록 조회 (페이징) */
@@ -55,8 +56,8 @@ public class BoardController {
         게시물 전체 목록 조회 -> ootd 트렌드 페이지
     */
     @GetMapping("/")
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam Long page) {
-        return boardService.findBoardAll(userDetails, page);
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam Long lastId, @RequestParam String search) {
+        return boardService.findBoardAll(userDetails, lastId, search);
     }
 
     /*
@@ -64,9 +65,28 @@ public class BoardController {
         &검색 필터링
         검색 필터링 (도시, 날씨 , 옷 타입, 옷 컬러)
     */
+    // 도시 검색
     @GetMapping("/search")
-    public ResponseEntity<?> findBoardAllByCity(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String city, @RequestParam Long page) {
+    public ResponseEntity<?> findBoardAllByCity(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String city, @RequestParam Long page) {
         return boardService.findBoardAllByCity(userDetails, city, page);
+    }
+
+    // 날씨 검색
+    @GetMapping("/search")
+    public ResponseEntity<?> findBoardAllByWeather(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String weather, @RequestParam Long page) {
+        return boardService.findBoardAllByWeather(userDetails, weather, page);
+    }
+
+    // 옷 컬러 검색
+    @GetMapping("/search")
+    public ResponseEntity<?> findBoardAllByColor(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String color, @RequestParam Long page) {
+        return boardService.findBoardAllByColor(userDetails, color, page);
+    }
+
+    // 옷 타입 검색
+    @GetMapping("/search")
+    public ResponseEntity<?> findBoardAllByType(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestParam String type, @RequestParam Long page) {
+        return boardService.findBoardAllByType(userDetails, type, page);
     }
 
     /* 게시물 수정 */

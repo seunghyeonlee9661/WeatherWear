@@ -12,16 +12,19 @@ import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.global.service.ImageTransformService;
+import com.sparta.WeatherWear.global.service.RedisService;
 import com.sparta.WeatherWear.global.service.S3Service;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import com.sparta.WeatherWear.weather.service.WeatherService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
   작성자 : 하준영
@@ -47,11 +51,10 @@ public class BoardService {
     private WeatherService weatherService;
     private BoardTagRepository boardTagRepository;
     private BoardLikeRepository boardLikeRepository;
-    private final BoardImageRepository boardImageRepository;
     private BoardRepository boardRepository;
-    private BoardImageService boardImageService;
     private ImageTransformService imageTransformService;
     private S3Service s3Service;
+    private RedisService redisService;
 
     /* 게시물 작성 */
     @Transactional
@@ -86,15 +89,6 @@ public class BoardService {
             // Board Entity에 추가
             newBoard.getBoardTags().add(newBoardTag);
         }
-//        // 추가 - 사진 저장 메서드 실행
-//        BoardImage boardImagePath = boardImageService.uploadImage(newBoard, image);
-//        // Board Entity에 추가
-//        newBoard.getBoardImages().add(boardImagePath);
-
-//        Board updateImageToBoard = newBoard.update(boardImagePath);
-        // newBoard -> responseDto로 반환
-//        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(newBoard, requestDto.getClothesRequestDTO());
-//        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
 
         // Prepare the response
         Map<String, Long> response = new HashMap<>();
@@ -105,44 +99,80 @@ public class BoardService {
 
     /* 게시물 id로 조회 */
     @Transactional
-    public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails) {
+    public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails,HttpServletRequest request) {
         Board board = boardRepository.findById(boardId).orElseThrow(()->
                 new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
         );
+
         // user 정보 가져오기 (id)
-        Long user = userDetails.getUser().getId(); //FIXME 여기 비로그인 사용자도 가능하기 때문에 userDetails를 null인지 확인하셔야 됩니다.
+        User user = null;
+        if(userDetails != null){
+            user = userDetails.getUser();
+        }
+
+        //
         int views = board.getViews();
         System.out.println("views = " + views);
 
-        // 비공개인지 확인
-        if(board.isPrivate() == true){ //FIXME board.isPrivate()자체가 boolean이라 == 안해도 될듯합니다.
-            // 아이디 비교
-            System.out.println("user = " + user);
-            System.out.println("board.getUser().getId() = " + board.getUser().getId()); //FIXME 마찬가지로 user가 null일 경우 고려
-            if(user.equals(board.getUser().getId())){
-                // newBoard -> responseDto로 반환
-                BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
-                // Creating the ApiResponse object
-//                ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
-                // Returning the response entity with the appropriate HTTP status
-                return new ResponseEntity<>(responseDto, HttpStatus.OK);
-            }else {
-                return new ResponseEntity<>("선택한 게시물은 볼 수 없는 게시물입니다.",HttpStatus.NO_CONTENT); //FIXME HttpStatus 바꾸시면 됩니다 Forbiden 같은 걸로
-
-            }
-        }else {
-            // 조회수 추가 & 저장
-            views++;
-            board.updateViews(views);
-            // newBoard -> responseDto로 반환
-            //FIXME 중요!!!! : 여기서 BoardCreateResponseDto로 새 객체 생성하면 데이터에 반영 안됩니다. update하는 함수 board에 작성하셔야 됩니다.
-            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
-            // Creating the ApiResponse object
-//            ApiResponse<BoardCreateResponseDto> response = new ApiResponse<>(200, "Board responsed successfully", responseDto);
-            // Returning the response entity with the appropriate HTTP status
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 게시물은 비공개 상태이므로 접근할 수 없습니다.");
         }
 
+        // Redis 기반, 사용자 IP로 게시물의 조회수를 1일 1회만 증가시킬 수 있도록 지정
+        if (redisService.incrementViewCount(getClientIp(request), boardId.toString())) { // 사용자 IP를 Redis에서 검색
+            board.updateViews(board.getViews()+1); // Board 엔티티의 조회수 증가 메서드 호출
+        }
+        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
+
+        // 현재 게시물을 사용자가 좋아요 했는지 확인하고 상태를 추가합니다.
+        if (user != null) {
+            responseDto.setCheckLike(boardLikeRepository.existsByUserAndBoard(user, board));
+        }else{
+            responseDto.setCheckLike(false);
+        }
+
+
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//        // 비공개인지 확인
+//        if(board.isPrivate()){
+//            if(user == null){ // 비로그인 사용자 -> 비공개
+//                new ResponseEntity<>("선택한 게시물은 볼 수 없는 게시물입니다.",HttpStatus.NO_CONTENT);
+//            }else{
+//                if(user.getId().equals(board.getUser().getId()))
+//            }
+//            // 아이디 비교
+////            System.out.println("user = " + user);
+////            System.out.println("board.getUser().getId() = " + board.getUser().getId()); //FIXME 마찬가지로 user가 null일 경우 고려
+//            if(user.equals(board.getUser().getId())){
+//                // newBoard -> responseDto로 반환
+//                BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
+//
+//                return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//            }else {
+//                return new ResponseEntity<>("선택한 게시물은 볼 수 없는 게시물입니다.",HttpStatus.NO_CONTENT); //FIXME HttpStatus 바꾸시면 됩니다 Forbiden 같은 걸로
+//
+//            }
+//        }else {
+//            // 조회수 추가 & 저장
+//            views++;
+//            board.updateViews(views);
+//            // newBoard -> responseDto로 반환
+//            //FIXME 중요!!!! : 여기서 BoardCreateResponseDto로 새 객체 생성하면 데이터에 반영 안됩니다. update하는 함수 board에 작성하셔야 됩니다.
+//            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
+//
+//
+//        }
+
+    }
+
+    // 사용자 IP 확인하는 기능
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty()) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
     /* 게시물 user_id 전체 목록 조회 (페이징) */
@@ -172,38 +202,30 @@ public class BoardService {
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
     //FIXME : 커서형 페이지네이션을 하시게되면 파라미터로 커서 id(마지막 board ID)를 받으실 수 있으니 참고 바랍니다!
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long page) {
-//FIXME : 여기서 아마 쿼리를 잘 짜시면 비굥개이면서 작성자 아이디가 내가 아닌 게시물 걸러내실 수 있을겁니다. GPT 추천드립니다.
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long lastId, String search) {
+    //FIXME : 여기서 아마 쿼리를 잘 짜시면 비굥개이면서 작성자 아이디가 내가 아닌 게시물 걸러내실 수 있을겁니다. GPT 추천드립니다.
         // Define the page size (e.g., 8 items per page)
         int pageSize = 8;
+        // 페이저블 객체 : ID를 기반으로 내림차순
+        Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Order.desc("id")));
 
-        // Create a Pageable object
-        Pageable pageable = PageRequest.of(page.intValue(), pageSize);
-
-        // Retrieve the paginated results
-        Page<Board> boardPage = boardRepository.findAllOrderedByCreatedAt(pageable);
-
-        // Get the current page content
-        List<Board> boards = boardPage.getContent();
-
-        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
-
-        Long user = userDetails.getUser().getId();
-        for (Board board : boards) {
-            // 비공개인지 확인
-            if(board.isPrivate() == true) {
-                // 아이디 비교
-                System.out.println("board.getUser().getId() = " + board.getUser().getId());
-                System.out.println("user = " + user );
-                if (user.equals(board.getUser().getId())) {
-                    responseDtos.add(new BoardCreateResponseDto(board));
-                }
-            }else {
-                responseDtos.add(new BoardCreateResponseDto(board));
-            }
+        // 현재 사용자가 로그인중이면 id를 받아옵니다. 해당 변수는 비공개를 필터링 하기 위해 사용합니다.
+        Long userId = null;
+        if (userDetails != null){
+            userId = userDetails.getUser().getId();
         }
 
-        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
+        // 결과값을 Repository에서 받아옵니다.
+        List<Board> boards;
+        if (lastId == null) {
+            // latest (가장 최근의 게시물부터) 조회
+            boards = boardRepository.findBoardsLatest(search,userId, pageable);
+        } else {
+            // lastId를 기준으로 커서 기반 페이지네이션
+            boards = boardRepository.findBoardsAfterId(lastId, search,userId, pageable);
+        }
+
+        return ResponseEntity.ok(boards.stream().map(BoardCreateResponseDto::new).collect(Collectors.toList()));
 
     }
 
@@ -234,30 +256,22 @@ public class BoardService {
         Weather weather = weatherService.getWeatherByAddress(requestDTO.getAddressId());
         // 같으면 update 실행
 
-        // request 로 받아 온 값 넣기 -> 뒤로
-        Board updateBoard = board.update(requestDTO, weather);
+        Board updateBoard = null;
 
         // 사진 업데이트
         if(image != null && !image.isEmpty()) {
 
-//            //1. DB에서 지울 때 / byBoardId
-            List<BoardImage> updateBoardImages = updateBoard.getBoardImages();
-//
-//            // db 삭제 & 실제 저장 이미지 삭제
-            for (BoardImage boardImage : updateBoardImages) {
-                boardImageService.deleteImage(boardImage.getId());
-//                boardImageRepository.deleteByBoardId(boardImage.getId());
+            // image null 인지 확인
+            if(image == null || image.isEmpty()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미지를 첨부해주세요"); // null이면 오류
             }
+            s3Service.deleteFileByUrl(board.getBoardImage()); // 기존 이미지 제거
 
-            //2. 기존 사진을 제거해야 한다
+            File webPFile = imageTransformService.convertToWebP(image); // imageWebp로 변환
+            String imageUrl = s3Service.uploadFile(webPFile); // 이미지 저장 후 url 확인
 
-            // Board Entity ImageList -> Null 설정
-            updateBoard.clearBoardImages();
-
-            // 3. 사진 저장 메서드 실행
-            BoardImage newBoardImage = boardImageService.uploadImage(updateBoard, image);
-            // 4. Board Entity에 추가
-            board.getBoardImages().add(newBoardImage);
+            // request 로 받아 온 값 넣기
+            updateBoard = board.update(requestDTO, weather, imageUrl);
 
         }
 
@@ -277,10 +291,6 @@ public class BoardService {
                 // 4. Board Entity에 추가
                 updateBoard.getBoardTags().add(updateBoardTag);
              }
-
-            // newBoard -> responseDto로 반환
-//            BoardCreateResponseDto responseDto = new BoardCreateResponseDto(updateBoard);
-//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
 
         // Prepare the response
         Map<String, Long> response = new HashMap<>();
@@ -353,7 +363,37 @@ public class BoardService {
     }
 
     public ResponseEntity<?> findBoardAllByCity(UserDetailsImpl userDetails, String city, Long page) {
+//        address
 
+        List<Board> allBoardByCity = boardRepository.findAllByAddress(city);
+
+        // newBoard -> responseDto로 반환
+        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
+
+        for (Board board : allBoardByCity) {
+
+            // isPrivate 확인
+
+            responseDtos.add(new BoardCreateResponseDto(board));
+        }
+
+        return new ResponseEntity<>(responseDtos,HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> findBoardAllByWeather(UserDetailsImpl userDetails, String weather, Long page) {
+//        weather / address / id
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> findBoardAllByColor(UserDetailsImpl userDetails, String color, Long page) {
+//        color
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> findBoardAllByType(UserDetailsImpl userDetails, String type, Long page) {
+//            type
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

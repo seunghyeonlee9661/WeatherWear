@@ -4,7 +4,6 @@ import com.sparta.WeatherWear.board.dto.BoardCreateRequestDto;
 import com.sparta.WeatherWear.board.dto.BoardUpdateRequestDto;
 
 import com.sparta.WeatherWear.board.time.Timestamped;
-import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import jakarta.persistence.*;
@@ -90,11 +89,12 @@ public class Board extends Timestamped {
         return this.comments.size();
     }
 
-    public Board update(BoardUpdateRequestDto requestDTO, Weather weather) {
+    public Board update(BoardUpdateRequestDto requestDTO, Weather weather, String imageUrl) {
         this.weather = weather;
         this.title = requestDTO.getTitle();
         this.content = requestDTO.getContents();
         this.isPrivate = requestDTO.isPrivate();
+        this.boardImage = imageUrl;
         return this;
     }
 
