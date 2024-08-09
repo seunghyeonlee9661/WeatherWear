@@ -1,6 +1,7 @@
 package com.sparta.WeatherWear.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardTag;
@@ -10,7 +11,6 @@ import com.sparta.WeatherWear.weather.dto.SimpleWeatherResponseDTO;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +27,11 @@ public class SimpleBoardResponseDTO {
     private SimpleWeatherResponseDTO weather; // 날씨 정보
     private boolean isPrivate;
     private List<TagResponseDTO> tags;
+
+    @JsonGetter("isPrivate")
+    public boolean getIsPrivate() {
+        return isPrivate;
+    }
 
     public SimpleBoardResponseDTO(Board board){
         this.id = board.getId();
