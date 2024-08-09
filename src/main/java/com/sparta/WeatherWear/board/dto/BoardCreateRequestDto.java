@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor // 기본 생성자 추가
 public class BoardCreateRequestDto {
 
     private String address;

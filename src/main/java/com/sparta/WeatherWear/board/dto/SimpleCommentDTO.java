@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.board.dto;
 
 import com.sparta.WeatherWear.board.entity.Comment;
 import com.sparta.WeatherWear.user.dto.SimpleUserDTO;
+import lombok.NoArgsConstructor;
 
 public class SimpleCommentDTO {
     private Long id;

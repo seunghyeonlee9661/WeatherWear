@@ -4,6 +4,7 @@ import com.sparta.WeatherWear.board.entity.BoardTag;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 public class TagResponseDTO {

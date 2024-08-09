@@ -5,6 +5,7 @@ import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.Comment;
 import com.sparta.WeatherWear.user.dto.UserSimpleDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor // 기본 생성자 추가
 public class CommentCreateResponseDto {
     private long id;
     // 사용자 정보

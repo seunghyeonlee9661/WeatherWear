@@ -8,6 +8,7 @@ import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.dto.ClothesResponseDTO;
 import com.sparta.WeatherWear.weather.dto.SimpleWeatherResponseDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

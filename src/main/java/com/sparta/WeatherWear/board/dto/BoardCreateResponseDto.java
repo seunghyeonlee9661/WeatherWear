@@ -11,6 +11,7 @@ import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.user.dto.SimpleUserDTO;
 import com.sparta.WeatherWear.weather.dto.SimpleWeatherResponseDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
