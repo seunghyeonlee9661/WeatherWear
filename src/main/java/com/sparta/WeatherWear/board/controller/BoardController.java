@@ -2,10 +2,13 @@ package com.sparta.WeatherWear.board.controller;
 
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
+import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +34,16 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("")
-    public ResponseEntity<?> createBoard(@Validated @RequestPart(value = "boardCreateRequestDto")  BoardCreateRequestDto requestDto,
+    public ResponseEntity<?> createBoard(
+                                         @RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
+                                         @RequestPart("address_id") @NotNull(message = "행정동 코드값이 없습니다.") Long addressId,
+                                         @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
+                                         @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
+                                         @RequestPart("isPrivate") boolean isPrivate,
+                                         @RequestPart("tags") List<ClothesRequestDTO> tags,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
                                          @RequestPart(value = "image") MultipartFile image) throws IOException {
+        BoardCreateRequestDto requestDto = new BoardCreateRequestDto(address,addressId,title,contents,isPrivate,tags);
         return boardService.createBoard(requestDto,userDetails, image);
 
     }
@@ -42,6 +52,10 @@ public class BoardController {
         상세 조회
         게시물 id로 조회 
     */
+//    @GetMapping("/{boardId}")
+//    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+//        return boardService.findBoardById(boardId, userDetails,request);
+//    }
     @GetMapping("/{boardId}")
     public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         return boardService.findBoardById(boardId, userDetails,request);
@@ -98,10 +112,23 @@ public class BoardController {
 //    }
 
     /* 게시물 수정 */
+//    @PutMapping("/")
+//    public ResponseEntity<?> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
+//                                                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
+//                                                                           @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+//        return boardService.updateBoard(requestDto, userDetails, image);
+//    }
     @PutMapping("/")
-    public ResponseEntity<?> updateBoard(@Validated @RequestPart(value = "boardUpdateRequestDto") BoardUpdateRequestDto requestDto,
-                                                                           @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                           @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+    public ResponseEntity<?> updateBoard( @RequestPart("boardId") @NotNull(message = "boardId가 없습니다.") Long boardId,
+                                          @RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
+                                          @RequestPart("address_id") @NotNull(message = "행정동 코드값이 없습니다.") Long addressId,
+                                          @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
+                                          @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
+                                          @RequestPart("isPrivate") boolean isPrivate,
+                                          @RequestPart("tags") List<ClothesRequestDTO> tags,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                          @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        BoardUpdateRequestDto requestDto = new BoardUpdateRequestDto(boardId,address,addressId ,title,contents,isPrivate,tags);
         return boardService.updateBoard(requestDto, userDetails, image);
     }
 

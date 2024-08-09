@@ -21,4 +21,12 @@ public class BoardCreateRequestDto {
     //
     private List<ClothesRequestDTO> tags;
 
+    public BoardCreateRequestDto(String address, Long addressId, String title, String contents, boolean isPrivate, List<ClothesRequestDTO> tags) {
+        this.address = address;
+        this.addressId = addressId;
+        this.title = title;
+        this.contents = contents;
+        this.isPrivate = isPrivate;
+        this.tags = tags;
+    }
 }

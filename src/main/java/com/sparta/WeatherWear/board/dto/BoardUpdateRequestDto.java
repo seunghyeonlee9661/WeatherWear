@@ -23,4 +23,14 @@ public class BoardUpdateRequestDto {
     private boolean isPrivate;
     //
     private List<ClothesRequestDTO> clothesRequestDTO;
+
+    public BoardUpdateRequestDto(Long boardId, String address, Long addressId, String title, String contents, boolean isPrivate, List<ClothesRequestDTO> tags) {
+        this.boardId = boardId;
+        this.addressId = addressId;
+        this.title = title;
+        this.contents = contents;
+        this.isPrivate = isPrivate;
+        this.clothesRequestDTO = tags;
+
+    }
 }
