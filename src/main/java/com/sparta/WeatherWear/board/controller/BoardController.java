@@ -34,15 +34,21 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("")
-    public ResponseEntity<?> createBoard(@RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
-                                         @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") String addressId,
-                                         @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
-                                         @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
-                                         @RequestPart("isPrivate") boolean isPrivate,
-                                         @RequestPart("tags") List<ClothesRequestDTO> tags,
+    public ResponseEntity<?> createBoard(@RequestPart("data") BoardCreateRequestDto requestDto,
+//                                             @NotBlank(message = "주소값이 없습니다.") String address,
+//                                         @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") String addressId,
+//                                         @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
+//                                         @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
+//                                         @RequestPart("isPrivate") boolean isPrivate,
+//                                         @RequestPart("tags") List<ClothesRequestDTO> tags,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
                                          @RequestPart(value = "image") MultipartFile image) throws IOException {
-        BoardCreateRequestDto requestDto = new BoardCreateRequestDto(address,Long.valueOf(addressId),title,contents,isPrivate,tags);
+//        BoardCreateRequestDto requestDto = new BoardCreateRequestDto(address,Long.valueOf(addressId),title,contents,isPrivate,tags);
+        System.out.println(requestDto.getAddress());
+        System.out.println(requestDto.getAddressId());
+        System.out.println(requestDto.getTags());
+        System.out.println(requestDto.getContents());
+        System.out.println(requestDto.getTitle());
         return boardService.createBoard(requestDto,userDetails, image);
     }
 

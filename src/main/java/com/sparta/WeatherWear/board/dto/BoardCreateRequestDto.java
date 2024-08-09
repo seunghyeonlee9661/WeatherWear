@@ -12,13 +12,10 @@ public class BoardCreateRequestDto {
 
     private String address;
     private Long addressId;
-    //
     private String title;
     private String contents;
-
     @JsonProperty("isPrivate")
     private boolean isPrivate;
-    //
     private List<ClothesRequestDTO> tags;
 
     public BoardCreateRequestDto(String address, Long addressId, String title, String contents, boolean isPrivate, List<ClothesRequestDTO> tags) {
