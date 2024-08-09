@@ -34,17 +34,15 @@ public class BoardController {
 
     /* 게시물 작성 */
     @PostMapping("")
-    public ResponseEntity<?> createBoard(
-                                         @RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
-                                         @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") Long addressId,
-
+    public ResponseEntity<?> createBoard(@RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
+                                         @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") String addressId,
                                          @RequestPart("title") @NotBlank(message = "제목이 없습니다.") String title,
                                          @RequestPart("contents") @NotBlank(message = "내용이 없습니다.") String contents,
                                          @RequestPart("isPrivate") boolean isPrivate,
                                          @RequestPart("tags") List<ClothesRequestDTO> tags,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails,
                                          @RequestPart(value = "image") MultipartFile image) throws IOException {
-        BoardCreateRequestDto requestDto = new BoardCreateRequestDto(address,addressId,title,contents,isPrivate,tags);
+        BoardCreateRequestDto requestDto = new BoardCreateRequestDto(address,Long.valueOf(addressId),title,contents,isPrivate,tags);
         return boardService.createBoard(requestDto,userDetails, image);
     }
 
