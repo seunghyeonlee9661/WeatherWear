@@ -58,7 +58,12 @@ public class BoardController {
         게시물 전체 목록 조회 -> ootd 트렌드 페이지
     */
     @GetMapping("")
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam Long lastId, @RequestParam long addressId, @RequestParam int sky, @RequestParam String color, @RequestParam String type) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                     @RequestParam(required = false) Long lastId,
+                                                                     @RequestParam(required = false) Long addressId,
+                                                                     @RequestParam(required = false) Integer sky,
+                                                                     @RequestParam(required = false) String color,
+                                                                     @RequestParam(required = false) String type) {
         return boardService.findBoardAll(userDetails, lastId,addressId, sky, color, type);
     }
 
