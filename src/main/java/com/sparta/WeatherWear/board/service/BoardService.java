@@ -10,6 +10,8 @@ import com.sparta.WeatherWear.board.repository.BoardLikeRepository;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
 import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
+import com.sparta.WeatherWear.clothes.enums.ClothesColor;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.weather.entity.Weather;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
   작성자 : 하준영
@@ -161,39 +165,35 @@ public class BoardService {
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     // 페이징 구현 추가 필요
-    //FIXME : 커서형 페이지네이션을 하시게되면 파라미터로 커서 id(마지막 board ID)를 받으실 수 있으니 참고 바랍니다!
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long page) {
-//FIXME : 여기서 아마 쿼리를 잘 짜시면 비굥개이면서 작성자 아이디가 내가 아닌 게시물 걸러내실 수 있을겁니다. GPT 추천드립니다.
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long lastId, long addressId, int sky, String color, String type ) {
         // Define the page size (e.g., 8 items per page)
         int pageSize = 8;
+        // 페이저블 객체 : ID를 기반으로 내림차순
+        Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Order.desc("id")));
 
-        // Create a Pageable object
-        Pageable pageable = PageRequest.of(page.intValue(), pageSize);
-
-        // Retrieve the paginated results
-        Page<Board> boardPage = boardRepository.findAllOrderedByCreatedAt(pageable);
-
-        // Get the current page content
-        List<Board> boards = boardPage.getContent();
-
-        List<BoardCreateResponseDto> responseDtos = new ArrayList<>();
-
-        Long user = userDetails.getUser().getId();
-        for (Board board : boards) {
-            // 비공개인지 확인
-            if(board.isPrivate() == true) {
-                // 아이디 비교
-                System.out.println("board.getUser().getId() = " + board.getUser().getId());
-                System.out.println("user = " + user );
-                if (user.equals(board.getUser().getId())) {
-                    responseDtos.add(new BoardCreateResponseDto(board));
-                }
-            }else {
-                responseDtos.add(new BoardCreateResponseDto(board));
-            }
+        // 현재 사용자가 로그인중이면 id를 받아옵니다. 해당 변수는 비공개를 필터링 하기 위해 사용합니다.
+        Long userId = null;
+        if (userDetails != null){
+            userId = userDetails.getUser().getId();
         }
 
-        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
+        // String 값을 Enum으로 변환, null 또는 빈 문자열 처리
+        ClothesColor clothesColor = (color != null && !color.isEmpty()) ? ClothesColor.valueOf(color.toUpperCase()) : null;
+
+        ClothesType clothesType = (type != null && !type.isEmpty()) ? ClothesType.valueOf(type.toUpperCase()) : null;
+
+        // 결과값을 Repository에서 받아옵니다.
+        List<Board> boards;
+        if (lastId == null) {
+            // 최신 게시물 조회
+            boards = boardRepository.findBoardsLatest(addressId,sky,clothesColor,clothesType,userId,pageable);
+        } else {
+            // lastId를 기준으로 커서 기반 페이지네이션
+            boards = boardRepository.findBoardsAfterId(lastId,addressId,sky,clothesColor,clothesType,userId,pageable
+            );
+        }
+
+        return ResponseEntity.ok(boards.stream().map(BoardCreateResponseDto::new).collect(Collectors.toList()));
 
     }
 
