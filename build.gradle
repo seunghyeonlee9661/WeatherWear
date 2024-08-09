@@ -17,6 +17,9 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	developmentOnly {
+		extendsFrom runtimeOnly
+	}
 }
 
 repositories {
