@@ -11,9 +11,9 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByUserId(Long userId);
 
-    // 게시물 추천용 검색 조건
-    List<Board> findByUserAndWeather_SKYAndWeather_PTYAndWeather_TMPBetween(User user, int sky, int pty, Double minTmp, Double maxTmp);
-    List<Board> findByWeather_SKYAndWeather_PTYAndWeather_TMPBetween(int sky, int pty, Double minTmp, Double maxTmp);
+//    // 게시물 추천용 검색 조건
+//    List<Board> findByUserAndWeather_SKYAndWeather_PTYAndWeather_TMPBetween(User user, int sky, int pty, Double minTmp, Double maxTmp);
+//    List<Board> findByWeather_SKYAndWeather_PTYAndWeather_TMPBetween(int sky, int pty, Double minTmp, Double maxTmp);
 
     @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
     Page<Board> findAllOrderedByCreatedAt(Pageable pageable);
