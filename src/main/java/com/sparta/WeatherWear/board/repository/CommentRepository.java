@@ -14,4 +14,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllOrderedByCreatedAt();
 
     void deleteByBoardId(Long boardId);
+
+    @Query("SELECT c FROM Comment c WHERE c.board.id = :boardId ORDER BY c.createdAt ASC")
+    List<Comment> findAllByBoardIdOrderedByCreatedAt(Long boardId);
 }

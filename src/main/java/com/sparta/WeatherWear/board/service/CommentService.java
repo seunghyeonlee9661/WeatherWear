@@ -62,7 +62,7 @@ public class CommentService {
         );
 
         // Get the current page content
-        List<Comment> comments = commentRepository.findAllOrderedByCreatedAt();
+        List<Comment> comments = commentRepository.findAllByBoardIdOrderedByCreatedAt(boardId);
 
         List<CommentCreateResponseDto> commentCreateResponseDtos = new ArrayList<>();
         for (Comment comment : comments) {
