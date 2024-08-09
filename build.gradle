@@ -17,7 +17,12 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	developmentOnly {
+		extendsFrom runtimeOnly
+	}
 }
+
+developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 repositories {
 	mavenCentral()

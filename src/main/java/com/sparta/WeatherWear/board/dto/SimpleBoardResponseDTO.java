@@ -16,19 +16,21 @@ import java.util.stream.Collectors;
 
 @Getter
 public class SimpleBoardResponseDTO {
-
+    private Long id;
     private String title;
+    private String address;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt; // 생성일자
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt; // 수정일자
     private String image;
     private SimpleWeatherResponseDTO weather; // 날씨 정보
-    @JsonProperty("isPrivate")
     private boolean isPrivate;
     private List<TagResponseDTO> tags;
 
     public SimpleBoardResponseDTO(Board board){
+        this.id = board.getId();
+        this.address = board.getAddress();
         this.title = board.getTitle();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
