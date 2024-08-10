@@ -31,9 +31,6 @@ public class ClothesController {
 
     private final ClothesService clothesService;
 
-
-    /*______________________Clothes_______________________*/
-
     /* 옷 목록 불러오기 */
     @GetMapping("/clothes")
     public ResponseEntity<Page<ClothesResponseDTO>> createClothes(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "type", required = false, defaultValue = "") String type, @RequestParam(value = "color", required = false, defaultValue = "") String color, @RequestParam(value = "page", defaultValue = "0") int page) {
