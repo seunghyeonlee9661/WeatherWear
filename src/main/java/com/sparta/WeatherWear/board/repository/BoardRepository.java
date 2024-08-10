@@ -68,4 +68,37 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                              @Param("sky") Integer sky,
                              @Param("keyword") String keyword,
                              Pageable pageable);
+
+    // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
+    @Query(value = "SELECT b.* " +
+            "FROM board b " +
+            "JOIN weather w ON b.weather_id = w.id " +
+            "WHERE b.user_id = :userId " +
+            "  AND w.SKY = :sky " +
+            "  AND w.PTY = :pty " +
+            "  AND w.TMP BETWEEN :minTmp AND :maxTmp " +
+            "ORDER BY b.likes_size DESC " +
+            "LIMIT 5", nativeQuery = true)
+    List<Board> findTopBoardsByUserAndWeather(@Param("userId") Long userId,
+                                              @Param("sky") int sky,
+                                              @Param("pty") int pty,
+                                              @Param("minTmp") double minTmp,
+                                              @Param("maxTmp") double maxTmp);
+
+    // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
+    @Query(value = "SELECT b.*, " +
+            "       (b.likes_size * 5 + b.views * 0.5 + b.comments_size * 0.5) AS score " +
+            "FROM board b " +
+            "JOIN weather w ON b.weather_id = w.id " +
+            "WHERE w.SKY = :sky " +
+            "  AND w.PTY = :pty " +
+            "  AND w.TMP BETWEEN :minTmp AND :maxTmp " +
+            "  AND b.user_id <> :userId " +
+            "ORDER BY score DESC " +
+            "LIMIT 9", nativeQuery = true)
+    List<Board> findTopBoardsByWeatherExcludingUser(@Param("sky") int sky,
+                                                    @Param("pty") int pty,
+                                                    @Param("minTmp") double minTmp,
+                                                    @Param("maxTmp") double maxTmp,
+                                                    @Param("userId") Long userId);
 }

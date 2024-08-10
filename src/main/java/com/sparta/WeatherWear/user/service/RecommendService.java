@@ -77,11 +77,11 @@ public class RecommendService {
         /* 1. 날씨 기반 옷차림 추천 */
         recommendResponseDTOS.add(getClothesByWeather(user, weather));
 
-//        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
-//        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
-//
-//        /* 3. 트랜드 옷차림 추천 */
-//        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
+        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
+        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
+
+        /* 3. 트랜드 옷차림 추천 */
+        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
 
         /* 4. 네이버 아이템 추천 */
         recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
@@ -112,28 +112,28 @@ public class RecommendService {
     }
 
 
-//    // 2. 점수 합산하여 순위 계산
-//    @Transactional(readOnly = true)
-//    protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
-//        // 온도 차이
-//        int tmpGap = 3;
-//        // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
-//        List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeather(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
-//
-//        // 결과 반환
-//        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
-//    }
-//
-//    /* 3. 트랜드 OOTD : 높은 좋아요의 게시물 추천 */
-//    @Transactional(readOnly = true)
-//    protected List<? extends ResponseDTO>  getBoardsByTrends(User user, Weather weather){
-//        int tmpGap = 3;
-//        // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
-//        List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUser(weather.getSKY(), weather.getPTY(), weather.getTMP()-tmpGap, weather.getTMP()+tmpGap, user.getId());
-//
-//        // 결과를 배열에 저장하고 반환합니다.
-//        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
-//    }
+    // 2. 점수 합산하여 순위 계산
+    @Transactional(readOnly = true)
+    protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
+        // 온도 차이
+        int tmpGap = 3;
+        // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
+        List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeather(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
+
+        // 결과 반환
+        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
+    }
+
+    /* 3. 트랜드 OOTD : 높은 좋아요의 게시물 추천 */
+    @Transactional(readOnly = true)
+    protected List<? extends ResponseDTO>  getBoardsByTrends(User user, Weather weather){
+        int tmpGap = 3;
+        // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
+        List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUser(weather.getSKY(), weather.getPTY(), weather.getTMP()-tmpGap, weather.getTMP()+tmpGap, user.getId());
+
+        // 결과를 배열에 저장하고 반환합니다.
+        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
+    }
 
 // 기존 방법 하나씩 뽑고 제외하기...
 //    /* 2. 나의 Best OOTD 추천 : 높은 좋아요의 게시물 추천 */
