@@ -196,29 +196,35 @@ public class BoardService {
             return new ResponseEntity<>("게시물을 작성한 사용자가 아닙니다", HttpStatus.BAD_REQUEST);
         }
 
-        // 날씨 정보 저장 -> 날씨 정보 db에 이미 있는지 검증 (캐싱)
-        Weather weather = weatherService.getWeatherByAddress(requestDTO.getAddressId());
-        // 같으면 update 실행
+        // ------------날씨 정보 저장 ----------------
+        Weather weather = null;
+        // 날씨 변경이 있으면 처리
+        if(requestDTO.getAddressId() == null || board.getAddressIdFromWeather().equals(requestDTO.getAddressId())) {
+            weather = board.getWeather();
+        }else{
+            weather = weatherService.getWeatherByAddress(requestDTO.getAddressId());
+        }
+
+        // ------------- 사진 ------------------
 
         Board updateBoard = null;
 
-        // 사진 업데이트
-        if(image != null && !image.isEmpty()) {
-
-            // image null 인지 확인
-            if(image == null || image.isEmpty()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미지를 첨부해주세요"); // null이면 오류
-            }
+        // 사진 업데이트 X
+        if(image == null || image.isEmpty()) {
+            updateBoard = board.update(requestDTO, weather, board.getBoardImage());
+        }else{
             s3Service.deleteFileByUrl(board.getBoardImage()); // 기존 이미지 제거
 
             File webPFile = imageTransformService.convertToWebP(image); // imageWebp로 변환
-            String imageUrl = s3Service.uploadFile(webPFile); // 이미지 저장 후 url 확인
 
+            String imageUrl = s3Service.uploadFile(webPFile); // 이미지 저장 후 url 확인
+            
             // request 로 받아 온 값 넣기
             updateBoard = board.update(requestDTO, weather, imageUrl);
 
         }
 
+        // ---------------- 옷 태그 --------------------
             // 1. db에서 태그 삭제
             boardTagRepository.deleteAll(updateBoard.getBoardTags()); // Remove existing tags
             //2. Board Entity에서 태그 삭제

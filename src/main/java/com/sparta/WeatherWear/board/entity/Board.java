@@ -89,6 +89,7 @@ public class Board extends Timestamped {
         return this.comments.size();
     }
 
+    // 업데이트 (이미지 수정)
     public Board update(BoardUpdateRequestDto requestDTO, Weather weather, String imageUrl) {
         this.weather = weather;
         this.title = requestDTO.getTitle();
@@ -97,6 +98,14 @@ public class Board extends Timestamped {
         this.boardImage = imageUrl;
         return this;
     }
+//    // 업데이트 (이미지 수정이 없는 경우)
+//    public Board update(BoardUpdateRequestDto requestDTO, Weather weather) {
+//        this.weather = weather;
+//        this.title = requestDTO.getTitle();
+//        this.content = requestDTO.getContents();
+//        this.isPrivate = requestDTO.isPrivate();
+//        return this;
+//    }
 
 //    public void clearBoardImages() {
 //        this.boardImages.clear();
