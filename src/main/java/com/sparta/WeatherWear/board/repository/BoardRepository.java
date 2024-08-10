@@ -107,7 +107,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "    LEFT JOIN board_like bl ON b.id = bl.board_id " +
             "    LEFT JOIN comment c ON b.id = c.board_id " +
             "    JOIN weather w ON b.weather_id = w.id " +
-            "    WHERE b.user_id = :userId " +
+            "    WHERE b.user_id <> :userId " +  // 수정된 부분
             "      AND w.SKY = :sky " +
             "      AND w.PTY = :pty " +
             "      AND w.TMP BETWEEN :minTmp AND :maxTmp " +
