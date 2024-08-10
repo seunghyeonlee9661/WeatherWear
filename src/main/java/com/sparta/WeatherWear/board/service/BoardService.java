@@ -77,6 +77,9 @@ public class BoardService {
         // Board Entity -> db에 저장
         boardRepository.save(newBoard);
 
+        System.out.println("Created at: " + newBoard.getCreatedAt());
+        System.out.println("Updated at: " + newBoard.getUpdatedAt());
+
         // 추가 - 태그 저장 메서드 실행
         for (ClothesRequestDTO clothesRequestDTO: requestDto.getTags()) {
             System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
@@ -172,8 +175,6 @@ public class BoardService {
 
     }
 
-    /* 게시물 수정 */
-    //FIXME : 이것도 반환 String으로 하시면 될듯합니다.
     @Transactional
     public ResponseEntity<?> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, MultipartFile image) throws IOException {
 
