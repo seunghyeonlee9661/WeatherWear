@@ -71,9 +71,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
     @Query(value = "SELECT b.*, " +
-            "       (COALESCE(like_count, 0) * 5 + COALESCE(view_count, 0) * 1 + COALESCE(comment_count, 0) * 0.5) AS score " +
+            "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.view_count, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
             "FROM ( " +
-            "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, b.views AS view_count, " +
+            "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, " +
+            "           b.created_at, b.updated_at, b.views AS view_count, " +
             "           COUNT(DISTINCT bl.id) AS like_count, " +
             "           COUNT(DISTINCT c.id) AS comment_count " +
             "    FROM board b " +
@@ -96,19 +97,20 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 추천 아이템 선정을 위해 점수를 선정하고 상위 9개를 선정하는 기능
     @Query(value = "SELECT b.*, " +
-            "       (COALESCE(like_count, 0) * 5 + COALESCE(view_count, 0) * 1 + COALESCE(comment_count, 0) * 0.5) AS score " +
+            "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.view_count, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
             "FROM ( " +
-            "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, b.views AS view_count, " +
+            "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, " +
+            "           b.created_at, b.updated_at, b.views AS view_count, " +
             "           COUNT(DISTINCT bl.id) AS like_count, " +
             "           COUNT(DISTINCT c.id) AS comment_count " +
             "    FROM board b " +
             "    LEFT JOIN board_like bl ON b.id = bl.board_id " +
             "    LEFT JOIN comment c ON b.id = c.board_id " +
             "    JOIN weather w ON b.weather_id = w.id " +
-            "    WHERE w.SKY = :sky " +
+            "    WHERE b.user_id = :userId " +
+            "      AND w.SKY = :sky " +
             "      AND w.PTY = :pty " +
             "      AND w.TMP BETWEEN :minTmp AND :maxTmp " +
-            "      AND b.user_id <> :userId " +
             "    GROUP BY b.id " +
             ") AS b " +
             "ORDER BY score DESC " +
