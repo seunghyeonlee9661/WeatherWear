@@ -178,19 +178,22 @@ public class BoardService {
     @Transactional
     public ResponseEntity<?> updateBoard(BoardUpdateRequestDto requestDTO, UserDetailsImpl userDetails, MultipartFile image) throws IOException {
 
+        Board board = boardRepository.findById(requestDTO.getId()).orElseThrow(()->
+                new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
+        );;
+
         // user 정보 가져오기 (id)
         Long userId = userDetails.getUser().getId();
 
         // 유저 아이디와 게시물의 id 가 같은지 확인
-        Long boardUserId = requestDTO.getBoardUserId();
+//        Long boardUserId = requestDTO.getBoardUserId();
+        Long boardUserId = board.getUser().getId();
 
         if(userId == null || boardUserId == null) {//FIXME : User가 null인 상황일 경우, 비로그인 요청일 경우 Security 필터에서 걸릴거라 이 부분도 제거하셔도 됩니다.
             log.info("User의 Id 값이 없습니다.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        Board board = boardRepository.findById(requestDTO.getBoardId()).orElseThrow(()->
-                new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
-        );;
+
         if(!boardUserId.equals(userId)) {
             log.info("게시물을 작성한 사용자가 아닙니다.");
             return new ResponseEntity<>("게시물을 작성한 사용자가 아닙니다", HttpStatus.BAD_REQUEST);
