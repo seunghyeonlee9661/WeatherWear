@@ -118,8 +118,7 @@ public class RecommendService {
         int tmpGap = 3;
         try {
             // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
-            List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeather(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
-
+            List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeatherWithScore(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
             // 결과 반환
             return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
         } catch (Exception e) {
@@ -136,7 +135,7 @@ public class RecommendService {
         int tmpGap = 3;
         try {
             // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
-            List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUser(weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap, user.getId());
+            List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUserWithScore(weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap, user.getId());
 
             // 결과를 배열에 저장하고 반환합니다.
             return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());

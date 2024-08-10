@@ -70,37 +70,52 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                              Pageable pageable);
 
     // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
-    @Query(value = "SELECT b.id, b.title, b.address, b.created_at AS createdAt, b.updated_at AS updatedAt,b.image, b.is_private AS isPrivate, " +
-            "(SELECT COUNT(*) FROM board_like bl WHERE bl.board_id = b.id) AS likes_count, " +
-            "(SELECT COUNT(*) FROM comment c WHERE c.board_id = b.id) AS comments_count " +
-            "FROM board b " +
-            "JOIN weather w ON b.weather_id = w.id " +
-            "WHERE b.user_id = :userId " +
-            "AND w.SKY = :sky " +
-            "AND w.PTY = :pty " +
-            "AND w.TMP BETWEEN :minTmp AND :maxTmp " +
-            "ORDER BY (likes_count * 5 + b.views * 0.5 + comments_count * 0.5) DESC " +
-            "LIMIT 5", nativeQuery = true)
-    List<Board> findTopBoardsByUserAndWeather(@Param("userId") Long userId,
-                                              @Param("sky") int sky,
-                                              @Param("pty") int pty,
-                                              @Param("minTmp") double minTmp,
-                                              @Param("maxTmp") double maxTmp);
-
-    // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
-    @Query(value = "SELECT b.id, b.title, b.address, b.created_at AS createdAt, b.updated_at AS updatedAt,b.image, b.is_private AS isPrivate, " +
-            "       (b.likes_size * 5 + b.views * 0.5 + b.comments_size * 0.5) AS score " +
-            "FROM board b " +
-            "JOIN weather w ON b.weather_id = w.id " +
-            "WHERE w.SKY = :sky " +
-            "  AND w.PTY = :pty " +
-            "  AND w.TMP BETWEEN :minTmp AND :maxTmp " +
-            "  AND b.user_id <> :userId " +
+    @Query(value = "SELECT b.*, " +
+            "       (COALESCE(like_count, 0) * 5 + COALESCE(view_count, 0) * 1 + COALESCE(comment_count, 0) * 0.5) AS score " +
+            "FROM ( " +
+            "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, b.views AS view_count, " +
+            "           COUNT(DISTINCT bl.id) AS like_count, " +
+            "           COUNT(DISTINCT c.id) AS comment_count " +
+            "    FROM board b " +
+            "    LEFT JOIN board_like bl ON b.id = bl.board_id " +
+            "    LEFT JOIN comment c ON b.id = c.board_id " +
+            "    JOIN weather w ON b.weather_id = w.id " +
+            "    WHERE b.user_id = :userId " +
+            "      AND w.SKY = :sky " +
+            "      AND w.PTY = :pty " +
+            "      AND w.TMP BETWEEN :minTmp AND :maxTmp " +
+            "    GROUP BY b.id " +
+            ") AS b " +
             "ORDER BY score DESC " +
             "LIMIT 9", nativeQuery = true)
-    List<Board> findTopBoardsByWeatherExcludingUser(@Param("sky") int sky,
-                                                    @Param("pty") int pty,
-                                                    @Param("minTmp") double minTmp,
-                                                    @Param("maxTmp") double maxTmp,
-                                                    @Param("userId") Long userId);
+    List<Board> findTopBoardsByUserAndWeatherWithScore(@Param("userId") Long userId,
+                                                       @Param("sky") int sky,
+                                                       @Param("pty") int pty,
+                                                       @Param("minTmp") double minTmp,
+                                                       @Param("maxTmp") double maxTmp);
+
+    // 추천 아이템 선정을 위해 점수를 선정하고 상위 9개를 선정하는 기능
+    @Query(value = "SELECT b.*, " +
+            "       (COALESCE(like_count, 0) * 5 + COALESCE(view_count, 0) * 1 + COALESCE(comment_count, 0) * 0.5) AS score " +
+            "FROM ( " +
+            "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, b.views AS view_count, " +
+            "           COUNT(DISTINCT bl.id) AS like_count, " +
+            "           COUNT(DISTINCT c.id) AS comment_count " +
+            "    FROM board b " +
+            "    LEFT JOIN board_like bl ON b.id = bl.board_id " +
+            "    LEFT JOIN comment c ON b.id = c.board_id " +
+            "    JOIN weather w ON b.weather_id = w.id " +
+            "    WHERE w.SKY = :sky " +
+            "      AND w.PTY = :pty " +
+            "      AND w.TMP BETWEEN :minTmp AND :maxTmp " +
+            "      AND b.user_id <> :userId " +
+            "    GROUP BY b.id " +
+            ") AS b " +
+            "ORDER BY score DESC " +
+            "LIMIT 9", nativeQuery = true)
+    List<Board> findTopBoardsByWeatherExcludingUserWithScore(@Param("sky") int sky,
+                                                             @Param("pty") int pty,
+                                                             @Param("minTmp") double minTmp,
+                                                             @Param("maxTmp") double maxTmp,
+                                                             @Param("userId") Long userId);
 }
