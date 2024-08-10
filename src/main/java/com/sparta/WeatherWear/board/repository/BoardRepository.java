@@ -74,7 +74,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.view_count, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
             "FROM ( " +
             "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, " +
-            "           b.created_at, b.updated_at, b.views AS view_count, " +
+            "           b.created_at, b.updated_at, b.views, " +
             "           COUNT(DISTINCT bl.id) AS like_count, " +
             "           COUNT(DISTINCT c.id) AS comment_count " +
             "    FROM board b " +
@@ -100,7 +100,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.view_count, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
             "FROM ( " +
             "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, " +
-            "           b.created_at, b.updated_at, b.views AS view_count, " +
+            "           b.created_at, b.updated_at, b.views, " +
             "           COUNT(DISTINCT bl.id) AS like_count, " +
             "           COUNT(DISTINCT c.id) AS comment_count " +
             "    FROM board b " +
