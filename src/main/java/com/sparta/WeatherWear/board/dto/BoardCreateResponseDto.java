@@ -45,7 +45,7 @@ public class BoardCreateResponseDto  {
     private int views; // 조회수
 
     private boolean checkLike; // 현재 사용자의 좋아요 여부
-    private int commentsCount;
+    private int commentsCount; // 댓글 수
 
     // 게시물 찾을 때
     public BoardCreateResponseDto(Board board) {
@@ -97,5 +97,7 @@ public class BoardCreateResponseDto  {
         //
         this.image = board.getBoardImage();
         this.views = views;
+        //
+        this.commentsCount = board.getCommentsSize();
     }
 }
