@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor // 기본 생성자 추가
 public class BoardUpdateRequestDto {
 
-    private Long boardId;
-    private Long boardUserId;
+    private Long Id;
+//    private Long boardUserId;
     private String address;
     private Long addressId;
     //
@@ -29,7 +29,7 @@ public class BoardUpdateRequestDto {
     private List<ClothesRequestDTO> tags;
 
     public BoardUpdateRequestDto(Long boardId, String address, Long addressId, String title, String contents, boolean isPrivate, List<ClothesRequestDTO> tags) {
-        this.boardId = boardId;
+        this.Id = boardId;
         this.addressId = addressId;
         this.title = title;
         this.contents = contents;
