@@ -13,10 +13,10 @@ import java.util.List;
 @Getter
 public class RecommendBoardResponseDTO implements ResponseDTO {
     private Long id;
-//    private String image;
+    private String image;
 
     public RecommendBoardResponseDTO(Board board) {
         this.id = board.getId();
-//        this.image = board.getImage();
+        this.image = board.getBoardImage();
     }
 }
