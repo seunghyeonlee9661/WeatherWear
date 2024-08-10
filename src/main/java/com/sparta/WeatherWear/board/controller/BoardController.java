@@ -71,7 +71,7 @@ public class BoardController {
 //    }
     @PutMapping("")
     public ResponseEntity<?> updateBoard( @RequestPart("data") String data, // data 스트링
-                                          @RequestPart(value = "file") MultipartFile image, // 파일 정보
+                                          @RequestPart(value = "file", required = false) MultipartFile image, // 파일 정보
 //                                          @RequestPart("boardId") @NotNull(message = "boardId가 없습니다.") Long boardId,
 //                                          @RequestPart("address") @NotBlank(message = "주소값이 없습니다.") String address,
 //                                          @RequestPart("addressId") @NotNull(message = "행정동 코드값이 없습니다.") Long addressId,
