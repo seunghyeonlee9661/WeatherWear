@@ -29,6 +29,7 @@ public class MVCConfiguration implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
+//                .allowedOrigins("http://localhost:3000")  // 프론트엔드 서버 주소
                 .allowedMethods("*") // 모든 HTTP 메소드 허용
                 .allowedHeaders("*") // 모든 헤더 허용
                 .allowCredentials(true); // 쿠키와 인증 정보 포함
