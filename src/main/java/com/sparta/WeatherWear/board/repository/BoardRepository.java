@@ -70,14 +70,16 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                              Pageable pageable);
 
     // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
-    @Query(value = "SELECT b.* " +
+    @Query(value = "SELECT b.id, b.title, b.address, b.created_at AS createdAt, b.updated_at AS updatedAt,b.image, b.is_private AS isPrivate, " +
+            "(SELECT COUNT(*) FROM board_like bl WHERE bl.board_id = b.id) AS likes_count, " +
+            "(SELECT COUNT(*) FROM comment c WHERE c.board_id = b.id) AS comments_count " +
             "FROM board b " +
             "JOIN weather w ON b.weather_id = w.id " +
             "WHERE b.user_id = :userId " +
-            "  AND w.SKY = :sky " +
-            "  AND w.PTY = :pty " +
-            "  AND w.TMP BETWEEN :minTmp AND :maxTmp " +
-            "ORDER BY b.likes_size DESC " +
+            "AND w.SKY = :sky " +
+            "AND w.PTY = :pty " +
+            "AND w.TMP BETWEEN :minTmp AND :maxTmp " +
+            "ORDER BY (likes_count * 5 + b.views * 0.5 + comments_count * 0.5) DESC " +
             "LIMIT 5", nativeQuery = true)
     List<Board> findTopBoardsByUserAndWeather(@Param("userId") Long userId,
                                               @Param("sky") int sky,
@@ -86,7 +88,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                                               @Param("maxTmp") double maxTmp);
 
     // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
-    @Query(value = "SELECT b.*, " +
+    @Query(value = "SELECT b.id, b.title, b.address, b.created_at AS createdAt, b.updated_at AS updatedAt,b.image, b.is_private AS isPrivate, " +
             "       (b.likes_size * 5 + b.views * 0.5 + b.comments_size * 0.5) AS score " +
             "FROM board b " +
             "JOIN weather w ON b.weather_id = w.id " +

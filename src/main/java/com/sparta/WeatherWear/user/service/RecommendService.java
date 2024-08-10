@@ -125,6 +125,7 @@ public class RecommendService {
         } catch (Exception e) {
             // 로그를 남기고 null 반환
             // 로그를 사용하는 것이 좋습니다. (예: logger.error("Error fetching boards by my boards", e))
+            logger.error("Error fetching boards by my boards", e);
             return null;
         }
     }
@@ -142,6 +143,7 @@ public class RecommendService {
         } catch (Exception e) {
             // 로그를 남기고 null 반환
             // 로그를 사용하는 것이 좋습니다. (예: logger.error("Error fetching boards by trends", e))
+            logger.error("Error fetching boards by my boards", e);
             return null;
         }
     }
