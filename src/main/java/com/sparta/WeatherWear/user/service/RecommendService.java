@@ -112,28 +112,40 @@ public class RecommendService {
     }
 
 
-    // 2. 점수 합산하여 순위 계산
     @Transactional(readOnly = true)
-    protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
+    protected List<? extends ResponseDTO> getBoardsByMyBoards(User user, Weather weather) {
         // 온도 차이
         int tmpGap = 3;
-        // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
-        List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeather(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
+        try {
+            // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
+            List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeather(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
 
-        // 결과 반환
-        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
+            // 결과 반환
+            return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
+        } catch (Exception e) {
+            // 로그를 남기고 null 반환
+            // 로그를 사용하는 것이 좋습니다. (예: logger.error("Error fetching boards by my boards", e))
+            return null;
+        }
     }
 
-    /* 3. 트랜드 OOTD : 높은 좋아요의 게시물 추천 */
+
     @Transactional(readOnly = true)
-    protected List<? extends ResponseDTO>  getBoardsByTrends(User user, Weather weather){
+    protected List<? extends ResponseDTO> getBoardsByTrends(User user, Weather weather) {
         int tmpGap = 3;
-        // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
-        List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUser(weather.getSKY(), weather.getPTY(), weather.getTMP()-tmpGap, weather.getTMP()+tmpGap, user.getId());
+        try {
+            // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
+            List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUser(weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap, user.getId());
 
-        // 결과를 배열에 저장하고 반환합니다.
-        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
+            // 결과를 배열에 저장하고 반환합니다.
+            return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
+        } catch (Exception e) {
+            // 로그를 남기고 null 반환
+            // 로그를 사용하는 것이 좋습니다. (예: logger.error("Error fetching boards by trends", e))
+            return null;
+        }
     }
+
 
 // 기존 방법 하나씩 뽑고 제외하기...
 //    /* 2. 나의 Best OOTD 추천 : 높은 좋아요의 게시물 추천 */

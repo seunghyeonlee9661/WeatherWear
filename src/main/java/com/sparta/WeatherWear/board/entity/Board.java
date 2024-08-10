@@ -50,10 +50,6 @@ public class Board extends Timestamped {
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<BoardTag> boardTags = new ArrayList<>();
 
-    // Board 엔티티에 image 리스트 필드 추가
-//    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    private List<BoardImage> boardImages = new ArrayList<>();
-
     @Column(name = "image", nullable = false)
     private String boardImage; // 이미지
 
@@ -98,18 +94,7 @@ public class Board extends Timestamped {
         this.boardImage = imageUrl;
         return this;
     }
-//    // 업데이트 (이미지 수정이 없는 경우)
-//    public Board update(BoardUpdateRequestDto requestDTO, Weather weather) {
-//        this.weather = weather;
-//        this.title = requestDTO.getTitle();
-//        this.content = requestDTO.getContents();
-//        this.isPrivate = requestDTO.isPrivate();
-//        return this;
-//    }
 
-//    public void clearBoardImages() {
-//        this.boardImages.clear();
-//    }
     public void clearBoardTags() {
         this.boardTags.clear();
     }
