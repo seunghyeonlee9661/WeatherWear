@@ -71,7 +71,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 추천 아이템 선정을 위해 점수를 선정하고 상위 5개를 선정하는 기능
     @Query(value = "SELECT b.*, " +
-            "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.view_count, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
+            "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.views, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
             "FROM ( " +
             "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, " +
             "           b.created_at, b.updated_at, b.views, " +
@@ -97,7 +97,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 추천 아이템 선정을 위해 점수를 선정하고 상위 9개를 선정하는 기능
     @Query(value = "SELECT b.*, " +
-            "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.view_count, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
+            "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.views, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
             "FROM ( " +
             "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, " +
             "           b.created_at, b.updated_at, b.views, " +
