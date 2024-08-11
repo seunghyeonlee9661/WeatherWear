@@ -43,6 +43,7 @@ public class UserController {
     }
 
 
+    // FIXME : 데이터 DTO로 처리할 수 있도록 개선 필요
     /* 사용자 게시물 요청 */
     @GetMapping("/users/boards")
     public ResponseEntity<Page<SimpleBoardResponseDTO>> findUserBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -59,6 +60,7 @@ public class UserController {
         return userService.createUser(requestDTO);
     }
 
+    // FIXME : 데이터 DTO로 처리할 수 있도록 개선 필요
     /* 사용자 정보 수정 */
     @PutMapping("/users")
     public ResponseEntity<String>  updateUserInfo(

@@ -145,20 +145,11 @@ public class BoardService {
     }
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
-    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(UserDetailsImpl userDetails, Long lastId, String address, String color, String type,String keyword ) {
+    public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(Long lastId, String color, String type,String keyword ) {
         // Define the page size (e.g., 8 items per page)
         int pageSize = 8;
         // 페이저블 객체 : ID를 기반으로 내림차순
         Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Order.desc("id")));
-
-        // 현재 사용자가 로그인중이면 id를 받아옵니다. 해당 변수는 비공개를 필터링 하기 위해 사용합니다.
-        System.out.println("사용자 확인하기");
-        Long userId = null;
-        if (userDetails != null){
-            userId = userDetails.getUser().getId();
-        }else{
-            System.out.println("사용자 없으니 null");
-        }
 
         // String 값을 Enum으로 변환, null 또는 빈 문자열 처리
         ClothesColor clothesColor = (color != null && !color.isEmpty()) ? ClothesColor.valueOf(color.toUpperCase()) : null;
@@ -166,13 +157,12 @@ public class BoardService {
 
         // 결과값을 Repository에서 받아옵니다.
         List<Board> boards;
-        if (lastId == null) {
-            // 최신 게시물 조회
-            boards = boardRepository.findBoardsLatest(address,clothesColor,clothesType,pageable,keyword);
-        } else {
-            // lastId를 기준으로 커서 기반 페이지네이션
-            boards = boardRepository.findBoardsAfterId(lastId,address,clothesColor,clothesType,pageable,keyword);
-        }
+
+        // 커서가 없을 경우 : 최신 게시물 조회
+        if (lastId == null) boards = boardRepository.findBoardsLatest(clothesColor,clothesType,pageable,keyword);
+        // 커서값이 있을 경우 : lastId를 기준으로 커서 기반 페이지네이션
+        else boards = boardRepository.findBoardsAfterId(lastId,clothesColor,clothesType,pageable,keyword);
+
 
         return ResponseEntity.ok(boards.stream().map(BoardCreateResponseDto::new).collect(Collectors.toList()));
 
