@@ -68,25 +68,22 @@ public class RecommendService {
 
         // 날씨값 찾기
         Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
-        User user = userDetails.getUser();
-        //Todo : 사용자 추천 결과를 Redis에서 검색하고 없으면 만들어서 Redis에 넣기
-        // 1. 그냥 매번 검색한다.
-        // 2. Redis에 아이템과 게시물, 제품의 ID만 저장한다.
-        // 3. Redis에 결과 모두를 저장한다.
 
-        /* 1. 날씨 기반 옷차림 추천 */
-        recommendResponseDTOS.add(getClothesByWeather(user, weather));
-
-        /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
-        recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
-
-        /* 3. 트랜드 옷차림 추천 */
-        recommendResponseDTOS.add(getBoardsByTrends(user, weather));
-
-        /* 4. 네이버 아이템 추천 */
-        recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
-
-
+        User user = null;
+        // 로그인한 사용자일 경우 각 항목에 대해 모두 추천 리스트를 받는다.
+        if(userDetails != null){
+            user = userDetails.getUser();
+            /* 1. 날씨 기반 옷차림 추천 */
+            recommendResponseDTOS.add(getClothesByWeather(user, weather));
+            /* 2. 내 옷차림 추천 : 내 게시물 / 현재 장소와 시간의 날씨와 유사한  */
+            recommendResponseDTOS.add(getBoardsByMyBoards(user,weather));
+            /* 3. 트랜드 옷차림 추천 */
+            recommendResponseDTOS.add(getBoardsByTrends(user, weather));
+            /* 4. 네이버 아이템 추천 */
+            recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
+        }else{
+            recommendResponseDTOS.add(getBoardsByTrends(user, weather));
+        }
         return recommendResponseDTOS;
     }
 
@@ -132,18 +129,15 @@ public class RecommendService {
     @Transactional(readOnly = true)
     protected List<? extends ResponseDTO> getBoardsByTrends(User user, Weather weather) {
         int tmpGap = 3;
-        try {
+        List<Board> topBoards = new ArrayList<>();
+        if(user != null)
             // 현재 시간과 날씨값이 동일한 게시물 목록을 찾습니다. 사용자의 게시물은 제외합니다.
-            List<Board> topBoards = boardRepository.findTopBoardsByWeatherExcludingUserWithScore(weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap, user.getId());
+            topBoards = boardRepository.findTopBoardsByWeatherExcludingUserWithScore(weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap, user.getId());
+        else
+            topBoards = boardRepository.findTopBoardsByWeatherWithScore(weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
+        // 결과를 배열에 저장하고 반환합니다.
+        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
 
-            // 결과를 배열에 저장하고 반환합니다.
-            return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
-        } catch (Exception e) {
-            // 로그를 남기고 null 반환
-            // 로그를 사용하는 것이 좋습니다. (예: logger.error("Error fetching boards by trends", e))
-            logger.error("Error fetching boards by my boards", e);
-            return null;
-        }
     }
 
 
@@ -197,7 +191,6 @@ public class RecommendService {
         /* 사용자가 가진 위시리스트 아이템 ID 목록 */
         List<Wishlist> userWishlists = wishlistRepository.findByUserId(user.getId());
         Set<Long> wishlistedProductIds = userWishlists.stream().map(wishlist -> wishlist.getProduct().getId()).collect(Collectors.toSet());
-//        logger.info("사용자 위시리스트 아이템 id 목록 {}", wishlistedProductIds.toString());
 
         // 결과 저장 배열 선언
         List<ResponseDTO> response = new ArrayList<>();

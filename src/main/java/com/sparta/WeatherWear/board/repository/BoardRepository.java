@@ -119,4 +119,30 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                                                              @Param("minTmp") double minTmp,
                                                              @Param("maxTmp") double maxTmp,
                                                              @Param("userId") Long userId);
+
+    // 추천 아이템 선정을 위해 점수를 선정하고 상위 9개를 선정하는 기능 (비로그인 사용자)
+    @Query(value = "SELECT b.*, " +
+            "       (COALESCE(b.like_count, 0) * 5 + COALESCE(b.views, 0) * 1 + COALESCE(b.comment_count, 0) * 0.5) AS score " +
+            "FROM ( " +
+            "    SELECT b.id, b.user_id, b.weather_id, b.address, b.title, b.content, b.is_private, b.image, " +
+            "           b.created_at, b.updated_at, b.views, " +
+            "           COUNT(DISTINCT bl.id) AS like_count, " +
+            "           COUNT(DISTINCT c.id) AS comment_count " +
+            "    FROM board b " +
+            "    LEFT JOIN board_like bl ON b.id = bl.board_id " +
+            "    LEFT JOIN comment c ON b.id = c.board_id " +
+            "    JOIN weather w ON b.weather_id = w.id " +
+            "      AND w.SKY = :sky " +
+            "      AND w.PTY = :pty " +
+            "      AND w.TMP BETWEEN :minTmp AND :maxTmp " +
+            "    GROUP BY b.id " +
+            ") AS b " +
+            "ORDER BY score DESC " +
+            "LIMIT 9", nativeQuery = true)
+    List<Board> findTopBoardsByWeatherWithScore(@Param("sky") int sky,
+                                                 @Param("pty") int pty,
+                                                 @Param("minTmp") double minTmp,
+                                                 @Param("maxTmp") double maxTmp);
+
+
 }
