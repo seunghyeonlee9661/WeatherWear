@@ -1,6 +1,7 @@
 package com.sparta.WeatherWear.wishlist.service;
 
 import com.sparta.WeatherWear.clothes.entity.Clothes;
+import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.wishlist.dto.WishlistRequestDTO;
 import com.sparta.WeatherWear.wishlist.dto.WishlistResponseDTO;
@@ -32,20 +33,12 @@ public class WishlistService {
     private final NaverProductRepository naverProductRepository;
 
     /* 위시리스트 불러오기 */
-    public ResponseEntity<Page<WishlistResponseDTO>> getWishlist(UserDetailsImpl userDetails, int page, String type){
+    public ResponseEntity<Page<WishlistResponseDTO>> getWishlist(UserDetailsImpl userDetails, int page, ClothesType type){
         Pageable pageable = PageRequest.of(page, 8);
+        
+        // 쿼리로 필터링 및 값 가져오기
+        Page<Wishlist> wishlistPage = wishlistRepository.findByUserIdAndType(userDetails.getUser().getId(), type, pageable);
 
-        List<Wishlist> wishlists = wishlistRepository.findByUserId(userDetails.getUser().getId(), pageable);
-
-        // 필터링 적용
-        List<Wishlist> filteredClothes = wishlists.stream()
-                .filter(clothes -> (type == null || type.trim().isEmpty() || clothes.getType().name().equalsIgnoreCase(type)))
-                .collect(Collectors.toList());
-
-        // 페이지네이션 적용
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), filteredClothes.size());
-        Page<Wishlist> wishlistPage = new PageImpl<>(filteredClothes.subList(start, end), pageable, filteredClothes.size());
         // 전체 데이터 가져오기
         return ResponseEntity.ok(wishlistPage.map(WishlistResponseDTO::new));
     }

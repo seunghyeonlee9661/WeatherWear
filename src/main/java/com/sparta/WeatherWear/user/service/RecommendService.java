@@ -105,7 +105,6 @@ public class RecommendService {
                 break;
             }
         }
-
         // 사용자의 옷 중에 배열의 태그와 동일한 옷을 추천합니다.
         List<Clothes> clothes = clothesRepository.findByUserAndTypeIn(user, types);
         return clothes.stream().map(ClothesResponseDTO::new).toList();
@@ -148,7 +147,7 @@ public class RecommendService {
     }
 
 
-// 기존 방법 하나씩 뽑고 제외하기...
+// 기존 방법 하나씩 뽑고 제외하기 : 성능 측정으로 사용 가능
 //    /* 2. 나의 Best OOTD 추천 : 높은 좋아요의 게시물 추천 */
 //    @Transactional(readOnly = true)
 //    protected List<? extends ResponseDTO>  getBoardsByMyBoards(User user, Weather weather) {
