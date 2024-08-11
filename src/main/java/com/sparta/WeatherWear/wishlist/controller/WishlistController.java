@@ -32,7 +32,7 @@ public class WishlistController {
     /* 위시리스트 불러오기 */
     @GetMapping("/wishlist")
     public ResponseEntity<Page<WishlistResponseDTO>> findWishlist(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "type", required = false, defaultValue = "") String type) {
-        return wishlistService.getWishlist(userDetails,page, ClothesType.valueOf(type));
+        return wishlistService.getWishlist(userDetails,page, type);
     }
 
     /* 위시리스트 추가하기 */

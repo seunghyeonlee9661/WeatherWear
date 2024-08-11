@@ -33,8 +33,13 @@ public class WishlistService {
     private final NaverProductRepository naverProductRepository;
 
     /* 위시리스트 불러오기 */
-    public ResponseEntity<Page<WishlistResponseDTO>> getWishlist(UserDetailsImpl userDetails, int page, ClothesType type){
+    public ResponseEntity<Page<WishlistResponseDTO>> getWishlist(UserDetailsImpl userDetails, int page, String typeStr){
         Pageable pageable = PageRequest.of(page, 8);
+
+        ClothesType type = null;
+        if (typeStr != null && !typeStr.trim().isEmpty()) {
+            type = ClothesType.valueOf(typeStr);
+        }
         
         // 쿼리로 필터링 및 값 가져오기
         Page<Wishlist> wishlistPage = wishlistRepository.findByUserIdAndType(userDetails.getUser().getId(), type, pageable);
