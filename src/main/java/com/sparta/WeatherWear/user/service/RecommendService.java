@@ -69,10 +69,9 @@ public class RecommendService {
         // 날씨값 찾기
         Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
 
-        System.out.println("초기 유저 null");
+
         // 로그인한 사용자일 경우 각 항목에 대해 모두 추천 리스트를 받는다.
         if(userDetails != null){
-            System.out.println("userDetails != null -> 로그인 사용자");
             User user = userDetails.getUser();
             /* 1. 날씨 기반 옷차림 추천 */
             recommendResponseDTOS.add(getClothesByWeather(user, weather));
@@ -83,7 +82,6 @@ public class RecommendService {
             /* 4. 네이버 아이템 추천 */
             recommendResponseDTOS.add(getNaverProductsByWeather(user, weather));
         }else{
-            System.out.println("userDetails == null -> 비로그인 사용자");
             recommendResponseDTOS.add(getBoardsByTrends(null, weather));
         }
         return recommendResponseDTOS;
