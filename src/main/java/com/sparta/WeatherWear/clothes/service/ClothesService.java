@@ -39,19 +39,8 @@ public class ClothesService {
         // 페이지네이션 8개 아이템
         Pageable pageable = PageRequest.of(page, 8);
 
-        // 사용자의 전체 옷 목록을 받아옵니다.
-        List<Clothes> clothesList = clothesRepository.findByUserId(userDetails.getUser().getId());
-
-        // 필터링을 적용합니다 : 없으면 전체 선택
-        List<Clothes> filteredClothes = clothesList.stream()
-                .filter(clothes -> (type == null || type.isEmpty() || clothes.getType().name().equalsIgnoreCase(type)))
-                .filter(clothes -> (color == null || color.isEmpty() || clothes.getColor().name().equalsIgnoreCase(color)))
-                .collect(Collectors.toList());
-        // 페이지네이션을 적용합니다.
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), filteredClothes.size());
-        Page<Clothes> clothesPage = new PageImpl<>(filteredClothes.subList(start, end), pageable, filteredClothes.size());
-
+        // 필터링 및 정렬을 데이터베이스 레벨에서 처리
+        Page<Clothes> clothesPage = clothesRepository.findByUserIdAndFilters(userDetails.getUser().getId(), type, color, pageable);
         return ResponseEntity.ok(clothesPage.map(ClothesResponseDTO::new));
     }
 

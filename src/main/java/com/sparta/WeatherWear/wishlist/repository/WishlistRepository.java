@@ -17,6 +17,6 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     Optional<Wishlist> findByUserIdAndProductId(Long userId, Long productId);
     Boolean existsByUserIdAndProductId(Long userId, Long productId);
 
-    @Query("SELECT w FROM Wishlist w WHERE w.user.id = :userId AND (:type IS NULL OR w.type = :type)")
+    @Query("SELECT w FROM Wishlist w WHERE w.user.id = :userId AND (:type IS NULL OR w.type = :type) ORDER BY w.id DESC")
     Page<Wishlist> findByUserIdAndType(@Param("userId") Long userId, @Param("type") ClothesType type, Pageable pageable);
 }
