@@ -50,7 +50,7 @@ public class CommentController {
     }    
     
 //    /* 댓글 좋아요 변경 */
-    @GetMapping("/comments/likes/{commentId}")
+    @PostMapping("/comments/likes/{commentId}")
     public ResponseEntity<?> switchCommentLikes(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.switchCommentLikes(commentId, userDetails);
     }
