@@ -90,6 +90,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/kakao/callback/**").permitAll() // 카카오 로그인 콜백
                         .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 불러오기
                         .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 불러오기 및 댓글 조회
+                        .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll() // 게시물 정보 불러오기 및 댓글 조회
                         // 그 외 모든 요청 인증 처리
                         .anyRequest().authenticated()
         );
