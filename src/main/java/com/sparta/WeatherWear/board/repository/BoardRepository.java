@@ -29,16 +29,16 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (:lastId IS NULL OR b.id < :lastId) " +
-            "AND (b.isPrivate = false OR (b.isPrivate = true AND (:userId IS NOT NULL AND b.user.id = :userId))) " +
+            "AND b.isPrivate = false " +  // isPrivate가 true인 경우 제외
             "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     List<Board> findBoardsAfterId(@Param("lastId") Long lastId,
                                   @Param("address") String address,
                                   @Param("color") ClothesColor color,
                                   @Param("type") ClothesType type,
-                                  @Param("userId") Long userId,
                                   Pageable pageable,
                                   @Param("keyword") String keyword);
+
 
 
     // 최신 게시물 조회: 커서 값이 없을 경우
@@ -46,13 +46,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "WHERE (:address IS NULL OR b.address LIKE CONCAT(:address, '%')) " +
             "AND (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
-            "AND (b.isPrivate = false OR (b.isPrivate = true AND (:userId IS NOT NULL AND b.user.id = :userId))) " +
+            "AND b.isPrivate = false " +  // 사용자 아이디 확인 조건 제거
             "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     List<Board> findBoardsLatest(@Param("address") String address,
                                  @Param("color") ClothesColor color,
                                  @Param("type") ClothesType type,
-                                 @Param("userId") Long userId,
                                  Pageable pageable,
                                  @Param("keyword") String keyword);
 

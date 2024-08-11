@@ -158,17 +158,16 @@ public class BoardService {
 
         // String 값을 Enum으로 변환, null 또는 빈 문자열 처리
         ClothesColor clothesColor = (color != null && !color.isEmpty()) ? ClothesColor.valueOf(color.toUpperCase()) : null;
-
         ClothesType clothesType = (type != null && !type.isEmpty()) ? ClothesType.valueOf(type.toUpperCase()) : null;
 
         // 결과값을 Repository에서 받아옵니다.
         List<Board> boards;
         if (lastId == null) {
             // 최신 게시물 조회
-            boards = boardRepository.findBoardsLatest(address,clothesColor,clothesType,userId,pageable,keyword);
+            boards = boardRepository.findBoardsLatest(address,clothesColor,clothesType,pageable,keyword);
         } else {
             // lastId를 기준으로 커서 기반 페이지네이션
-            boards = boardRepository.findBoardsAfterId(lastId,address,clothesColor,clothesType,userId,pageable,keyword);
+            boards = boardRepository.findBoardsAfterId(lastId,address,clothesColor,clothesType,pageable,keyword);
         }
 
         return ResponseEntity.ok(boards.stream().map(BoardCreateResponseDto::new).collect(Collectors.toList()));
