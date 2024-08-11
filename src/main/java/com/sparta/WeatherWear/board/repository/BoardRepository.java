@@ -29,7 +29,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND (:lastId IS NULL OR b.id < :lastId) " +
             "AND b.isPrivate = false " +  // isPrivate가 true인 경우 제외
-            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')) OR b.address LIKE CONCAT('%', :keyword, '%')) " +
+            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%') OR b.address LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     List<Board> findBoardsAfterId(@Param("lastId") Long lastId,
                                   @Param("color") ClothesColor color,
@@ -44,7 +44,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "WHERE (:color IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.color = :color)) " +
             "AND (:type IS NULL OR EXISTS (SELECT 1 FROM b.boardTags t WHERE t.type = :type)) " +
             "AND b.isPrivate = false " +  // 사용자 아이디 확인 조건 제거
-            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')) OR b.address LIKE CONCAT('%', :keyword, '%')" +
+            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%') OR b.address LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     List<Board> findBoardsLatest(@Param("color") ClothesColor color,
                                  @Param("type") ClothesType type,
@@ -56,7 +56,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "JOIN b.weather w " +
             "WHERE b.user.id = :userId " +
             "AND (:pty IS NULL OR :sky IS NULL OR w.PTY = :pty OR w.SKY = :sky) " +
-            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')) " +
+            "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')  OR b.address LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     Page<Board> findByUserId(@Param("userId") Long userId,
                              @Param("pty") Integer pty,
