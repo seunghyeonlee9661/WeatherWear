@@ -106,7 +106,7 @@ public class CommentService {
         return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
     }
 
-    public ResponseEntity<?> setCommentLikes(Long commentId, UserDetailsImpl userDetails) {
+    public ResponseEntity<?> switchCommentLikes(Long commentId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new IllegalArgumentException("댓글을 찾을 수 없습니다"));
 
