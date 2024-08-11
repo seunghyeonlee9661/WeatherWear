@@ -87,7 +87,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "    GROUP BY b.id " +
             ") AS b " +
             "ORDER BY score DESC " +
-            "LIMIT 9", nativeQuery = true)
+            "LIMIT 4", nativeQuery = true)
     List<Board> findTopBoardsByUserAndWeatherWithScore(@Param("userId") Long userId,
                                                        @Param("sky") int sky,
                                                        @Param("pty") int pty,
@@ -113,7 +113,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "    GROUP BY b.id " +
             ") AS b " +
             "ORDER BY score DESC " +
-            "LIMIT 9", nativeQuery = true)
+            "LIMIT 4", nativeQuery = true)
     List<Board> findTopBoardsByWeatherExcludingUserWithScore(@Param("sky") int sky,
                                                              @Param("pty") int pty,
                                                              @Param("minTmp") double minTmp,
@@ -138,7 +138,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "    GROUP BY b.id " +
             ") AS b " +
             "ORDER BY score DESC " +
-            "LIMIT 9", nativeQuery = true)
+            "LIMIT 4", nativeQuery = true)
     List<Board> findTopBoardsByWeatherWithScore(@Param("sky") int sky,
                                                  @Param("pty") int pty,
                                                  @Param("minTmp") double minTmp,

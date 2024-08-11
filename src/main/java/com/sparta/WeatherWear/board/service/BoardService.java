@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /*
@@ -278,43 +279,52 @@ public class BoardService {
 
     /* 게시물 좋아요 변경 */
     @Transactional
-    public ResponseEntity<?> switchBoardLikes(Long boardId, UserDetailsImpl userDetails) {
+    public ResponseEntity<Integer> switchBoardLikes(Long boardId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        Board board = boardRepository.findById(boardId).orElseThrow(()->
-                new IllegalArgumentException("게시물이 존재하지 않습니다")
-        );
+        Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("게시물이 존재하지 않습니다"));
 
-        // 좋아요가 아예 없는 경우
-        //FIXME : 좋아요가 아예 없는 경우는 의미가 없을거 같은데요??
-        BoardLike newBoardLike = new BoardLike(user, board);
-        if(board.getBoardLikes().isEmpty()) {
-            board.getBoardLikes().add(newBoardLike);
-            boardLikeRepository.save(newBoardLike);
-            int boardLikes = board.getBoardLikes().size();
-            return new ResponseEntity<>(boardLikes, HttpStatus.OK);
-        }
-
-        // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
-        //FIXME : findByUserAndBoard에 결과가 없는 경우 에러가 나기 때문에 Optional<Board>로 쓰시는게 좋습니다!
-        // Optional은 존재 유무를 파악할 수 있습니다! 있으면 get 가능!
-        BoardLike existingLike = boardLikeRepository.findByUserAndBoard(user, board);
-        if (existingLike != null) {
-            // User has already liked the post; remove the like
-            board.getBoardLikes().remove(existingLike);
-            boardLikeRepository.delete(existingLike);
+        // 현재 게시물과, 현재 사용자가 좋아요 상태인지 확인합니다.
+        Optional<BoardLike> boardLike = boardLikeRepository.findByUserAndBoard(user, board);
+        if (boardLike.isPresent()) {
+            // 좋아요가 있는 경우, 삭제
+            boardLikeRepository.delete(boardLike.get());
         } else {
-            // User has not liked the post; add the like
-            BoardLike newBoardLike2 = new BoardLike(user, board);
-            board.getBoardLikes().add(newBoardLike2);
-            boardLikeRepository.save(newBoardLike2);
+            // 좋아요가 없는 경우, 추가
+            boardLikeRepository.save(new BoardLike(user, board));
         }
-        // FIXME : 좋아요 수 반환하도록 하신거 좋습니다!!!
-        int boardLikes = board.getBoardLikes().size();
 
-        // Prepare the response
-        Map<String, Integer> response = new HashMap<>();
-        response.put("boardLikes", boardLikes);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+//        // 좋아요가 아예 없는 경우
+//        //FIXME : 좋아요가 아예 없는 경우는 의미가 없을거 같은데요??
+//        BoardLike newBoardLike = new BoardLike(user, board);
+//        if(board.getBoardLikes().isEmpty()) {
+//            board.getBoardLikes().add(newBoardLike);
+//            boardLikeRepository.save(newBoardLike);
+//            int boardLikes = board.getBoardLikes().size();
+//            return new ResponseEntity<>(boardLikes, HttpStatus.OK);
+//        }
+//
+//        // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
+//        //FIXME : findByUserAndBoard에 결과가 없는 경우 에러가 나기 때문에 Optional<Board>로 쓰시는게 좋습니다!
+//        // Optional은 존재 유무를 파악할 수 있습니다! 있으면 get 가능!
+//        BoardLike existingLike = boardLikeRepository.findByUserAndBoard(user, board);
+//        if (existingLike != null) {
+//            // User has already liked the post; remove the like
+//            board.getBoardLikes().remove(existingLike);
+//            boardLikeRepository.delete(existingLike);
+//        } else {
+//            // User has not liked the post; add the like
+//            BoardLike newBoardLike2 = new BoardLike(user, board);
+//            board.getBoardLikes().add(newBoardLike2);
+//            boardLikeRepository.save(newBoardLike2);
+//        }
+//        // FIXME : 좋아요 수 반환하도록 하신거 좋습니다!!!
+//        int boardLikes = board.getBoardLikes().size();
+//
+//        // Prepare the response
+//        Map<String, Integer> response = new HashMap<>();
+//        response.put("boardLikes", boardLikes);
+
+        return new ResponseEntity<>(board.getLikesSize(), HttpStatus.OK);
     }
 
 }

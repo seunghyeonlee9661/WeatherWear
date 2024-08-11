@@ -106,12 +106,9 @@ public class CommentService {
         return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
     }
 
-    public ResponseEntity<?> switchCommentLikes(Long commentId, UserDetailsImpl userDetails) {
-
+    public ResponseEntity<?> setCommentLikes(Long commentId, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                ()-> new IllegalArgumentException("댓글을 찾을 수 없습니다")
-        );
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new IllegalArgumentException("댓글을 찾을 수 없습니다"));
 
         // 좋아요가 아예 없는 경우
         CommentLike newCommentLike = new CommentLike(user, comment);
@@ -121,6 +118,7 @@ public class CommentService {
             int commentLikes = comment.getCommentLikes().size();
             return new ResponseEntity<>(commentLikes, HttpStatus.OK);
         }
+
         for(CommentLike commentLike : comment.getCommentLikes()) {
             System.out.println("commentLike = " + commentLike);
             System.out.println("commentLike.getUser() = " + commentLike.getUser());
