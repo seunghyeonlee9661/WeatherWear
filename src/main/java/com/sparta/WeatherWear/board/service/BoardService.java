@@ -324,8 +324,7 @@ public class BoardService {
 //        Map<String, Integer> response = new HashMap<>();
 //        response.put("boardLikes", boardLikes);
 
-        board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다"));
-        return new ResponseEntity<>(board.getLikesSize(), HttpStatus.OK);
+        return new ResponseEntity<>( boardLikeRepository.countLikesByBoardId(boardId), HttpStatus.OK);
     }
 
 }
