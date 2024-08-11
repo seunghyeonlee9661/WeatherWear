@@ -151,9 +151,12 @@ public class BoardService {
         Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Order.desc("id")));
 
         // 현재 사용자가 로그인중이면 id를 받아옵니다. 해당 변수는 비공개를 필터링 하기 위해 사용합니다.
+        System.out.println("사용자 확인하기");
         Long userId = null;
         if (userDetails != null){
             userId = userDetails.getUser().getId();
+        }else{
+            System.out.println("사용자 없으니 null");
         }
 
         // String 값을 Enum으로 변환, null 또는 빈 문자열 처리
