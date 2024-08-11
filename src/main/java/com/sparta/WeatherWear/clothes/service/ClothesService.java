@@ -39,8 +39,11 @@ public class ClothesService {
         // 페이지네이션 8개 아이템
         Pageable pageable = PageRequest.of(page, 8);
 
+        ClothesType clothesType = (type != null && !type.isEmpty()) ? ClothesType.valueOf(type.toUpperCase()) : null;
+        ClothesColor clothesColor = (color != null && !color.isEmpty()) ? ClothesColor.valueOf(color.toUpperCase()) : null;
+
         // 필터링 및 정렬을 데이터베이스 레벨에서 처리
-        Page<Clothes> clothesPage = clothesRepository.findByUserIdAndFilters(userDetails.getUser().getId(), type, color, pageable);
+        Page<Clothes> clothesPage = clothesRepository.findByUserIdAndFilters(userDetails.getUser().getId(), clothesType, clothesColor, pageable);
         return ResponseEntity.ok(clothesPage.map(ClothesResponseDTO::new));
     }
 
