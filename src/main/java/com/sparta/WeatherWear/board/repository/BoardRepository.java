@@ -56,6 +56,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "JOIN b.weather w " +
             "WHERE b.user.id = :userId " +
             "AND ( " +
+            "  (:pty IS NULL AND :sky IS NULL) " +
             "  (:pty = 1 AND (w.PTY = 1 OR w.PTY = 2 OR w.PTY = 4)) " +
             "  OR (:pty = 3 AND w.PTY = 3) " +
             "  OR (:pty IS NULL AND (:sky IS NOT NULL AND w.SKY = :sky AND w.PTY = 0)) " +

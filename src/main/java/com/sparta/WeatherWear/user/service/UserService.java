@@ -43,7 +43,8 @@ public class UserService {
     /* 사용자의 게시물 검색 기능 */
     public ResponseEntity<Page<SimpleBoardResponseDTO>> findUserBoard(UserDetailsImpl userDetails, int page, Integer pty, Integer sky, String keyword){
         Pageable pageable = PageRequest.of(page, 8, Sort.by(Sort.Order.desc("id")));
-
+        System.out.println(pty);
+        System.out.println(sky);
         Page<Board> boardPage  = boardRepository.findByUserId(userDetails.getUser().getId(),pty,sky,keyword,pageable);
         return ResponseEntity.ok(boardPage.map(SimpleBoardResponseDTO::new));
     }
