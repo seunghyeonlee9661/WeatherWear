@@ -108,7 +108,6 @@ public class BoardService {
 
         //
         int views = board.getViews();
-        System.out.println("views = " + views);
 
         if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 게시물은 비공개 상태이므로 접근할 수 없습니다.");
@@ -172,7 +171,7 @@ public class BoardService {
 //        Long boardUserId = requestDTO.getBoardUserId();
         Long boardUserId = board.getUser().getId();
 
-        if(userId == null || boardUserId == null) {//FIXME : User가 null인 상황일 경우, 비로그인 요청일 경우 Security 필터에서 걸릴거라 이 부분도 제거하셔도 됩니다.
+        if(userId == null || boardUserId == null) {
             log.info("User의 Id 값이 없습니다.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -217,9 +216,6 @@ public class BoardService {
             updateBoard.clearBoardTags();
             for (ClothesRequestDTO clothesRequestDTO: requestDTO.getTags()) {
 
-                System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
-                System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
-
                 // 3. 태그 추가
                 BoardTag updateBoardTag = new BoardTag(updateBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType());
                 boardTagRepository.save(updateBoardTag);
@@ -243,7 +239,7 @@ public class BoardService {
         Long userId = userDetails.getUser().getId();
         Long boardUserId = board.getUser().getId();
 
-        if(userId == null || boardUserId == null) { //FIXME : 여기서도 마찬가지, user의 존재 유무를 파악하실 필요는 없어 보입니다.
+        if(userId == null || boardUserId == null) {
             log.info("User의 Id 값이 없습니다.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

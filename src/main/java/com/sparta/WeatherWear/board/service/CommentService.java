@@ -51,7 +51,6 @@ public class CommentService {
         board.addComment(newComment);
 
         // newBoard -> responseDto로 반환
-//        CommentCreateResponseDto responseDto = new CommentCreateResponseDto(newComment);
         return new ResponseEntity<>("댓글 생성 성공", HttpStatus.CREATED);
     }
 
@@ -81,9 +80,6 @@ public class CommentService {
         if(user.getId().equals(comment.getUser().getId())) {
             Comment updatedComment = comment.update(requestDto.getContents());
             commentRepository.save(updatedComment);
-
-            // newBoard -> responseDto로 반환
-            CommentCreateResponseDto responseDto = new CommentCreateResponseDto(updatedComment);
 
             // Returning the response entity with the appropriate HTTP status
             return new ResponseEntity<>("수정 완료", HttpStatus.OK);
@@ -118,12 +114,6 @@ public class CommentService {
             return new ResponseEntity<>(commentLikes, HttpStatus.OK);
         }
 
-        for(CommentLike commentLike : comment.getCommentLikes()) {
-            System.out.println("commentLike = " + commentLike);
-            System.out.println("commentLike.getUser() = " + commentLike.getUser());
-            System.out.println("commentLike.getComment() = " + commentLike.getComment());
-
-        }
         // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
         CommentLike existingLike = commentLikeRepository.findByUserAndComment(user, comment);
 
