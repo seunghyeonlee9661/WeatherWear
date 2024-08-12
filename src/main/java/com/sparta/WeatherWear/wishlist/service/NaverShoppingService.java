@@ -61,7 +61,7 @@ public class NaverShoppingService {
         headers.set("X-Naver-Client-Id", clientId);
         headers.set("X-Naver-Client-Secret", clientSecret);
         /* url 정의 */
-        String apiUrl = "https://openapi.naver.com/v1/search/shop.json?query=" + query+ "&display=" + 500 + "&start=" + start + "&sort=" + "sim";
+        String apiUrl = "https://openapi.naver.com/v1/search/shop.json?query=" + query+ "&display=" + 100 + "&start=" + start + "&sort=" + "sim";
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         // API 호출
