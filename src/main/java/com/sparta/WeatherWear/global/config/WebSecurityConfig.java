@@ -25,8 +25,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /*
 작성자 : 이승현
@@ -65,52 +69,52 @@ public class WebSecurityConfig {
     /* 보안 필터의 범위 설정 */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // CSRF 설정
-        http.csrf(AbstractHttpConfigurer::disable);
-        // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
-        http.sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        // 접근 가능 범위 설정
-        http.authorizeHttpRequests(authorizeHttpRequests ->
-                authorizeHttpRequests
-                        // resources 접근 허용 설정
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        // 로그인 없이 접근 가능한 경로들
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/login").permitAll() // 로그인
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // 회원가입
-                        .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
-                        .requestMatchers(HttpMethod.GET, "/api/kakao/callback/**").permitAll() // 카카오 로그인 콜백
-                        .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 불러오기
-                        .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 불러오기 및 댓글 조회
-                        .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll() // 게시물 정보 불러오기 및 댓글 조회
-                        .requestMatchers(HttpMethod.GET, "/health").permitAll() // 헬스 체크 허용
-                        .anyRequest().authenticated() // 그 외 모든 요청 인증 처리
-        );
-        // 에러 처리를 위한 핸들러 설정
-        http.exceptionHandling((exceptionHandling) -> {
-            exceptionHandling.authenticationEntryPoint(authenticationEntryPoint); // 로그인이 필요한 서비스에 대해
-        });
-
-        // 로그인 처리 진행
-        http.formLogin((formLogin) -> formLogin.
-                loginPage("/login") // 로그인 페이지 url
-                .loginProcessingUrl("/api/login") // 로그인 요청 url
-                .permitAll()
-        );
-
-        // 로그아웃 처리 진행
-        http.logout(logout -> logout
-                .logoutUrl("/api/logout")
-                .addLogoutHandler(this::handleLogout)
-                .logoutSuccessHandler(this::handleLogoutSuccess)
-                .permitAll()
-        );
-
-        // JWT 검증 및 인가 필터
-        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        // 로그인 및 JWT 생성 필터
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        http
+                // CORS 설정
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // CSRF 비활성화
+                .csrf(AbstractHttpConfigurer::disable)
+                // 세션 관리 설정
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                // 접근 권한 설정
+                .authorizeHttpRequests(authorizeHttpRequests ->
+                        authorizeHttpRequests
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                                .requestMatchers("/error").permitAll()
+                                .requestMatchers("/api/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/kakao/callback/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/health").permitAll()
+                                .anyRequest().authenticated()
+                )
+                // 에러 핸들러 설정
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+                )
+                // 로그인 처리 설정
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/login")
+                                .loginProcessingUrl("/api/login")
+                                .permitAll()
+                )
+                // 로그아웃 처리 설정
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/api/logout")
+                                .addLogoutHandler(this::handleLogout)
+                                .logoutSuccessHandler(this::handleLogoutSuccess)
+                                .permitAll()
+                )
+                // JWT 필터 추가
+                .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -139,6 +143,19 @@ public class WebSecurityConfig {
     private void handleLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("Logout successful");
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("https://weatherwear-ten.vercel.app")); // 허용된 출처
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용된 메소드
+        configuration.setAllowedHeaders(Arrays.asList("*")); // 허용된 헤더
+        configuration.setAllowCredentials(true); // 자격 증명 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }

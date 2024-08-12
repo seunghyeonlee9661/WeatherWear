@@ -24,15 +24,4 @@ public class MVCConfiguration implements WebMvcConfigurer {
         StringHttpMessageConverter stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
         converters.add(0, stringConverter);
     }
-
-    // CORS 설정
-    // TODO : CORS가 잘 작동하도록 프론트엔드 서버 주소를 수정할 필요가 있음
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // 모든 경로에 대해 CORS 설정
-                .allowedOrigins("https://weatherwear-ten.vercel.app") // 허용할 출처
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메소드
-                .allowedHeaders("*") // 허용할 헤더
-                .allowCredentials(true); // 쿠키와 인증 정보 허용
-    }
 }
