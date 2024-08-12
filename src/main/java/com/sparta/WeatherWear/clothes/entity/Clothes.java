@@ -32,19 +32,14 @@ public class Clothes {
     @Column(name = "image", nullable = true)
     private String image;
 
-    public Clothes(ClothesColor color,ClothesType type, User user) {
+    public Clothes(ClothesColor color,ClothesType type, User user,String image) {
         this.user = user;
         this.color = color;
         this.type = type;
+        this.image = image;
     }
 
     public void update (ClothesColor color,ClothesType type,String image){
-        this.image = image;
-        this.color = color;
-        this.type = type;
-    }
-
-    public void updateImage (String image){
         this.image = image;
         this.color = color;
         this.type = type;

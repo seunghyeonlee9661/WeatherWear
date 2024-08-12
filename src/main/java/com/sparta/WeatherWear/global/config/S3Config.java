@@ -7,7 +7,10 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-
+/*
+작성자 : 이승현
+AWS S3 설정
+ */
 @Configuration
 public class S3Config {
 

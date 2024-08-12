@@ -13,7 +13,7 @@ import java.util.List;
 
 /*
 작성자 : 이승현
-자원 파일 관리를 위한 경로 설정 설정
+자원 파일 관리를 위한 경로 설정 설정과 CORS 설정
  */
 @Configuration
 public class MVCConfiguration implements WebMvcConfigurer {
@@ -25,6 +25,8 @@ public class MVCConfiguration implements WebMvcConfigurer {
         converters.add(0, stringConverter);
     }
 
+    // CORS 설정
+    // TODO : CORS가 잘 작동하도록 프론트엔드 서버 주소를 수정할 필요가 있음
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

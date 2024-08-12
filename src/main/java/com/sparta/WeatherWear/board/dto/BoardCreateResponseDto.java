@@ -70,7 +70,6 @@ public class BoardCreateResponseDto  {
 
 
     // 게시물 조회 & 조회수 추가
-    //Fixme
     public BoardCreateResponseDto(Board board, int views) {
         this.id = board.getId();
         // 사용자

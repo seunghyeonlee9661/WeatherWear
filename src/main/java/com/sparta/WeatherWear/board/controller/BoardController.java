@@ -66,6 +66,5 @@ public class BoardController {
     public ResponseEntity<?> switchBoardLikes(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.switchBoardLikes(boardId, userDetails);
     }
-
 }
 
