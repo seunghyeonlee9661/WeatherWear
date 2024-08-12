@@ -23,19 +23,18 @@ import java.util.List;
 @Configuration
 public class MVCConfiguration implements WebMvcConfigurer {
 
-    // 오류 메시지의 경우 반환할 때 알림이 될 수 있도록 해주는 기능
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         StringHttpMessageConverter stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
         converters.add(0, stringConverter);
     }
 
-    @Bean
+    @Bean(name = "mvcCorsConfigurationSource")
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://weatherwear-ten.vercel.app"));
+        configuration.setAllowedOrigins(List.of("https://weatherwear-ten.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
