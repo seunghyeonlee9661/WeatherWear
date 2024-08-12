@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.WeatherWear.board.entity.Comment;
+import com.sparta.WeatherWear.user.dto.SimpleUserDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class CommentCreateResponseDto {
     private long id;
     // 사용자 정보
-    private UserSimpleDto user = new UserSimpleDto();
+    private SimpleUserDTO user;
 
     private Long BoardId;
     private String contents;
@@ -27,9 +28,7 @@ public class CommentCreateResponseDto {
     public CommentCreateResponseDto(Comment comment) {
         this.id = comment.getId();
         //
-        this.user.setId(comment.getUser().getId());
-        this.user.setNickname(comment.getUser().getNickname());
-        this.user.setImage(comment.getUser().getImage());
+        this.user =new SimpleUserDTO(comment.getUser());
         //
         this.BoardId = comment.getBoard().getId();
         this.contents = comment.getContents();
