@@ -141,10 +141,8 @@ public class BoardService {
 
     /* 게시물 전체 목록 조회 (페이징) & 아이디에 해당하는 값 있으면 수정 기능 추가하기 */
     public ResponseEntity<List<BoardCreateResponseDto>> findBoardAll(Long lastId, String color, String type,String keyword ) {
-        // Define the page size (e.g., 8 items per page)
-        int pageSize = 8;
         // 페이저블 객체 : ID를 기반으로 내림차순
-        Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Order.desc("id")));
+        Pageable pageable = PageRequest.of(0, 8, Sort.by(Sort.Order.desc("id")));
 
         // String 값을 Enum으로 변환, null 또는 빈 문자열 처리
         ClothesColor clothesColor = (color != null && !color.isEmpty()) ? ClothesColor.valueOf(color.toUpperCase()) : null;
@@ -157,10 +155,7 @@ public class BoardService {
         if (lastId == null) boards = boardRepository.findBoardsLatest(clothesColor,clothesType,pageable,keyword);
         // 커서값이 있을 경우 : lastId를 기준으로 커서 기반 페이지네이션
         else boards = boardRepository.findBoardsAfterId(lastId,clothesColor,clothesType,pageable,keyword);
-
-
         return ResponseEntity.ok(boards.stream().map(BoardCreateResponseDto::new).collect(Collectors.toList()));
-
     }
 
     @Transactional
