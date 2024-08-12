@@ -31,6 +31,13 @@ public class ClothesController {
         return clothesService.getClotheList(userDetails,page,type,color);
     }
 
+    /* 옷 아이템 불러오기 */
+    @GetMapping("/clothes/{id}")
+    public ResponseEntity<ClothesResponseDTO> createClothes(@PathVariable("id") long id) {
+        return clothesService.getClothe(id);
+    }
+
+
     /* 옷 정보 추가 */
     @PostMapping("/clothes")
     public ResponseEntity<String> createClothes(

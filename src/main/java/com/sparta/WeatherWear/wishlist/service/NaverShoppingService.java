@@ -32,24 +32,18 @@ public class NaverShoppingService {
     public List<NaverProductResponseDTO> getProducts(String query,int start) throws JsonProcessingException {
         /* Redis에서 검색 결과 조회 */
         String redisKey = "naverProducts:" + query + ":" + start;
-        log.info("Redis key{}", redisKey);
         String cachedResult = redisService.get(RedisService.NAVER_SHOPPING_API_PREFIX, redisKey);
         List<NaverProductResponseDTO> result;
-        log.info("Redis에서 검색");
         if (cachedResult != null) {
-            log.info("Redis 발견!");
             // 캐시된 결과가 있다면 이를 반환
             ObjectMapper objectMapper = new ObjectMapper();
             result = objectMapper.readValue(cachedResult, new TypeReference<List<NaverProductResponseDTO>>() {});
-            log.info("Redis 결과 반환");
         } else {
-            log.info("Redis에 없음");
             result = searchProductsByAPI(query, start);
             // 여기 Redis에 저장하는 기능 추가
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonResult = objectMapper.writeValueAsString(result); // 객체 리스트를 JSON 문자열로 직렬화
             redisService.save(RedisService.NAVER_SHOPPING_API_PREFIX, redisKey, jsonResult, RedisService.NAVER_SHOPPING_API_DURATION); // 1시간 동안 캐시 저장
-            log.info("Redis 저장 성공");
         }
         return result ;
     }

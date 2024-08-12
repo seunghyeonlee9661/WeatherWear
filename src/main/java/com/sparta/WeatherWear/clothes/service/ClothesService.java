@@ -44,6 +44,12 @@ public class ClothesService {
         return ResponseEntity.ok(clothesPage.map(ClothesResponseDTO::new));
     }
 
+    /* 단일 옷 아이템 정보를 불러오기 */
+    public ResponseEntity<ClothesResponseDTO> getClothe(long id) {
+        Clothes clothes = clothesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No Clothes"));
+        return ResponseEntity.ok(new ClothesResponseDTO(clothes));
+    }
+
     /* 옷 추가 */
     @Transactional
     public ResponseEntity<String> createClothes(UserDetailsImpl userDetails, ClothesColor color, ClothesType type, MultipartFile file) throws IOException {
@@ -56,6 +62,7 @@ public class ClothesService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Clothes Image Required");
         }
     }
+
 
     /* 옷 수정 */
     @Transactional
