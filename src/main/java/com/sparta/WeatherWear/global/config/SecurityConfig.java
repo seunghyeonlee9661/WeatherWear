@@ -151,10 +151,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://weatherwear-ten.vercel.app")); // 허용된 출처
+        configuration.setAllowedOrigins(Arrays.asList("http://weatherwear-ten.vercel.app")); // 허용된 출처
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용된 메소드
         configuration.setAllowedHeaders(Arrays.asList("*")); // 허용된 헤더
         configuration.setAllowCredentials(true); // 자격 증명 허용
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
