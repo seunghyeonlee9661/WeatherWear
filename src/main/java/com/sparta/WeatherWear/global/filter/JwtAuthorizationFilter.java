@@ -34,8 +34,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = req.getRequestURI();
-        if(!requestURI.equals("/health")) log.info("access : {}", requestURI);
-
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER); // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         if (accessToken != null) { // accessToken 확인
             String accessTokenValue = jwtUtil.substringToken(accessToken); // accessToken 검증

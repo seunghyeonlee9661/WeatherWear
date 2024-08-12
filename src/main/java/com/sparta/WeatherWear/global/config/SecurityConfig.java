@@ -115,7 +115,7 @@ public class SecurityConfig {
                                 .permitAll()
                 )
                 // JWT 필터 추가
-                .addFilterBefore(new CorsLoggingFilter(), CorsFilter.class) // CorsLoggingFilter 추가
+//                .addFilterBefore(new CorsLoggingFilter(), CorsFilter.class) // CorsLoggingFilter 추가
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
