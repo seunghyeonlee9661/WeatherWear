@@ -62,7 +62,7 @@ public class BoardController {
     }
 
     /* 게시물 좋아요 변경 */
-    @GetMapping("/likes/{boardId}")
+    @PostMapping("/likes/{boardId}")
     public ResponseEntity<?> switchBoardLikes(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.switchBoardLikes(boardId, userDetails);
     }
