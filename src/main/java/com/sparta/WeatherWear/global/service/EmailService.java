@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
     private final String senderEmail = "WeatherWear@gmail.com"; // 발송자 이메일 주소
-    private final String senderName = "WWAdmin"; // 발송자 이름
+    private final String senderName = "WeatherWear"; // 발송자 이름
     private final JavaMailSender emailSender;
 
     public EmailService(JavaMailSender emailSender) {

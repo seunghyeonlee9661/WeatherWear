@@ -33,7 +33,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     /* 사용자의 로그인 상태를 토큰을 통해 검증합니다. 또한 RefreshToken을 활용해 토큰 탈취에 대비합니다. */
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
-        log.info("access : {}", req.getRequestURI());
+        String requestURI = req.getRequestURI();
+        String clientIP = req.getRemoteAddr(); // 클라이언트 IP 주소
+        String userAgent = req.getHeader("User-Agent"); // User-Agent 정보
+
+        log.info("access : {}, IP : {}, User-Agent : {}", requestURI, clientIP, userAgent);
+
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER); // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         if (accessToken != null) { // accessToken 확인
             String accessTokenValue = jwtUtil.substringToken(accessToken); // accessToken 검증

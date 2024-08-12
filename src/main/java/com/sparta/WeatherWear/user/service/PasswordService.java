@@ -30,7 +30,7 @@ public class PasswordService {
         if(userRepository.existsByEmail(email)){
             String resetCode = UUID.randomUUID().toString(); // 임의의 코드 생성
             if(emailService.sendPasswordResetEmail(email, resetCode)){ // 메일 발송
-                redisService.save(RedisService.RESET_CODE_PREFIX,email,resetCode,RedisService.RESET_CODE_DURATION); // Redis에 저장
+                redisService.save(RedisService.RESET_CODE_PREFIX,resetCode,email,RedisService.RESET_CODE_DURATION); // Redis에 저장
                 return ResponseEntity.ok("메일 전송이 완료되었습니다.");
             }
         }

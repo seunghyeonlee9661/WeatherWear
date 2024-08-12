@@ -70,7 +70,6 @@ public class RecommendService {
         // 날씨값 찾기
         Weather weather = weatherRepository.getWeatherById(id).orElseThrow(()-> new IllegalArgumentException("날씨 ID가 올바르지 않습니다."));
 
-
         // 로그인한 사용자일 경우 각 항목에 대해 모두 추천 리스트를 받는다.
         if(userDetails != null){
             User user = userDetails.getUser();
@@ -113,17 +112,10 @@ public class RecommendService {
     protected List<? extends ResponseDTO> getBoardsByMyBoards(User user, Weather weather) {
         // 온도 차이
         int tmpGap = 3;
-        try {
-            // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
-            List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeatherWithScore(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
-            // 결과 반환
-            return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
-        } catch (Exception e) {
-            // 로그를 남기고 null 반환
-            // 로그를 사용하는 것이 좋습니다. (예: logger.error("Error fetching boards by my boards", e))
-            logger.error("Error fetching boards by my boards", e);
-            return null;
-        }
+        // 날씨 조건이 동일한 게시물의 목록을 불러옵니다.
+        List<Board> topBoards = boardRepository.findTopBoardsByUserAndWeatherWithScore(user.getId(), weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
+        // 결과 반환
+        return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
     }
 
 
@@ -198,7 +190,6 @@ public class RecommendService {
 
             // 네이버 API 검색어를 선정합니다 : 타입 + 성별
             String query = type.toString() + " " + user.getGender();
-            logger.info(query);
 
             // 검색 결과 저장을 위한 배열을 선언합니다.
             List<NaverProductResponseDTO> filteredProducts = new ArrayList<>();
