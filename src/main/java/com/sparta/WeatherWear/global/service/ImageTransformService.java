@@ -9,8 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
-
+/*
+작성자 : 이승현
+이미지 Webp로 변환하기 위한 기능
+*/
 @Service
 public class ImageTransformService  {
 

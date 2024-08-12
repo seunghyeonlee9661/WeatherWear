@@ -30,6 +30,7 @@ import java.util.Map;
 /*
  * 작성자 :
  * 날씨 정보 데이터를 받아서 처리합니다.
+ * 출처 : https://www.data.go.kr/data/15084084/openapi.do
  */
 @Service
 @RequiredArgsConstructor
@@ -46,15 +47,14 @@ public class WeatherService {
     private final AddressRepository addressRepository;
 
     /* 법정동 코드와 현재 시간으로 DB에서 날씨 정보를 찾아 반환합니다. */
-    /* 법정동 코드 -> 날씨 */
     @Transactional
     @Cacheable(value = "weather", key = "#id")
     public Weather getWeatherByAddress(Long id){
         Address address = addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Address not found"));
-        /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
-        // Weather 데이터를 조회하고 반환합니다.
-        return weatherRepository.findByAddressAndDate(address, Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))
+
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS); /* 현재 시간에 대해 분 값을 제외하여 확인합니다. (1시 24분 -> 1시) */
+
+        return weatherRepository.findByAddressAndDate(address, Date.from(now.plusHours(1).atZone(ZoneId.systemDefault()).toInstant()))  // Weather 데이터를 조회하고 반환합니다.
                 // Weather가 없는 경우 기상청 API에 날씨 정보를 요청합니다.
                 .orElseGet(() -> {
                     Weather newWeather = null;
@@ -71,12 +71,9 @@ public class WeatherService {
     }
 
     /* 위치와 날짜를 기반으로 API를 요청하고 날씨 정보를 받아옵니다. */
-    /* 출처 : https://www.data.go.kr/data/15084084/openapi.do */
-    /* 위치, 시간 -> 날씨 */
     private Weather getWeatherByAPI(Address address, LocalDateTime date) throws IOException {
         /* 현재 시간 값에 따른 API 요청 시간을 생성합니다.*/
         /* 단기 예보의 경우, 2시부터 3시간 간격으로 데이터를 생성합니다. 예보는 생성 시간 기준 +6시간이 생성됩니다. */
-        logger.info("date : " + date);
         String baseDate;
         String baseTime;
         /* 현재 시간이 2보다 작을 경우 전날 23시 */
@@ -96,8 +93,6 @@ public class WeatherService {
             }
             baseTime = String.format("%02d00", baseTimeHour);
         }
-        /* 요청을 위한 날짜와 시간 확인! */
-        logger.info("baseDate: " + baseDate + " | baseTime: " + baseTime);
 
         try {
             /* URL 생성*/
@@ -110,7 +105,6 @@ public class WeatherService {
                     "&base_time=" + URLEncoder.encode(baseTime, StandardCharsets.UTF_8) +
                     "&nx=" + URLEncoder.encode(String.valueOf(address.getNx()), StandardCharsets.UTF_8) +
                     "&ny=" + URLEncoder.encode(String.valueOf(address.getNy()), StandardCharsets.UTF_8);
-            logger.info("urlBuilder : " + urlBuilder);
 
             /* JSONObject를 처리해서 아이템 목록을 가져옵니다.*/
             JSONObject jsonResponse = getJsonObject(urlBuilder);
@@ -123,8 +117,6 @@ public class WeatherService {
             LocalDateTime compareDate = date.plusHours(1);
             String compareDateStr = compareDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String compareTimeStr = compareDate.format(DateTimeFormatter.ofPattern("HHmm"));
-            logger.info("compareDateStr : " + compareDateStr);
-            logger.info("compareTimeStr : " + compareTimeStr);
 
 
             /* 아이템 목록에서 필요한 데이터만 찾아서 Map에 저장 */
@@ -138,7 +130,6 @@ public class WeatherService {
                     weatherData.put(category, fcstValue);
                 }
             }
-            logger.info("weatherData" + weatherData);
             // Weather 객체에 저장하고 반환합니다.
             return new Weather(compareDateStr,compareTimeStr,address,
                     weatherData.getOrDefault("POP", null),

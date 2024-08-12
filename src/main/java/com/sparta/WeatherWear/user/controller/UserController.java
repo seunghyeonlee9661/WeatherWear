@@ -42,8 +42,6 @@ public class UserController {
         return ResponseEntity.ok(new UserResponseDTO(userDetails.getUser()));
     }
 
-
-    // FIXME : 데이터 DTO로 처리할 수 있도록 개선 필요
     /* 사용자 게시물 요청 */
     @GetMapping("/users/boards")
     public ResponseEntity<Page<SimpleBoardResponseDTO>> findUserBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -83,8 +81,8 @@ public class UserController {
 
     /* 사용자 정보 요청 */
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.logout(userDetails);
+    public ResponseEntity<String> logout(){
+        return userService.logout();
     }
 
     /* 카카오 로그인 콜백 처리 */
@@ -95,7 +93,7 @@ public class UserController {
 
     /* 추천 아이템들 불러오기 */
     @GetMapping("/recommends")
-    public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) {
+    public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) throws JsonProcessingException {
         return ResponseEntity.ok(recommendService.getRecommends(userDetails,id));
     }
 

@@ -1,5 +1,6 @@
 package com.sparta.WeatherWear.user.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.clothes.entity.Clothes;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
@@ -62,7 +63,7 @@ public class RecommendService {
     /*______________________Recommend___________________*/
 
     /* 모든 추천 아이템 불러오기 */
-    public List<List<? extends ResponseDTO>> getRecommends (UserDetailsImpl userDetails, long id){
+    public List<List<? extends ResponseDTO>> getRecommends (UserDetailsImpl userDetails, long id) throws JsonProcessingException {
         //반환을 위한 배열의 배열 선언
         List<List<? extends ResponseDTO> > recommendResponseDTOS = new ArrayList<>();
 
@@ -137,7 +138,6 @@ public class RecommendService {
             topBoards = boardRepository.findTopBoardsByWeatherWithScore(weather.getSKY(), weather.getPTY(), weather.getTMP() - tmpGap, weather.getTMP() + tmpGap);
         // 결과를 배열에 저장하고 반환합니다.
         return topBoards.stream().map(RecommendBoardResponseDTO::new).collect(Collectors.toList());
-
     }
 
 
@@ -180,8 +180,7 @@ public class RecommendService {
 
     /* 4. 네이버에서 아이템들을 추천해줍니다. */
     @Transactional(readOnly = true)
-    private List<? extends ResponseDTO> getNaverProductsByWeather(User user, Weather weather){
-        logger.info("네이버 아이템 추천 받기");
+    private List<? extends ResponseDTO> getNaverProductsByWeather(User user, Weather weather) throws JsonProcessingException {
 
         /* 기온에 맞는 옷 타입 배열 선언*/
         List<ClothesType> types = new ArrayList<>();
@@ -205,19 +204,15 @@ public class RecommendService {
             List<NaverProductResponseDTO> filteredProducts = new ArrayList<>();
             // 검색 결과 페이지 번호를 선언합니다.
             int start = 1;
-
             List<NaverProductResponseDTO> naverProducts;
             do {
                 // 검색어를 입력하고 네이버 API에 검색 결과를 받아옵니다.
-                naverProducts = naverShoppingService.searchProducts(query, 10, start);
-//                logger.info("naverProducts (start={}): {}", start, naverProducts.toString());
-
+                naverProducts = naverShoppingService.getProducts(query,start);
                 // 받아온 네이버 결과의 ID가 현재 위시리스트에 포함되어 있는지 확인합니다.
                 for (NaverProductResponseDTO product : naverProducts) {
                     // 받아온 네이버 결과의 ID가 현재 위시리스트에 포함되어 있는지 확인합니다.
                     if (!wishlistedProductIds.contains(product.getProductId())) {
                         // 포함되어 있지 않다면 리스트에 저장합니다.
-//                        logger.info("filteredProducts에 아이템 추가 : {}", product.toString());
                         // 저장되는 아이템에 검색어를 타입으로 추가합니다.
                         product.setType(type.name());
                         filteredProducts.add(product);
@@ -226,7 +221,6 @@ public class RecommendService {
                             break;
                         }
                     }else{
-//                        logger.info("이미 wishlist에 있는 아이템 : {}", product.toString());
                     }
                 }
                 // 다음 검색 결과 페이지를 요청합니다.
@@ -235,7 +229,6 @@ public class RecommendService {
             // 검색 결과를 저장합니다.
             response.addAll(filteredProducts);
         }
-//        logger.info("response : {}", response.toString());
         return response;
     }
 

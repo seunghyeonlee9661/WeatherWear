@@ -38,7 +38,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     /* 로그인 진행 및 JWT 토큰 반환 */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.info("로그인 시도");
         try {
             UserLoginRequestDTO requestDto = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequestDTO.class);
             return getAuthenticationManager().authenticate(
@@ -57,37 +56,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     /* 로그인 성공 */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
-        log.info("로그인 성공 및 JWT 생성");
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
-        // accessToken 생성 및 쿠키 추가
-        String accessToken = jwtUtil.createAccessToken(user);
-        // RefreshToken 생성 및 Redis 추가
-        String refreshToken = jwtUtil.createRefreshToken(user);
+        String accessToken = jwtUtil.createAccessToken(user); // accessToken 생성 및 쿠키 추가
+        String refreshToken = jwtUtil.createRefreshToken(user); // RefreshToken 생성 및 Redis 추가
         jwtUtil.addTokenToRedis(accessToken,refreshToken);
         jwtUtil.addTokenToCookie(accessToken,response);
-
-        // 성공 응답 전송
-        sendResponse(response, HttpStatus.OK, "로그인 성공");
+        sendResponse(response, HttpStatus.OK, "로그인 성공"); // 성공 응답 전송
     }
 
     /* 로그인 실패 */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        log.info("로그인 실패");
-        // 실패 응답 전송
-        sendResponse(response, HttpStatus.UNAUTHORIZED, "로그인 실패: " + failed.getMessage());
+        sendResponse(response, HttpStatus.UNAUTHORIZED, "로그인 실패: " + failed.getMessage()); // 실패 응답 전송
     }
 
-    /* 응답 전송 */
+    /* 로그인 결괄에 대해 응답 전송 */
     private void sendResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);  // 콘텐츠 타입을 JSON으로 설정
         response.setCharacterEncoding("UTF-8");  // 문자 인코딩을 UTF-8로 설정
         response.setStatus(status.value());  // 상태 코드 설정
-
-        // 응답 본문에 JSON 형태로 메시지 작성
-        Map<String, String> responseBody = new HashMap<>();
+        Map<String, String> responseBody = new HashMap<>(); // 응답 본문에 JSON 형태로 메시지 작성
         responseBody.put("message", message);
-
         ObjectMapper objectMapper = new ObjectMapper();
         PrintWriter out = response.getWriter();
         objectMapper.writeValue(out, responseBody);

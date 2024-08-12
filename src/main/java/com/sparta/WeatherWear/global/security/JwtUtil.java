@@ -33,10 +33,8 @@ JWT 생성, 검증을 맡은 클래스
 @Component
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; // Header KEY 값
-    //public static final String AUTHORIZATION_KEY = "auth"; // 사용자 권한 값의 KEY
     public static final String BEARER_PREFIX = "Bearer "; // Token 식별자
     private final long ACCESS_TOKEN_VALIDITY = 60 * 60 * 1000L; // Access Token 만료시간 : 1시간
-    private final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000L; // Refresh Token 만료시간 : 7일
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -79,7 +77,7 @@ public class JwtUtil {
         Date date = new Date();
         return Jwts.builder()
                         .setSubject(String.valueOf(user.getEmail())) // 사용자 식별자값(ID)
-                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_VALIDITY)) // 만료 시간
+                        .setExpiration(new Date(date.getTime() + RedisService.REFRESH_TOKEN_VALIDITY)) // 만료 시간
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
     }
@@ -99,11 +97,10 @@ public class JwtUtil {
     // Redis에 AccessToken과 RefreshToken 저장
     public void addTokenToRedis(String accessToken, String refreshToken) {
         String strippedAccessToken = substringToken(accessToken); // BEARER_PREFIX 제거
-        redisService.saveRefreshToken(strippedAccessToken, refreshToken, REFRESH_TOKEN_VALIDITY);
+        redisService.save(RedisService.REFRESH_TOKEN_PREFIX,strippedAccessToken, refreshToken, RedisService.REFRESH_TOKEN_VALIDITY);
     }
 
-
-    // JWT Cookie 삭제 : 이후 로그아웃과 같은 과정에서 필요!
+    // JWT Cookie 삭제
     public void removeJwtCookie(HttpServletResponse res) {
         Cookie accessTokenCookie = new Cookie(AUTHORIZATION_HEADER, null);
         accessTokenCookie.setPath("/");
@@ -143,20 +140,20 @@ public class JwtUtil {
         // 기존 토큰의 값 추출
         String strippedAccessToken = substringToken(accessToken); // BEARER_PREFIX 제거
         // 기존 토큰 값으로부터 Refresh Token을 Redis로부터 찾아옴
-        String storedRefreshToken = redisService.getRefreshToken(strippedAccessToken);
+        String storedRefreshToken = redisService.get(RedisService.REFRESH_TOKEN_PREFIX,strippedAccessToken);
         // Refresh Token이 올바른지 확인
         if (storedRefreshToken != null && validateToken(storedRefreshToken)) {
             // Refresh Token으로부터 사용자의 정보 추출
             String email = getUserInfoFromToken(storedRefreshToken).getSubject();
             User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
             // 기존 refreshToken 삭제
-            redisService.deleteRefreshToken(strippedAccessToken);
+            redisService.delete(RedisService.REFRESH_TOKEN_PREFIX,strippedAccessToken);
             // 새로운 Access Token 생성
             String newAccessToken = createAccessToken(user);
             // 새로운 Refresh Token 생성
             String newRefreshToken = createRefreshToken(user);
             // Redis에 새로운 Refresh Token 저장
-            redisService.saveRefreshToken(substringToken(newAccessToken), newRefreshToken, REFRESH_TOKEN_VALIDITY);
+            redisService.save(RedisService.REFRESH_TOKEN_PREFIX,substringToken(newAccessToken), newRefreshToken, RedisService.REFRESH_TOKEN_VALIDITY);
             return newAccessToken;
         }
         return null;

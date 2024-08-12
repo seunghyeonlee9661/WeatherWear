@@ -2,7 +2,6 @@ package com.sparta.WeatherWear.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.WeatherWear.board.entity.Comment;
-import com.sparta.WeatherWear.user.dto.UserSimpleDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

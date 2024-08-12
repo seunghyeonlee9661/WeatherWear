@@ -35,5 +35,4 @@ public class UserCreateRequestDTO {
 
     @NotNull(message = "생년월일을 선택해주세요.")
     private Date birthday;
-
 }

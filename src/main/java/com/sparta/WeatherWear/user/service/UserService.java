@@ -40,16 +40,6 @@ public class UserService {
     private final S3Service s3Service;
     private final ImageTransformService imageTransformService;
 
-    /* 사용자의 게시물 검색 기능 */
-    public ResponseEntity<Page<SimpleBoardResponseDTO>> findUserBoard(UserDetailsImpl userDetails, int page, Integer pty, Integer sky, String keyword){
-        Pageable pageable = PageRequest.of(page, 8, Sort.by(Sort.Order.desc("id")));
-        System.out.println(pty);
-        System.out.println(sky);
-        Page<Board> boardPage  = boardRepository.findByUserId(userDetails.getUser().getId(),pty,sky,keyword,pageable);
-        return ResponseEntity.ok(boardPage.map(SimpleBoardResponseDTO::new));
-    }
-
-
     /* 회원가입 */
     @Transactional
     public ResponseEntity<String> createUser(UserCreateRequestDTO userCreateRequestDTO){
@@ -91,7 +81,7 @@ public class UserService {
             url = s3Service.uploadFile(webPFile);
         }
         user.updateInfo(nickname,url);
-        userRepository.save(user); // Transactional 왜 안되는지 확인해야됨!!!
+        userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");
     }
 
@@ -108,9 +98,16 @@ public class UserService {
         return ResponseEntity.ok().body("User updated successfully");
     }
 
-    public ResponseEntity<String> logout(UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-
+    public ResponseEntity<String> logout() {
         return ResponseEntity.ok().body("User logout successfully");
+    }
+
+    /* 사용자의 게시물 검색 기능 */
+    public ResponseEntity<Page<SimpleBoardResponseDTO>> findUserBoard(UserDetailsImpl userDetails, int page, Integer pty, Integer sky, String keyword){
+        Pageable pageable = PageRequest.of(page, 8, Sort.by(Sort.Order.desc("id")));
+        System.out.println(pty);
+        System.out.println(sky);
+        Page<Board> boardPage  = boardRepository.findByUserId(userDetails.getUser().getId(),pty,sky,keyword,pageable);
+        return ResponseEntity.ok(boardPage.map(SimpleBoardResponseDTO::new));
     }
 }

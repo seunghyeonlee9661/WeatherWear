@@ -46,12 +46,4 @@ public class WishlistController {
     public ResponseEntity<String> removeWishlist(@PathVariable("id") long id,@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return wishlistService.removeWishlist(userDetails,id);
     }
-
-    /*______________________NaverShoping_______________________*/
-
-    /* 네이버 쇼핑 불러오기 */
-    @GetMapping("/naver/shopping")
-    public ResponseEntity<List<NaverProductResponseDTO>> findNaverProduct(@RequestParam(value = "query", required = true) String query, @RequestParam(value = "display", defaultValue = "10") int display,@RequestParam(value = "display", defaultValue = "1") int start) {
-        return ResponseEntity.ok(naverShoppingService.searchProducts(query,display,start));
-    }
 }

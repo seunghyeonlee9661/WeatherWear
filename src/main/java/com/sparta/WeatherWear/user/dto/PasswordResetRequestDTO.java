@@ -3,7 +3,10 @@ package com.sparta.WeatherWear.user.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
-
+/*
+작성자 : 이승현
+비밀번호 변경 DTO
+ */
 @Getter
 public class PasswordResetRequestDTO {
     String code;

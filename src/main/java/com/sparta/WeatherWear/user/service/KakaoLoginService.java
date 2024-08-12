@@ -135,7 +135,6 @@ public class KakaoLoginService {
 
         // HTTP 요청 보내기
         ResponseEntity<String> response = restTemplate.exchange(requestEntity,String.class);
-        System.out.println(response.getBody());
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
         Long id = jsonNode.get("id").asLong();

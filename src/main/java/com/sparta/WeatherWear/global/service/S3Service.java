@@ -2,7 +2,6 @@ package com.sparta.WeatherWear.global.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -11,12 +10,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/*
+작성자 : 이승현
+* S3에 파일을 업로드 하거나 삭제하는 역할을 수행합니다.
+*/
 @Service
 public class S3Service {
     private final S3Client s3Client;
@@ -31,22 +31,7 @@ public class S3Service {
         this.s3Client = s3Client;
     }
 
-
-    public String uploadFile(MultipartFile file) throws IOException {
-        String key = generateUniqueFileName();
-
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .build();
-
-        try (InputStream inputStream = file.getInputStream()) {
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
-        }
-
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
-    }
-
+     /* 파일 업로드 */
     public String uploadFile(File file) throws IOException {
         String key = generateUniqueFileName();
 
@@ -61,6 +46,7 @@ public class S3Service {
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, key);
     }
 
+    /* S3에 없는 유니크 이름을 생성하는 기능 */
     private String generateUniqueFileName() {
         String key;
         do {
@@ -69,6 +55,7 @@ public class S3Service {
         return key;
     }
 
+    /* 해당 이름이 현재 S3이 있는지 확인 */
     private boolean fileExistsInS3(String key) {
         try {
             s3Client.headObject(HeadObjectRequest.builder().bucket(bucketName).key(key).build());
@@ -78,6 +65,7 @@ public class S3Service {
         }
     }
 
+    /* 파일 삭제 기능 */
     public void deleteFileByUrl(String fileUrl) {
         String key = extractKeyFromUrl(fileUrl);
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
@@ -87,6 +75,7 @@ public class S3Service {
         s3Client.deleteObject(deleteObjectRequest);
     }
 
+    /* url로 부터 파일 이름을 추출하는 기능 */
     private String extractKeyFromUrl(String fileUrl) {
         String pattern = String.format("https://%s.s3.%s.amazonaws.com/(.*)", bucketName, region);
         Pattern r = Pattern.compile(pattern);
