@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.wishlist.dto;
 
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /*
@@ -9,6 +10,7 @@ import lombok.Setter;
 네이버 아이템 요청 DTO
  */
 @Getter
+@NoArgsConstructor
 public class NaverProductResponseDTO implements ResponseDTO {
     private Long productId;
     private String title;
