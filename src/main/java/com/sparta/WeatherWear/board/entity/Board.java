@@ -23,40 +23,41 @@ public class Board extends Timestamped {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // 회원 정보
 
     @Column(name = "address", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String address; // 주소
 
     @Column(name = "title", columnDefinition = "MEDIUMTEXT", nullable = false)
-    private String title;
+    private String title; // 제목
 
     @Column(name = "content", columnDefinition = "MEDIUMTEXT", nullable = false)
-    private String content;
+    private String content; // 내용
 
     @Column(name = "is_private")
-    private boolean isPrivate;
+    private boolean isPrivate; //  공개여부
 
     @ManyToOne
     @JoinColumn(name = "weather_id", nullable = false)
-    private Weather weather;
+    private Weather weather; // 날씨 정보
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<BoardLike> boardLikes = new ArrayList<>();
+    private List<BoardLike> boardLikes = new ArrayList<>(); // 게시물 좋아요
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>(); // 댓글
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<BoardTag> boardTags = new ArrayList<>();
+    private List<BoardTag> boardTags = new ArrayList<>(); // 옷 태그
 
     @Column(name = "image", nullable = false)
     private String boardImage; // 이미지
 
     // 이승현 : 조회수
     @Column(name = "views", nullable = true)
-    private int views;
+    private int views; // 조회수
 
+    // 게시물 생성
     public Board(BoardCreateRequestDto requestDto, User user, Weather weather, String imageUrl) {
         this.user = user;
         //
@@ -71,6 +72,7 @@ public class Board extends Timestamped {
         this.views = 0;
     }
 
+    // 댓글 추가
     public void addComment(Comment comment){
         this.comments.add(comment);
     }
@@ -95,15 +97,17 @@ public class Board extends Timestamped {
         return this;
     }
 
+    // 보드 태그 List 비우기
     public void clearBoardTags() {
         this.boardTags.clear();
     }
 
+    // 조회수 업데이트
     public void updateViews(int views) {
         this.views = views;
     }
 
-    // Example method to get Address ID from Weather
+    // Weather에서 Address ID 얻기
     public Long getAddressIdFromWeather() {
         return this.weather.getAddress().getId();
     }

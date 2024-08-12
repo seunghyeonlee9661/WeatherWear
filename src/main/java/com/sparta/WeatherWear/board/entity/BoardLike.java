@@ -16,11 +16,11 @@ public class BoardLike {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // 유저 정보
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    private Board board; // 게시물 정보
 
     public BoardLike(User user, Board board) {
         this.user = user;

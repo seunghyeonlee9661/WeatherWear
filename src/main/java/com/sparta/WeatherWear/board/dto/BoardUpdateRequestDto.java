@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,7 +15,6 @@ import java.util.List;
 public class BoardUpdateRequestDto {
 
     private Long Id;
-//    private Long boardUserId;
     private String address;
     private Long addressId;
     //
@@ -28,13 +26,4 @@ public class BoardUpdateRequestDto {
     //
     private List<ClothesRequestDTO> tags;
 
-    public BoardUpdateRequestDto(Long boardId, String address, Long addressId, String title, String contents, boolean isPrivate, List<ClothesRequestDTO> tags) {
-        this.Id = boardId;
-        this.addressId = addressId;
-        this.title = title;
-        this.contents = contents;
-        this.isPrivate = isPrivate;
-        this.tags = tags;
-
-    }
 }

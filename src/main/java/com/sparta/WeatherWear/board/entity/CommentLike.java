@@ -15,11 +15,11 @@ public class CommentLike {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // 유저 정보
 
     @ManyToOne
     @JoinColumn(name = "comment_id", nullable = false)
-    private Comment comment;
+    private Comment comment; // 댓글 정보
 
     public CommentLike(User user, Comment comment) {
         this.user = user;

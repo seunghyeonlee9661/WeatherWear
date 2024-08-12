@@ -12,17 +12,17 @@ import java.time.LocalDateTime;
 public class BoardImage{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; 
 
     @Column(name = "image_path", length = 255, nullable = false)
-    private String imagePath;
+    private String imagePath; // 이미지 경로
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
     private Board board; // FK
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; // 생성 시간
 
     public BoardImage(Board board, String imagePath) {
         this.board = board;

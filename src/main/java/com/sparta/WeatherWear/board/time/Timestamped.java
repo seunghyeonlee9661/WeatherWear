@@ -24,10 +24,10 @@ public abstract class Timestamped {
     @CreatedDate
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    protected LocalDateTime createdAt;
+    protected LocalDateTime createdAt; // 생성 시간
 
     @LastModifiedDate
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-    protected LocalDateTime updatedAt;
+    protected LocalDateTime updatedAt; // 업데이트 시간
 }

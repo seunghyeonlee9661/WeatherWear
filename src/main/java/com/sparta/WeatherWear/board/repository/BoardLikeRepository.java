@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
-    //BoardLike findByUserAndBoard(User user, Board board);
     Optional<BoardLike> findByUserAndBoard(User user, Board board);
     boolean existsByUserAndBoard(User user, Board board); // 사용자가 게시물을 좋아요를 했는지 확인하는 기능
 

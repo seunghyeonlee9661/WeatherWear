@@ -5,16 +5,12 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.WeatherWear.board.entity.Board;
-import com.sparta.WeatherWear.board.entity.BoardTag;
-import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 
 import com.sparta.WeatherWear.user.dto.SimpleUserDTO;
 import com.sparta.WeatherWear.weather.dto.SimpleWeatherResponseDTO;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

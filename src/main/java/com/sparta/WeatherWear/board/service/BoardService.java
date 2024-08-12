@@ -78,13 +78,8 @@ public class BoardService {
         // Board Entity -> db에 저장
         boardRepository.save(newBoard);
 
-        System.out.println("Created at: " + newBoard.getCreatedAt());
-        System.out.println("Updated at: " + newBoard.getUpdatedAt());
-
         // 추가 - 태그 저장 메서드 실행
         for (ClothesRequestDTO clothesRequestDTO: requestDto.getTags()) {
-            System.out.println("clothesRequestDTO.getColor() = " + clothesRequestDTO.getColor());
-            System.out.println("clothesRequestDTO.getType() = " + clothesRequestDTO.getType());
             BoardTag newBoardTag = new BoardTag(newBoard, clothesRequestDTO.getColor(), clothesRequestDTO.getType());
             boardTagRepository.save(newBoardTag);
             // Board Entity에 추가
@@ -282,37 +277,6 @@ public class BoardService {
             // 좋아요가 없는 경우, 추가
             boardLikeRepository.save(new BoardLike(user, board));
         }
-
-//        // 좋아요가 아예 없는 경우
-//        //FIXME : 좋아요가 아예 없는 경우는 의미가 없을거 같은데요??
-//        BoardLike newBoardLike = new BoardLike(user, board);
-//        if(board.getBoardLikes().isEmpty()) {
-//            board.getBoardLikes().add(newBoardLike);
-//            boardLikeRepository.save(newBoardLike);
-//            int boardLikes = board.getBoardLikes().size();
-//            return new ResponseEntity<>(boardLikes, HttpStatus.OK);
-//        }
-//
-//        // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
-//        //FIXME : findByUserAndBoard에 결과가 없는 경우 에러가 나기 때문에 Optional<Board>로 쓰시는게 좋습니다!
-//        // Optional은 존재 유무를 파악할 수 있습니다! 있으면 get 가능!
-//        BoardLike existingLike = boardLikeRepository.findByUserAndBoard(user, board);
-//        if (existingLike != null) {
-//            // User has already liked the post; remove the like
-//            board.getBoardLikes().remove(existingLike);
-//            boardLikeRepository.delete(existingLike);
-//        } else {
-//            // User has not liked the post; add the like
-//            BoardLike newBoardLike2 = new BoardLike(user, board);
-//            board.getBoardLikes().add(newBoardLike2);
-//            boardLikeRepository.save(newBoardLike2);
-//        }
-//        // FIXME : 좋아요 수 반환하도록 하신거 좋습니다!!!
-//        int boardLikes = board.getBoardLikes().size();
-//
-//        // Prepare the response
-//        Map<String, Integer> response = new HashMap<>();
-//        response.put("boardLikes", boardLikes);
 
         return new ResponseEntity<>( boardLikeRepository.countLikesByBoardId(boardId), HttpStatus.OK);
     }

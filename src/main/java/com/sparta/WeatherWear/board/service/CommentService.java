@@ -84,8 +84,7 @@ public class CommentService {
 
             // newBoard -> responseDto로 반환
             CommentCreateResponseDto responseDto = new CommentCreateResponseDto(updatedComment);
-            // Creating the ApiResponse object
-//            ApiResponse<CommentCreateResponseDto> response = new ApiResponse<>(200, "comment updated successfully", responseDto);
+
             // Returning the response entity with the appropriate HTTP status
             return new ResponseEntity<>("수정 완료", HttpStatus.OK);
         }else {
