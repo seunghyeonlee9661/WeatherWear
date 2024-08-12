@@ -1,6 +1,7 @@
 package com.sparta.WeatherWear.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sparta.WeatherWear.global.filter.CorsLoggingFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
@@ -28,6 +29,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -71,7 +73,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // CORS 설정
-                .cors(AbstractHttpConfigurer::disable) // WebMvcConfigurer의 CORS 설정을 사용하므로, SecurityFilterChain에서는 cors 설정을 비활성화
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
                 // CSRF 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 // 세션 관리 설정
@@ -113,6 +115,7 @@ public class SecurityConfig {
                                 .permitAll()
                 )
                 // JWT 필터 추가
+                .addFilterBefore(new CorsLoggingFilter(), CorsFilter.class) // CorsLoggingFilter 추가
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -152,10 +155,8 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용된 메소드
         configuration.setAllowedHeaders(Arrays.asList("*")); // 허용된 헤더
         configuration.setAllowCredentials(true); // 자격 증명 허용
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }
