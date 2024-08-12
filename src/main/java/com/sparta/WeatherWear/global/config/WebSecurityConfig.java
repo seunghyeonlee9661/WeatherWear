@@ -83,6 +83,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 불러오기
                         .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 불러오기 및 댓글 조회
                         .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll() // 게시물 정보 불러오기 및 댓글 조회
+                        .requestMatchers(HttpMethod.GET, "/health").permitAll() // 헬스 체크 허용
                         .anyRequest().authenticated() // 그 외 모든 요청 인증 처리
         );
         // 에러 처리를 위한 핸들러 설정
