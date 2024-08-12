@@ -55,7 +55,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM Board b " +
             "JOIN b.weather w " +
             "WHERE b.user.id = :userId " +
-            "AND (:pty IS NULL OR :sky IS NULL OR w.PTY = :pty OR w.SKY = :sky) " +
+            "AND ( " +
+            "  (:pty = 1 AND (w.PTY = 1 OR w.PTY = 2 OR w.PTY = 4)) " +
+            "  OR (:pty = 3 AND w.PTY = 3) " +
+            "  OR (:pty IS NULL AND (:sky IS NOT NULL AND w.SKY = :sky AND w.PTY = 0)) " +
+            ") " +
             "AND (:keyword IS NULL OR b.title LIKE CONCAT('%', :keyword, '%') OR b.content LIKE CONCAT('%', :keyword, '%')  OR b.address LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY b.id DESC")
     Page<Board> findByUserId(@Param("userId") Long userId,
