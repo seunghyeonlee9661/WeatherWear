@@ -73,7 +73,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // CORS 설정
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
                 // CSRF 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 // 세션 관리 설정
@@ -147,17 +147,17 @@ public class SecurityConfig {
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("Logout successful");
     }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // 명시적 출처 허용
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용된 메소드
-        configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
-        configuration.setAllowCredentials(true); // 자격 증명 허용
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+// 4번 시도
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // 명시적 출처 허용
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용된 메소드
+//        configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
+//        configuration.setAllowCredentials(true); // 자격 증명 허용
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }
