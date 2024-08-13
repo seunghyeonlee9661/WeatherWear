@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/kakao")
+@RequestMapping("/oauth/kakao")
 public class KakaoLoginController {
 
     @Value("${kakao.client.id}")
@@ -36,5 +36,4 @@ public class KakaoLoginController {
     public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoLoginService.kakaoLogin(code,response);
     }
-
 }
