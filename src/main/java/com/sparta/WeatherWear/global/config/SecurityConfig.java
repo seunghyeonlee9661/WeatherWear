@@ -4,7 +4,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.WeatherWear.global.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.filter.RequestLoggingFilter;
-import com.sparta.WeatherWear.global.filter.UserDetailsFilter;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
@@ -27,11 +26,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -74,15 +71,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-
                 // CORS 설정
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
                 // CSRF 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 // 세션 관리 설정
-                .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 접근 권한 설정
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
@@ -93,7 +87,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
                                 .requestMatchers(HttpMethod.POST, "/api/kakao/login").permitAll() // 카카오 로그인
                                 .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 접근
-                                .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 접근
+//                                .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 접근
                                 .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll() // 추천 아이템 접근
                                 .requestMatchers(HttpMethod.GET, "/health").permitAll() // 로드밸런서 상태 확인 요청
                                 .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll() // Swagger
@@ -102,9 +96,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 // 에러 핸들러 설정
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
-                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint))
                 // 로그인 처리 설정
                 .formLogin(formLogin ->
                         formLogin
@@ -123,7 +115,6 @@ public class SecurityConfig {
                 .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-                // UserDetailsFilter 추가
         return http.build();
     }
     /* 패스워드 인코딩 */

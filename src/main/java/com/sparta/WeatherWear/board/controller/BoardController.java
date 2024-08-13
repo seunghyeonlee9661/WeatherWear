@@ -44,8 +44,8 @@ public class BoardController {
 
     /* 상세 조회 : 게시물 id로 조회 */
     @GetMapping("/{boardId}")
-    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, HttpServletRequest request) {
-        return boardService.findBoardById(boardId,request);
+    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        return boardService.findBoardById(boardId, userDetails,request);
     }
 
 

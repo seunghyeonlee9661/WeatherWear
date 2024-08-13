@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -175,13 +176,5 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    }
-
-    public User getUserFromToken(String token) {
-        System.out.println("token : " + token);
-        if (token == null || token.isEmpty())  return null;
-        String tokenValue = substringToken(token);
-        System.out.println("tokenValue : " + tokenValue);
-        return validateToken(tokenValue) ? userRepository.findByEmail(getUserInfoFromToken(tokenValue).getSubject()).orElse(null) : null;
     }
 }
