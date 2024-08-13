@@ -136,11 +136,25 @@ public class KakaoLoginService {
         // HTTP 요청 보내기
         ResponseEntity<String> response = restTemplate.exchange(requestEntity,String.class);
 
+
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+
+        // 로그로 전체 응답 확인
+        log.info("Kakao API response: {}", jsonNode.toPrettyString());
+
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties").get("nickname").asText();
-        String email = jsonNode.get("kakao_account").get("email").asText();
-        String image = jsonNode.get("properties").get("profile_image").asText();
+
+        // nickname 처리
+        JsonNode propertiesNode = jsonNode.get("properties");
+        String nickname = propertiesNode != null && propertiesNode.get("nickname") != null ? propertiesNode.get("nickname").asText() : "No Nickname";
+
+        // email 처리
+        JsonNode kakaoAccountNode = jsonNode.get("kakao_account");
+        String email = kakaoAccountNode != null && kakaoAccountNode.get("email") != null ? kakaoAccountNode.get("email").asText() : "No Email";
+
+        // profile_image 처리
+        String image = propertiesNode != null && propertiesNode.get("profile_image") != null ? propertiesNode.get("profile_image").asText() : "No Image";
+
         return new KakaoUserResponseDto(id, nickname, email,image);
     }
 }
