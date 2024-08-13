@@ -24,7 +24,7 @@ public class KakaoLoginController {
     private final KakaoLoginService kakaoLoginService;
 
     /* 카카오 로그인 콜백 처리 */
-    @PostMapping("/login")
+    @GetMapping("/login")
     public void kakaoLogin(HttpServletResponse response) throws IOException {
         String kakaoLoginUrl = "https://kauth.kakao.com/oauth/authorize?client_id=" + kakaoClientId
                 + "&redirect_uri=" + kakaoRedirectUri
