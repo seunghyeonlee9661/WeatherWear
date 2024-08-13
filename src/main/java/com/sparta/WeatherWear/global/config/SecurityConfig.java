@@ -89,7 +89,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/users/callback/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/kakao/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/kakao/login").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll()
