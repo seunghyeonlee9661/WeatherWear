@@ -93,6 +93,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/health").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll() // Swagger 명세 경로 허용
+                                .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll() // Swagger UI 리소스 경로 허용
                                 .anyRequest().authenticated()
                 )
                 // 에러 핸들러 설정
