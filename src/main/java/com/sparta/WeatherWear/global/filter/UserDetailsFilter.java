@@ -31,14 +31,13 @@ public class UserDetailsFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        log.info("Processing request URI: {}", requestURI);
 
         // URL 패턴에 해당하는 요청인 경우에만 필터를 적용
-        if (requestURI.startsWith(urlPattern)) {
+        if (requestURI.matches(urlPattern.replace("**", ".*"))) {
+            log.info("Processing request URI: {}", requestURI); // 로그 추가
             String accessToken = jwtUtil.getTokenFromRequest(request, JwtUtil.AUTHORIZATION_HEADER);
             if (accessToken != null) {
                 String tokenValue = jwtUtil.substringToken(accessToken);
-                log.info("Extracted token value: {}", tokenValue);
 
                 // 토큰 검증
                 if (jwtUtil.validateToken(tokenValue)) {
@@ -46,7 +45,6 @@ public class UserDetailsFilter extends OncePerRequestFilter {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(tokenValue).getSubject());
                     if (userDetails != null) {
                         setAuthentication(userDetails, request);
-                        log.info("User authenticated: {}", userDetails.getUsername());
                     }
                 } else {
                     // 토큰이 만료된 경우 새 액세스 토큰 생성
@@ -55,17 +53,14 @@ public class UserDetailsFilter extends OncePerRequestFilter {
                         jwtUtil.addTokenToCookie(newAccessToken, response);
                         UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUtil.getUserInfoFromToken(newAccessToken).getSubject());
                         setAuthentication(userDetails, request);
-                        log.info("New Access Token issued and user authenticated: {}", userDetails.getUsername());
-                    } else {
-                        log.warn("Failed to refresh access token.");
+                        log.info("New Access Token issued for user: {}", userDetails.getUsername());
                     }
                 }
-            } else {
-                log.warn("No access token found in request.");
             }
         } else {
-            log.info("Request URI does not match URL pattern: {}", urlPattern);
+            log.info("Request URI does not match URL pattern: {}", requestURI);
         }
+
         filterChain.doFilter(request, response);
     }
 
