@@ -23,6 +23,6 @@ public class UserResponseDTO {
         this.nickname = user.getNickname();
         this.image = user.getImage();
         this.gender = user.getGender();
-        this.birthday =new SimpleDateFormat("yyyy MM dd").format(user.getBirthday());
+        this.birthday = (user.getBirthday() != null) ? new SimpleDateFormat("yyyy MM dd").format(user.getBirthday()) : null;
     }
 }
