@@ -73,6 +73,9 @@ public class BoardController {
     /* 게시물 좋아요 변경 */
     @PostMapping("/likes/{boardId}")
     public ResponseEntity<?> switchBoardLikes(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info("SecurityContext Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
+        log.info("UserDetails: {}", userDetails);
+        log.info("User: {}", userDetails != null ? userDetails.getUser() : "null");
         return boardService.switchBoardLikes(boardId, userDetails);
     }
 }
