@@ -18,7 +18,7 @@ public class KakaoLoginController {
     private final KakaoLoginService kakaoLoginService;
 
     /* 카카오 로그인 콜백 처리 */
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<String> kakaoLogin(@RequestBody Map<String, String> payload, HttpServletResponse response) throws JsonProcessingException {
         String code = payload.get("code");
         return kakaoLoginService.kakaoLogin(code,response);
