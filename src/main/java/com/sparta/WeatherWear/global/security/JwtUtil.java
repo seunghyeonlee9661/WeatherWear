@@ -89,6 +89,7 @@ public class JwtUtil {
             accessTokenCookie.setPath("/");
             accessTokenCookie.setHttpOnly(true);
             accessTokenCookie.setSecure(false);
+            accessTokenCookie.setAttribute("SameSite", "None"); // 외부 도메인에서도 쿠키를 전송
             res.addCookie(accessTokenCookie);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
