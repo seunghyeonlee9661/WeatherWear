@@ -88,6 +88,7 @@ public class JwtUtil {
             Cookie accessTokenCookie = new Cookie(AUTHORIZATION_HEADER, URLEncoder.encode(accessToken, "utf-8").replaceAll("\\+", "%20")); // Name-Value
             accessTokenCookie.setPath("/");
             accessTokenCookie.setHttpOnly(true);
+            accessTokenCookie.setSecure(false);
             res.addCookie(accessTokenCookie);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
