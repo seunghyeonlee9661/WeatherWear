@@ -120,8 +120,6 @@ public class SecurityConfig {
                                 .logoutSuccessHandler(this::handleLogoutSuccess)
                                 .permitAll()
                 )
-                // JWT 필터 추가
-                .addFilterBefore(new UserDetailsFilter("/api/boards/**", jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

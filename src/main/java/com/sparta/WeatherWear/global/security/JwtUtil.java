@@ -178,8 +178,10 @@ public class JwtUtil {
     }
 
     public User getUserFromToken(String token) {
+        System.out.println("token : " + token);
         if (token == null || token.isEmpty())  return null;
         String tokenValue = substringToken(token);
+        System.out.println("tokenValue : " + tokenValue);
         return validateToken(tokenValue) ? userRepository.findByEmail(getUserInfoFromToken(tokenValue).getSubject()).orElse(null) : null;
     }
 }
