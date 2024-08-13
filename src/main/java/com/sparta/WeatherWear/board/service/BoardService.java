@@ -96,20 +96,20 @@ public class BoardService {
     /* 게시물 id로 조회 */
     @Transactional
     public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails,HttpServletRequest request) {
-        Board board = boardRepository.findById(boardId).orElseThrow(()->
-                new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
-        );
+        Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("선택한 게시물은 없는 게시물입니다."));
 
         // user 정보 가져오기 (id)
         User user = null;
-        if(userDetails != null){
+        if(userDetails != null) {
             user = userDetails.getUser();
+            log.info("현재 사용자 : {}", user.getNickname());
         }
 
-        //
-        int views = board.getViews();
+
 
         if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
+            log.info("비공개로 막힘");
+            log.info("작성자 사용자 : {}", board.getUser().getId());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 게시물은 비공개 상태이므로 접근할 수 없습니다.");
         }
 
@@ -125,7 +125,6 @@ public class BoardService {
         }else{
             responseDto.setCheckLike(false);
         }
-
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
