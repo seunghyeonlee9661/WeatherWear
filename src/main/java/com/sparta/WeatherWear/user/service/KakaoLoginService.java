@@ -35,8 +35,6 @@ public class KakaoLoginService {
     @Value("${kakao.client.id}")
     private String client_id;
 
-    private String redirect_uri;
-
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
@@ -44,10 +42,7 @@ public class KakaoLoginService {
 
     public ResponseEntity<String> kakaoLogin(String code,String redirectUri, HttpServletResponse response) throws JsonProcessingException {
         // "인가 코드"로 "액세스 토큰" 요청
-        String accessToken = getToken(code);
-        this.redirect_uri = redirectUri;
-        log.info("redirectUri :{}",redirectUri);
-
+        String accessToken = getToken(code,redirectUri);
         // 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
         KakaoUserResponseDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
@@ -93,7 +88,7 @@ public class KakaoLoginService {
 
 
     // 카카오 토큰 처리
-    private String getToken(String code) throws JsonProcessingException {
+    private String getToken(String code,String redirectUri) throws JsonProcessingException {
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder.fromUriString("https://kauth.kakao.com").path("/oauth/token").encode().build().toUri();
 
@@ -102,11 +97,10 @@ public class KakaoLoginService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // HTTP Body 생성
-        log.info("redirectUri :{}",this.redirect_uri);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", client_id);
-        body.add("redirect_uri", this.redirect_uri);
+        body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
