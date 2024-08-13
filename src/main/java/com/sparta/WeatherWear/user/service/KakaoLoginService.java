@@ -34,6 +34,7 @@ public class KakaoLoginService {
 
     @Value("${kakao.client.id}")
     private String client_id;
+
     private String redirect_uri;
 
     private final PasswordEncoder passwordEncoder;
