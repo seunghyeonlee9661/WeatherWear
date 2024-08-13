@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /*
 작성자 : 이승현
@@ -34,7 +35,6 @@ public class UserController {
 
     private final UserService userService;
     private final RecommendService recommendService;
-    private final KakaoLoginService kakaoLoginService;
 
     /* 사용자 정보 요청 */
     @GetMapping("/users/me")
@@ -83,12 +83,6 @@ public class UserController {
     @GetMapping("/logout")
     public ResponseEntity<String> logout(){
         return userService.logout();
-    }
-
-    /* 카카오 로그인 콜백 처리 */
-    @GetMapping("/kakao/callback")
-    public ResponseEntity<String> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        return kakaoLoginService.kakaoLogin(code,response);
     }
 
     /* 추천 아이템들 불러오기 */
