@@ -34,8 +34,6 @@ public class KakaoLoginService {
 
     @Value("${kakao.client.id}")
     private String client_id;
-
-    @Value("${kakao.redirect.uri}")
     private String redirect_uri;
 
     private final PasswordEncoder passwordEncoder;
@@ -43,9 +41,10 @@ public class KakaoLoginService {
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
 
-    public ResponseEntity<String> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<String> kakaoLogin(String code,String redirectUri, HttpServletResponse response) throws JsonProcessingException {
         // "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
+        this.redirect_uri = redirectUri;
 
         // 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
         KakaoUserResponseDto kakaoUserInfo = getKakaoUserInfo(accessToken);
@@ -136,25 +135,17 @@ public class KakaoLoginService {
         // HTTP 요청 보내기
         ResponseEntity<String> response = restTemplate.exchange(requestEntity,String.class);
 
-
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
 
-        // 로그로 전체 응답 확인
-        log.info("Kakao API response: {}", jsonNode.toPrettyString());
-
         Long id = jsonNode.get("id").asLong();
-
         // nickname 처리
         JsonNode propertiesNode = jsonNode.get("properties");
         String nickname = propertiesNode != null && propertiesNode.get("nickname") != null ? propertiesNode.get("nickname").asText() : "No Nickname";
-
         // email 처리
         JsonNode kakaoAccountNode = jsonNode.get("kakao_account");
         String email = kakaoAccountNode != null && kakaoAccountNode.get("email") != null ? kakaoAccountNode.get("email").asText() : "No Email";
-
         // profile_image 처리
         String image = propertiesNode != null && propertiesNode.get("profile_image") != null ? propertiesNode.get("profile_image").asText() : "No Image";
-
         return new KakaoUserResponseDto(id, nickname, email,image);
     }
 }
