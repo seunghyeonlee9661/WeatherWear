@@ -18,8 +18,9 @@ public class RequestLoggingFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        logger.info("________________________________________________________");
         logger.info("Request URL: {}", httpRequest.getRequestURL());
-        logger.info("Request Method: {}", httpRequest.getMethod());
+//        logger.info("Request Method: {}", httpRequest.getMethod());
 
         // 필터 체인의 다음 필터로 요청을 전달
         chain.doFilter(request, response);
