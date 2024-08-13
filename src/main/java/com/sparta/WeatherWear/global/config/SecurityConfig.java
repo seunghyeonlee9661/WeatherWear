@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.WeatherWear.global.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.filter.RequestLoggingFilter;
+import com.sparta.WeatherWear.global.filter.UserDetailsFilter;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -72,6 +74,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
                 // CORS 설정
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
                 // CSRF 비활성화
@@ -120,10 +123,11 @@ public class SecurityConfig {
                 // JWT 필터 추가
                 .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                // UserDetailsFilter 추가
+                .addFilterBefore(new UserDetailsFilter("/api/boards/**", jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
     /* 패스워드 인코딩 */
     @Bean
     public PasswordEncoder passwordEncoder() {
