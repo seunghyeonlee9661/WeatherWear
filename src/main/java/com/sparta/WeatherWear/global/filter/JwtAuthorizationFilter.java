@@ -38,23 +38,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = req.getRequestURI();
 
-        // 쿠키 확인 및 로그 추가
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            Optional<Cookie> accessTokenCookie = Arrays.stream(cookies)
-                    .filter(cookie -> "access_token".equals(cookie.getName()))
-                    .findFirst();
-
-            if (accessTokenCookie.isPresent()) {
-                log.info("Found access_token cookie: {}", accessTokenCookie.get().getValue());
-            } else {
-                log.warn("No access_token cookie found");
-            }
-        } else {
-            log.warn("No cookies found in the request");
-        }
-
-
         String accessToken  = jwtUtil.getTokenFromRequest(req, JwtUtil.AUTHORIZATION_HEADER); // 액세스 토큰과 리프레시 토큰을 쿠키에서 가져옴
         if (accessToken != null) { // accessToken 확인
             String accessTokenValue = jwtUtil.substringToken(accessToken); // accessToken 검증

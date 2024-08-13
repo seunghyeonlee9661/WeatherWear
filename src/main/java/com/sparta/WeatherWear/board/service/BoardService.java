@@ -99,13 +99,8 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("선택한 게시물은 없는 게시물입니다."));
 
         // user 정보 가져오기 (id)
-        User user = null;
-        if(userDetails != null) {
-            user = userDetails.getUser();
-            log.info("현재 사용자 : {}", user.getNickname());
-        }
-
-
+        User user = userDetails != null ? userDetails.getUser() : null;
+        log.info(userDetails.getUser().getNickname());
 
         if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
             log.info("비공개로 막힘");
