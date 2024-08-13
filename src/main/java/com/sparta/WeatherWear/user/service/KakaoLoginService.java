@@ -45,6 +45,7 @@ public class KakaoLoginService {
         // "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
         this.redirect_uri = redirectUri;
+        log.info("redirectUri :{}",redirectUri);
 
         // 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
         KakaoUserResponseDto kakaoUserInfo = getKakaoUserInfo(accessToken);
@@ -100,10 +101,11 @@ public class KakaoLoginService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // HTTP Body 생성
+        log.info("redirectUri :{}",this.redirect_uri);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", client_id);
-        body.add("redirect_uri", redirect_uri);
+        body.add("redirect_uri", this.redirect_uri);
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
