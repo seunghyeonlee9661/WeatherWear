@@ -7,9 +7,12 @@ import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +29,7 @@ import java.util.List;
 @RequestMapping("/api/boards")
 public class BoardController {
 
+    private static final Logger log = LoggerFactory.getLogger(BoardController.class);
     @Autowired
     private final BoardService boardService;
 
@@ -39,6 +43,9 @@ public class BoardController {
     /* 상세 조회 : 게시물 id로 조회 */
     @GetMapping("/{boardId}")
     public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        log.info("SecurityContext Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
+        log.info("UserDetails: {}", userDetails);
+        log.info("User: {}", userDetails != null ? userDetails.getUser() : "null");
         return boardService.findBoardById(boardId, userDetails,request);
     }
 
