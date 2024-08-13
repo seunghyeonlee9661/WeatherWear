@@ -115,8 +115,10 @@ public class BoardService {
         BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
 
         // 현재 게시물을 사용자가 좋아요 했는지 확인하고 상태를 추가합니다.
-        if (user != null) {
-            responseDto.setCheckLike(boardLikeRepository.existsByUserAndBoard(user, board));
+        boolean flag =boardLikeRepository.existsByUserAndBoard(user, board);
+        System.out.println("flag =" + flag);
+        if (!flag) {
+            responseDto.setCheckLike(true);
         }else{
             responseDto.setCheckLike(false);
         }
