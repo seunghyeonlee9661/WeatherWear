@@ -176,4 +176,10 @@ public class JwtUtil {
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
+
+    public User getUserFromToken(String token) {
+        if (token == null || token.isEmpty())  return null;
+        String tokenValue = substringToken(token);
+        return validateToken(tokenValue) ? userRepository.findByEmail(getUserInfoFromToken(tokenValue).getSubject()).orElse(null) : null;
+    }
 }

@@ -10,6 +10,7 @@ import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
+import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.global.service.ImageTransformService;
 import com.sparta.WeatherWear.global.service.RedisService;
@@ -53,6 +54,8 @@ public class BoardService {
     private ImageTransformService imageTransformService;
     private S3Service s3Service;
     private RedisService redisService;
+    // New dependency
+    private final JwtUtil jwtUtil;
 
     /* 게시물 작성 */
     @Transactional
@@ -95,11 +98,9 @@ public class BoardService {
 
     /* 게시물 id로 조회 */
     @Transactional
-    public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails,HttpServletRequest request) {
+    public ResponseEntity<?> findBoardById(Long boardId,HttpServletRequest request) {
         Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("선택한 게시물은 없는 게시물입니다."));
-
-        // user 정보 가져오기 (id)
-        User user = userDetails != null ? userDetails.getUser() : null;
+        User user = jwtUtil.getUserFromToken(jwtUtil.getTokenFromRequest(request, JwtUtil.AUTHORIZATION_HEADER));
 
         if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
             log.info("비공개로 막힘");

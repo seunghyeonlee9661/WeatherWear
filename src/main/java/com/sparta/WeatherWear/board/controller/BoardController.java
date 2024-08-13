@@ -3,7 +3,9 @@ package com.sparta.WeatherWear.board.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.service.BoardService;
+import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -42,11 +44,8 @@ public class BoardController {
 
     /* 상세 조회 : 게시물 id로 조회 */
     @GetMapping("/{boardId}")
-    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
-        log.info("SecurityContext Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
-        log.info("UserDetails: {}", userDetails);
-        log.info("User: {}", userDetails != null ? userDetails.getUser() : "null");
-        return boardService.findBoardById(boardId, userDetails,request);
+    public ResponseEntity<?> findBoardById(@PathVariable Long boardId, HttpServletRequest request) {
+        return boardService.findBoardById(boardId,request);
     }
 
 
@@ -73,9 +72,6 @@ public class BoardController {
     /* 게시물 좋아요 변경 */
     @PostMapping("/likes/{boardId}")
     public ResponseEntity<?> switchBoardLikes(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("SecurityContext Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
-        log.info("UserDetails: {}", userDetails);
-        log.info("User: {}", userDetails != null ? userDetails.getUser() : "null");
         return boardService.switchBoardLikes(boardId, userDetails);
     }
 }
