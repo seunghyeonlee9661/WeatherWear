@@ -39,7 +39,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
+            // 로그: 로그인 시도
+            log.info("로그인 시도: {}", request.getRequestURI());
+
+            // 요청에서 로그인 정보를 읽어와 DTO로 변환
             UserLoginRequestDTO requestDto = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequestDTO.class);
+
+            // 로그: 사용자 정보
+            log.info("로그인 요청 사용자: {}", requestDto.getUsername());
+
+            // 인증 처리
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
                             requestDto.getUsername(),
@@ -48,7 +57,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     )
             );
         } catch (IOException e) {
-            log.error(e.getMessage());
+            // 로그: 로그인 처리 중 오류
+            log.error("로그인 처리 중 오류: {}", e.getMessage(), e);
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -57,29 +67,50 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
-        String accessToken = jwtUtil.createAccessToken(user); // accessToken 생성 및 쿠키 추가
-        String refreshToken = jwtUtil.createRefreshToken(user); // RefreshToken 생성 및 Redis 추가
-        jwtUtil.addTokenToRedis(accessToken,refreshToken);
-        jwtUtil.addTokenToCookie(accessToken,response);
-        sendResponse(response, HttpStatus.OK, "로그인 성공"); // 성공 응답 전송
+
+        // 로그: 로그인 성공
+        log.info("로그인 성공: 사용자 - {}", user.getNickname());
+
+        // AccessToken 및 RefreshToken 생성
+        String accessToken = jwtUtil.createAccessToken(user);
+        String refreshToken = jwtUtil.createRefreshToken(user);
+
+        // 로그: JWT 토큰 생성
+        log.info("JWT 토큰 생성: AccessToken - {}, RefreshToken - {}", accessToken, refreshToken);
+
+        // Redis 및 쿠키에 토큰 저장
+        jwtUtil.addTokenToRedis(accessToken, refreshToken);
+        jwtUtil.addTokenToCookie(accessToken, response);
+
+        // 성공 응답 전송
+        sendResponse(response, HttpStatus.OK, "로그인 성공");
     }
 
     /* 로그인 실패 */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        sendResponse(response, HttpStatus.UNAUTHORIZED, "로그인 실패: " + failed.getMessage()); // 실패 응답 전송
+        // 로그: 로그인 실패
+        log.warn("로그인 실패: {}", failed.getMessage());
+
+        // 실패 응답 전송
+        sendResponse(response, HttpStatus.UNAUTHORIZED, "로그인 실패: " + failed.getMessage());
     }
 
-    /* 로그인 결괄에 대해 응답 전송 */
+    /* 로그인 결과에 대해 응답 전송 */
     private void sendResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);  // 콘텐츠 타입을 JSON으로 설정
-        response.setCharacterEncoding("UTF-8");  // 문자 인코딩을 UTF-8로 설정
-        response.setStatus(status.value());  // 상태 코드 설정
-        Map<String, String> responseBody = new HashMap<>(); // 응답 본문에 JSON 형태로 메시지 작성
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(status.value());
+
+        Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", message);
+
         ObjectMapper objectMapper = new ObjectMapper();
         PrintWriter out = response.getWriter();
         objectMapper.writeValue(out, responseBody);
         out.flush();
+
+        // 로그: 응답 전송
+        log.info("응답 전송: 상태 - {}, 메시지 - {}", status, message);
     }
 }

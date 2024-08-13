@@ -67,32 +67,4 @@ public class BoardCreateResponseDto  {
         //
         this.commentsCount = board.getCommentsSize();
     }
-
-
-    // 게시물 조회 & 조회수 추가
-    public BoardCreateResponseDto(Board board, int views) {
-        this.id = board.getId();
-        // 사용자
-        this.user = new SimpleUserDTO(board.getUser());
-        // 게시물
-        this.title = board.getTitle();
-        this.contents = board.getContent();
-        this.isPrivate = board.isPrivate();
-        //시간
-        this.createdAt = board.getCreatedAt();
-        this.updatedAt = board.getUpdatedAt();
-        // 날씨
-        this.weather = new SimpleWeatherResponseDTO(board.getWeather());
-        this.address = board.getAddress();
-        //
-        this.boardLikesCount = board.getLikesSize();
-        //
-        // 보드의 태그 Response
-        this.tags = board.getBoardTags().stream().map(TagResponseDTO::new).collect(Collectors.toList());
-        //
-        this.image = board.getBoardImage();
-        this.views = views;
-        //
-        this.commentsCount = board.getCommentsSize();
-    }
 }

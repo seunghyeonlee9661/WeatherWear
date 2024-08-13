@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.WeatherWear.global.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
 import com.sparta.WeatherWear.global.filter.RequestLoggingFilter;
+import com.sparta.WeatherWear.global.filter.UserDetailsFilter;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -72,6 +74,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
                 // CORS 설정
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
                 // CSRF 비활성화
@@ -84,17 +87,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                                .requestMatchers("/error").permitAll()
-                                .requestMatchers("/api/login").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/users/callback/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/kakao/login").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/health").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll()
+                                .requestMatchers("/error").permitAll() // 오류
+                                .requestMatchers("/api/login").permitAll() // 로그인
+                                .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // 사용자 회원가입
+                                .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
+                                .requestMatchers(HttpMethod.POST, "/api/kakao/login").permitAll() // 카카오 로그인
+                                .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 접근
+                                .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 접근
+                                .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll() // 추천 아이템 접근
+                                .requestMatchers(HttpMethod.GET, "/health").permitAll() // 로드밸런서 상태 확인 요청
+                                .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll() // Swagger
                                 .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll() // Swagger 명세 경로 허용
                                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll() // Swagger UI 리소스 경로 허용
                                 .anyRequest().authenticated()
@@ -118,13 +120,12 @@ public class SecurityConfig {
                                 .logoutSuccessHandler(this::handleLogoutSuccess)
                                 .permitAll()
                 )
-                // JWT 필터 추가
                 .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                // UserDetailsFilter 추가
         return http.build();
     }
-
     /* 패스워드 인코딩 */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -159,7 +160,6 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용된 메소드
         configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
         configuration.setAllowCredentials(true); // 자격 증명 허용
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

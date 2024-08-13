@@ -88,6 +88,8 @@ public class JwtUtil {
             Cookie accessTokenCookie = new Cookie(AUTHORIZATION_HEADER, URLEncoder.encode(accessToken, "utf-8").replaceAll("\\+", "%20")); // Name-Value
             accessTokenCookie.setPath("/");
             accessTokenCookie.setHttpOnly(true);
+            accessTokenCookie.setSecure(true); // HTTPS에서만 전송
+            accessTokenCookie.setAttribute("SameSite", "None"); // 외부 도메인에서도 쿠키를 전송
             res.addCookie(accessTokenCookie);
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
@@ -173,5 +175,13 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public User getUserFromToken(String token) {
+        System.out.println("token : " + token);
+        if (token == null || token.isEmpty())  return null;
+        String tokenValue = substringToken(token);
+        System.out.println("tokenValue : " + tokenValue);
+        return validateToken(tokenValue) ? userRepository.findByEmail(getUserInfoFromToken(tokenValue).getSubject()).orElse(null) : null;
     }
 }

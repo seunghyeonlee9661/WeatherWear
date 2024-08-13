@@ -10,6 +10,7 @@ import com.sparta.WeatherWear.board.repository.BoardTagRepository;
 import com.sparta.WeatherWear.clothes.dto.ClothesRequestDTO;
 import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
+import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.global.service.ImageTransformService;
 import com.sparta.WeatherWear.global.service.RedisService;
@@ -53,6 +54,8 @@ public class BoardService {
     private ImageTransformService imageTransformService;
     private S3Service s3Service;
     private RedisService redisService;
+    // New dependency
+    private final JwtUtil jwtUtil;
 
     /* 게시물 작성 */
     @Transactional
@@ -95,21 +98,13 @@ public class BoardService {
 
     /* 게시물 id로 조회 */
     @Transactional
-    public ResponseEntity<?> findBoardById(Long boardId, UserDetailsImpl userDetails,HttpServletRequest request) {
-        Board board = boardRepository.findById(boardId).orElseThrow(()->
-                new IllegalArgumentException("선택한 게시물은 없는 게시물입니다.")
-        );
-
-        // user 정보 가져오기 (id)
-        User user = null;
-        if(userDetails != null){
-            user = userDetails.getUser();
-        }
-
-        //
-        int views = board.getViews();
+    public ResponseEntity<?> findBoardById(Long boardId,HttpServletRequest request) {
+        Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("선택한 게시물은 없는 게시물입니다."));
+        User user = jwtUtil.getUserFromToken(jwtUtil.getTokenFromRequest(request, JwtUtil.AUTHORIZATION_HEADER));
 
         if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
+            log.info("비공개로 막힘");
+            log.info("작성자 사용자 : {}", board.getUser().getId());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 게시물은 비공개 상태이므로 접근할 수 없습니다.");
         }
 
@@ -117,7 +112,7 @@ public class BoardService {
         if (redisService.incrementViewCount(getClientIp(request), boardId.toString())) { // 사용자 IP를 Redis에서 검색
             board.updateViews(board.getViews()+1); // Board 엔티티의 조회수 증가 메서드 호출
         }
-        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
+        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
 
         // 현재 게시물을 사용자가 좋아요 했는지 확인하고 상태를 추가합니다.
         boolean flag =boardLikeRepository.existsByUserAndBoard(user, board);
@@ -127,7 +122,6 @@ public class BoardService {
         }else{
             responseDto.setCheckLike(false);
         }
-
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 

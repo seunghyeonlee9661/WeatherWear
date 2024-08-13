@@ -19,10 +19,15 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+        // 요청 정보와 인증 오류에 대한 자세한 로그 기록
+        String requestURI = request.getRequestURI();
+        String clientIP = request.getRemoteAddr();
+        String method = request.getMethod();
+        String queryString = request.getQueryString();
 
-        // 로그 찍기
-        logger.error("Unauthorized request to URL: {}", request.getRequestURL());
-        logger.error("Exception message: {}", authException.getMessage());
+        logger.error("Unauthorized request: URI: {}, Method: {}, QueryString: {}, Client IP: {}",
+                requestURI, method, queryString, clientIP);
+        logger.error("Authentication error: {}", authException.getMessage(), authException);
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
