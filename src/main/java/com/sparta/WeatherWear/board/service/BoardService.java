@@ -117,7 +117,7 @@ public class BoardService {
         if (redisService.incrementViewCount(getClientIp(request), boardId.toString())) { // 사용자 IP를 Redis에서 검색
             board.updateViews(board.getViews()+1); // Board 엔티티의 조회수 증가 메서드 호출
         }
-        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board, views);
+        BoardCreateResponseDto responseDto = new BoardCreateResponseDto(board);
 
         // 현재 게시물을 사용자가 좋아요 했는지 확인하고 상태를 추가합니다.
         if (user != null) {
