@@ -110,6 +110,7 @@ public class JwtUtil {
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true); // HTTPS 환경에서만 전송
         accessTokenCookie.setMaxAge(0); // 쿠키 삭제
+        accessTokenCookie.setAttribute("SameSite", "None"); // 외부 도메인에서도 쿠키를 전송
         res.addCookie(accessTokenCookie);
     }
 
