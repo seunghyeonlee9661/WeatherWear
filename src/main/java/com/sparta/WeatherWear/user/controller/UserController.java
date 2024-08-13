@@ -81,12 +81,6 @@ public class UserController {
         return userService.removeUser(userDetails);
     }
 
-    /* 사용자 정보 요청 */
-    @GetMapping("/logout")
-    public ResponseEntity<String> logout(){
-        return userService.logout();
-    }
-
     /* 추천 아이템들 불러오기 */
     @GetMapping("/recommends")
     public ResponseEntity<List<List<? extends ResponseDTO>>> getRecommend(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(value = "id") Long id) throws JsonProcessingException {

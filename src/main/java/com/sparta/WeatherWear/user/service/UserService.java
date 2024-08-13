@@ -98,10 +98,6 @@ public class UserService {
         return ResponseEntity.ok().body("User updated successfully");
     }
 
-    public ResponseEntity<String> logout() {
-        return ResponseEntity.ok().body("User logout successfully");
-    }
-
     /* 사용자의 게시물 검색 기능 */
     public ResponseEntity<Page<SimpleBoardResponseDTO>> findUserBoard(UserDetailsImpl userDetails, int page, Integer pty, Integer sky, String keyword){
         Pageable pageable = PageRequest.of(page, 8, Sort.by(Sort.Order.desc("id")));
