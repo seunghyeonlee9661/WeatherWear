@@ -100,7 +100,6 @@ public class BoardService {
 
         // user 정보 가져오기 (id)
         User user = userDetails != null ? userDetails.getUser() : null;
-        log.info("비공개로 막힘");
 
         if (board.isPrivate() && (user == null || !board.getUser().getId().equals(user.getId()))) {
             log.info("비공개로 막힘");
