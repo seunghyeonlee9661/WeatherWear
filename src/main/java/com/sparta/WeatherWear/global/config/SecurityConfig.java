@@ -87,7 +87,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll() // 비밀번호 찾기 관련
                                 .requestMatchers(HttpMethod.POST, "/api/kakao/login").permitAll() // 카카오 로그인
                                 .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll() // 날씨 정보 접근
-//                                .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 접근
+                                .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시물 정보 접근
                                 .requestMatchers(HttpMethod.GET, "/api/recommends/**").permitAll() // 추천 아이템 접근
                                 .requestMatchers(HttpMethod.GET, "/health").permitAll() // 로드밸런서 상태 확인 요청
                                 .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll() // Swagger
