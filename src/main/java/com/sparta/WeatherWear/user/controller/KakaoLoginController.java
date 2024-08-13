@@ -2,6 +2,7 @@ package com.sparta.WeatherWear.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.WeatherWear.user.service.KakaoLoginService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "카카오 API", description = "카카오 로그인 API")
 @RequestMapping("/api/kakao")
 public class KakaoLoginController {
     private final KakaoLoginService kakaoLoginService;

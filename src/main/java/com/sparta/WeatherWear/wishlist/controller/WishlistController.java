@@ -7,6 +7,7 @@ import com.sparta.WeatherWear.wishlist.dto.WishlistResponseDTO;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.wishlist.service.NaverShoppingService;
 import com.sparta.WeatherWear.wishlist.service.WishlistService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "위시리스트 API", description = "옷 위시리스트")
 @RequestMapping("/api")
 public class WishlistController {
 

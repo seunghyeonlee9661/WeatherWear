@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.user.controller;
 import com.sparta.WeatherWear.user.dto.EmailRequestDTO;
 import com.sparta.WeatherWear.user.dto.PasswordResetRequestDTO;
 import com.sparta.WeatherWear.user.service.PasswordService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "비밀번호 찾기 API", description = "이메일 발송 및 처리")
 @RequestMapping("/api/password")
 public class PasswordResetController {
 

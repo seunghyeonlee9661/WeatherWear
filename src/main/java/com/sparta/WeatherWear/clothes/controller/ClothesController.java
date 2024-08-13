@@ -5,6 +5,7 @@ import com.sparta.WeatherWear.clothes.enums.ClothesColor;
 import com.sparta.WeatherWear.clothes.enums.ClothesType;
 import com.sparta.WeatherWear.clothes.service.ClothesService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.io.IOException;
  */
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "옷 API", description = "옷 관련 API")
 @RequestMapping("/api")
 public class ClothesController {
 

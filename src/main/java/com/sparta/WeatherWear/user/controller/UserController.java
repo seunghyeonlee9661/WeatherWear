@@ -10,6 +10,7 @@ import com.sparta.WeatherWear.user.service.RecommendService;
 import com.sparta.WeatherWear.user.service.UserService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.service.KakaoLoginService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "사용자 API", description = "사용자 관련 API")
 @RequestMapping("/api")
 public class UserController {
 

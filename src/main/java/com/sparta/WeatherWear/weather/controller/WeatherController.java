@@ -3,6 +3,7 @@ package com.sparta.WeatherWear.weather.controller;
 import com.sparta.WeatherWear.weather.dto.WeatherResponseDTO;
 import com.sparta.WeatherWear.weather.entity.Weather;
 import com.sparta.WeatherWear.weather.service.WeatherService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "날씨 API", description = "날씨 정보 API")
 @RequestMapping("/api")
 public class WeatherController {
 

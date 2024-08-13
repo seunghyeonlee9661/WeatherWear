@@ -5,6 +5,7 @@ import com.sparta.WeatherWear.board.dto.CommentCreateResponseDto;
 import com.sparta.WeatherWear.board.dto.CommentUpdateRequesteDto;
 import com.sparta.WeatherWear.board.service.CommentService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "댓글 API", description = "댓글 관련 API")
 @RequestMapping("/api/boards/")
 public class CommentController {
 
