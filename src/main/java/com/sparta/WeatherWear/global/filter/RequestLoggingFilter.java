@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class RequestLoggingFilter extends GenericFilterBean {
 
@@ -19,8 +20,9 @@ public class RequestLoggingFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         logger.info("________________________________________________________");
-        logger.info("Request URL: {}", httpRequest.getRequestURL());
-//        logger.info("Request Method: {}", httpRequest.getMethod());
+        // 요청 URL 및 쿠키 정보 로그
+        logger.info("Request URL: " + httpRequest.getRequestURL());
+        logger.info("Request Cookies: " + Arrays.toString(httpRequest.getCookies()));
 
         // 필터 체인의 다음 필터로 요청을 전달
         chain.doFilter(request, response);
