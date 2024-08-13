@@ -121,11 +121,11 @@ public class SecurityConfig {
                                 .permitAll()
                 )
                 // JWT 필터 추가
+                .addFilterBefore(new UserDetailsFilter("/api/boards/**", jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
                 // UserDetailsFilter 추가
-                .addFilterBefore(new UserDetailsFilter("/api/boards/**", jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     /* 패스워드 인코딩 */
