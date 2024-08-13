@@ -1,9 +1,9 @@
 package com.sparta.WeatherWear.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sparta.WeatherWear.global.filter.CorsLoggingFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthenticationFilter;
 import com.sparta.WeatherWear.global.filter.JwtAuthorizationFilter;
+import com.sparta.WeatherWear.global.filter.RequestLoggingFilter;
 import com.sparta.WeatherWear.global.handler.AuthenticationEntryPoint;
 import com.sparta.WeatherWear.global.security.JwtUtil;
 import com.sparta.WeatherWear.global.security.UserDetailsServiceImpl;
@@ -86,8 +86,10 @@ public class SecurityConfig {
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .requestMatchers("/api/login").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/users/callback/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/password/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/kakao/callback/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/kakao/callback/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/weathers/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll()
@@ -118,7 +120,7 @@ public class SecurityConfig {
                                 .permitAll()
                 )
                 // JWT 필터 추가
-//                .addFilterBefore(new CorsLoggingFilter(), CorsFilter.class) // CorsLoggingFilter 추가
+                .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
