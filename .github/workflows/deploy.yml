@@ -20,6 +20,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2  # AWS 리전 설정
 
+      - name: Create deployment package
+        run: zip -r deployment-package.zip ./
+
       - name: Upload application to S3
         run: |
           aws s3 cp deployment-package.zip s3://weatherwearbucket/WeatherWear-main.zip
