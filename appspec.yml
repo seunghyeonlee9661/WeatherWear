@@ -2,8 +2,8 @@ version: 0.0
 os: linux
 
 files:
-  - source: /home/ubuntu/spring/Weatherwear
-    destination: /home/ubuntu/deployments/Weatherwear
+  - source: ./
+    destination: /home/ubuntu/spring/Weatherwear
 
 hooks:
   BeforeInstall:

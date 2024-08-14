@@ -27,6 +27,9 @@ jobs:
         run: |
           aws s3 cp deployment-package.zip s3://weatherwearbucket/WeatherWear-main.zip
 
+      - name: Verify S3 upload
+        run: aws s3 ls s3://weatherwearbucket/WeatherWear-main.zip
+
       - name: Deploy to CodeDeploy
         run: |
           aws deploy create-deployment \
