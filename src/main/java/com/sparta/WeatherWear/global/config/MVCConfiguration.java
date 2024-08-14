@@ -22,7 +22,6 @@ import java.util.List;
  */
 @Configuration
 public class MVCConfiguration implements WebMvcConfigurer {
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
