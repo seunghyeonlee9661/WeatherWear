@@ -22,6 +22,7 @@ import java.util.List;
 @Tag(name = "댓글 API", description = "댓글 관련 API")
 @RequestMapping("/api/boards/")
 public class CommentController {
+
     private final CommentService commentService;
 
     /* 댓글 생성 */
