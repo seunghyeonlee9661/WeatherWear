@@ -25,5 +25,5 @@ jobs:
           aws deploy create-deployment \
             --application-name deploy-app \
             --deployment-group-name deploy-group \
-            --revision revisionType=S3,s3Location={bucket=weatherwearbucket,key=WeatherWear-main.zip} \
+            --s3-location bucket=weatherwearbucket,key=WeatherWear-main.zip,bundleType=zip\
             --description "WeatherWear Deploying new version"
