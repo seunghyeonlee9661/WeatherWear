@@ -6,6 +6,7 @@ LOGFILE="$LOGDIR/startup.log"
 
 # 로그 디렉토리 생성 (존재하지 않는 경우)
 mkdir -p $LOGDIR
+chown ubuntu:ubuntu $LOGDIR
 
 # 현재 시간 출력
 echo "Starting application at $(date)" >> $LOGFILE
