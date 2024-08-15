@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# 로그 파일 정의
-LOGFILE="/home/ubuntu/spring/WeatherWear/logs/startup.log"
+# 로그 파일 및 디렉토리 정의
+LOGDIR="/home/ubuntu/spring/WeatherWear/logs"
+LOGFILE="$LOGDIR/startup.log"
+
+# 로그 디렉토리 생성 (존재하지 않는 경우)
+mkdir -p $LOGDIR
 
 # 현재 시간 출력
 echo "Starting application at $(date)" >> $LOGFILE
