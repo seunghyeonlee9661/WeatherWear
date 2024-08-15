@@ -56,7 +56,8 @@ public class UserController {
 
     /* 사용자 정보 추가 */
     @PostMapping("/users")
-    public ResponseEntity<String> createUser(@RequestBody @Valid UserCreateRequestDTO requestDTO) {
+    public ResponseEntity<String> createUser( @Valid @RequestBody UserCreateRequestDTO requestDTO) {
+        System.out.println(requestDTO.getPassword().length());
         return userService.createUser(requestDTO);
     }
 
