@@ -65,10 +65,6 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    // 사용자가 좋아요한 게시물
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<CommentLike> commentLikes;
-
     // 사용자의 옷 목록
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Clothes> clothes;
