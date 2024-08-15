@@ -3,7 +3,6 @@ package com.sparta.WeatherWear.user.entity;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.BoardLike;
 import com.sparta.WeatherWear.board.entity.Comment;
-import com.sparta.WeatherWear.board.entity.CommentLike;
 import com.sparta.WeatherWear.clothes.entity.Clothes;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
 import com.sparta.WeatherWear.user.enums.UserGender;

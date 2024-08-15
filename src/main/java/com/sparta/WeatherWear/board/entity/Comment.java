@@ -28,9 +28,6 @@ public class Comment extends Timestamped {
     @Column(name = "contents", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String contents; // 내용물
 
-    @OneToMany(mappedBy = "comment") 
-    private List<CommentLike> commentLikes = new ArrayList<>(); // 댓글 좋아요
-
     public Comment(User user, Board board, String contents) {
         this.user = user;
         this.board = board;

@@ -40,5 +40,4 @@ public class GlobalExceptionHandler {
         // 모든 예외에 대해 기본적으로 500 에러와 메시지 반환
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + ex.getMessage());
     }
-
 }

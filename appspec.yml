@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: ./
-    destination: /home/ubuntu/spring/Weatherwear
+    destination: /home/ubuntu/spring/WeatherWear
 
 hooks:
   BeforeInstall:

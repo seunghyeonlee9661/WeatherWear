@@ -3,18 +3,13 @@ package com.sparta.WeatherWear.board.service;
 import com.sparta.WeatherWear.board.dto.*;
 import com.sparta.WeatherWear.board.entity.Board;
 import com.sparta.WeatherWear.board.entity.Comment;
-import com.sparta.WeatherWear.board.entity.CommentLike;
 import com.sparta.WeatherWear.board.repository.BoardRepository;
-import com.sparta.WeatherWear.board.repository.CommentLikeRepository;
 import com.sparta.WeatherWear.board.repository.CommentRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import com.sparta.WeatherWear.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,7 +27,6 @@ import java.util.Map;
 @Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final CommentLikeRepository commentLikeRepository;
     private final BoardRepository  boardRepository;
 
     /* 댓글 생성 */
@@ -99,39 +93,5 @@ public class CommentService {
             commentRepository.deleteById(commentId);
         }
         return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
-    }
-
-    public ResponseEntity<?> switchCommentLikes(Long commentId, UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-        Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new IllegalArgumentException("댓글을 찾을 수 없습니다"));
-
-        // 좋아요가 아예 없는 경우
-        CommentLike newCommentLike = new CommentLike(user, comment);
-        if(comment.getCommentLikes().isEmpty()) {
-            comment.getCommentLikes().add(newCommentLike);
-            commentLikeRepository.save(newCommentLike);
-            int commentLikes = comment.getCommentLikes().size();
-            return new ResponseEntity<>(commentLikes, HttpStatus.OK);
-        }
-
-        // 유저가 이미 좋아요 눌렀는 지 확인 & 성능 개선 필요
-        CommentLike existingLike = commentLikeRepository.findByUserAndComment(user, comment);
-
-        if (existingLike != null) {
-            // User has already liked the post; remove the like
-            comment.getCommentLikes().remove(existingLike);
-            commentLikeRepository.delete(existingLike);
-        } else {
-            // User has not liked the post; add the like
-            CommentLike newCommentLike2 = new CommentLike(user, comment);
-            comment.getCommentLikes().add(newCommentLike2);
-            commentLikeRepository.save(newCommentLike2);
-        }
-        int commentLikes = comment.getCommentLikes().size();
-
-        // Prepare the response
-        Map<String, Integer> response = new HashMap<>();
-        response.put("commentLikes", commentLikes);
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
