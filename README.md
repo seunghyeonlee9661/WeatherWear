@@ -1,4 +1,5 @@
 # WeatherWear
+<img src="https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/8d75ca45-6c1b-438b-aeb1-d7ee14b6a3a0/1.jpg?table=block&id=bf1f7ee6-9206-4982-b7bf-60211dc05a98&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1723881600000&signature=Ij18XWOmws8w_h_mYDgxVgdk-mViF7Kz7sjuMYWTXow&downloadName=1.jpg" width="700px;" alt=""/>
 
 ## 🌈 팀원 소개 BACK-END
 <table>
