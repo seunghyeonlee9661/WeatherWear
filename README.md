@@ -30,7 +30,7 @@
 	    :purple_heart: 2 <br />
 	    :purple_heart: 3 <br />
      	    </td>
-      <td align="center" rowspan="5">
+      <td align="center" rowspan="10">
 	    2024.07.19 ~ 2023.08.16 (약 4주)
       </td>
    <tr/>
