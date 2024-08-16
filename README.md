@@ -3,7 +3,7 @@
 
 
 
-## 🌈 팀원 소개
+## 🌈 팀원 소개 BACK-END
 <table>
 
   <tbody>
@@ -30,26 +30,9 @@
 	    :purple_heart: 2 <br />
 	    :purple_heart: 3 <br />
      	    </td>
-      <td align="center" rowspan="10">
+      <td align="center" rowspan="5">
 	    2024.07.19 ~ 2023.08.16 (약 4주)
       </td>
-   <tr/>
-   <tr>
-      <td align="center">
-	      <a href="https://github.com/summereuna" target="_blank">
-	      <img src="" width="200px;" alt=""/>
-	      <br />
-	      <sub>정은화<b>(Deputy team leader)</b></sub>
-	      </a>
-	      <br />
-       	      </td>
-	   <td align="left">
-	   summereuna@gmail.com
-     	    </td>
-      <td align="left">
-	    :purple_heart: 1 <br />
-	    :purple_heart: 2 <br />
-     	    </td>
    <tr/>
    <tr>
       <td align="center">
@@ -79,23 +62,6 @@
        	      </td>
       <td align="left">
 	   carry9691@gmail.com
-     	    </td>
-      <td align="left">
-	    :purple_heart: 1 <br />
-	    :purple_heart: 2 <br />
-     	    </td>
-   <tr/>
-   <tr>
-      <td align="center">
-	      <a href="https://github.com/GoGeunWoo" target="_blank">
-	      <img src="" alt=""/>
-	      <br />
-	      <sub><b>고근우(Team Member)</b></sub>
-	      </a>
-	      <br />
-       	      </td>
-      <td align="left">
-	   gkw0314@naver.com
      	    </td>
       <td align="left">
 	    :purple_heart: 1 <br />
