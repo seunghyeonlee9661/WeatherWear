@@ -139,7 +139,7 @@
 <img src="https://file.notion.so/f/f/580978a3-c9a7-47f5-bafb-ccd33c1fd74a/4e80565c-8046-42a7-a0dd-56f709b75f05/Untitled.png?table=block&id=4f08046d-8ed4-45e1-969a-b1c9f2bc6820&spaceId=580978a3-c9a7-47f5-bafb-ccd33c1fd74a&expirationTimestamp=1723874400000&signature=6GBXjW6ONfIF7Zedq18daQZ1EwQKR63HHG8omMPbFCI&downloadName=Untitled.png" width="800px;" alt=""/>
 
 ### 💚 성능 측정
-# Weather API 성능 테스트 결과 및 개선 방안
+## Weather API 성능 테스트 결과 및 개선 방안
 
 ## 1. 테스트 개요
 
@@ -160,7 +160,7 @@
 - **쿼리 최적화**: 인덱싱 및 쿼리 성능 개선
 - **비동기 처리 도입**: 긴 처리 작업을 비동기로 전환
 - **예외 처리 로직 개선**: 오류율 감소를 위해 예외 처리 강화
-- **모니터링 도구 도입**: 실시간 오류 대응 시스템 구축
+- **모니터링 도구(AWS Control Tower) 도입**: 실시간 오류 대응 시스템 구축
 
 [자세한 성능 테스트 결과 및 분석은 여기를 참조하세요](https://www.notion.so/weatherwer-f9f4ad791994422c8b5e24af9cfcae80?pvs=4) _(링크된 상세 문서로 이동)_
 
