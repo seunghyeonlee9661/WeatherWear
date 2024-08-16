@@ -3,23 +3,23 @@ name: Build and Deploy to AWS CodeDeploy
 on:
   push:
     branches:
-      - main  # 배포를 트리거할 브랜치
+      - main  # main 브랜치에 푸시될 때 배포 트리거
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 코드 체크아웃
         uses: actions/checkout@v3
 
-      - name: Set up JDK
+      - name: JDK 설정
         uses: actions/setup-java@v3
         with:
-          java-version: '17' # 필요한 Java 버전에 맞게 설정
+          java-version: '17'  # 필요한 Java 버전에 맞게 설정
 
-      - name: Build with Gradle
-        run: ./gradlew build # Gradle을 사용하는 경우
+      - name: 애플리케이션 빌드
+        run: ./gradlew build  # Gradle을 사용하는 경우 (Maven인 경우 mvn clean package로 수정)
         env:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
@@ -35,21 +35,20 @@ jobs:
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
 
-      - name: Create deployment package
+      - name: 배포 패키지 생성
         run: zip -r deployment-package.zip ./
 
-      - name: Upload application to S3
+      - name: 애플리케이션을 S3에 업로드
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
-        run: aws s3 cp deployment-package.zip s3://${{ secrets.AWS_S3_BUCKET_NAME }}/WeatherWear-main.zip
+          aws-region: ap-northeast-2  # AWS 리전 설정
 
-      - name: Verify S3 upload
+      - name: S3 업로드 검증
         run: aws s3 ls s3://${{ secrets.AWS_S3_BUCKET_NAME }}/WeatherWear-main.zip
 
-      - name: Deploy to CodeDeploy
+      - name: CodeDeploy로 배포
         run: |
           aws deploy create-deployment \
             --application-name ${{ secrets.CODEDEPLOY_APPLICATION_NAME }} \
