@@ -51,4 +51,10 @@ public class RedisService {
         Boolean result = redisTemplate.opsForValue().setIfAbsent(VIEW_LIMIT_PREFIX + userIp + ":" + boardId, "viewed", VIEW_LIMIT_DURATION, TimeUnit.MILLISECONDS);
         return result != null && result;
     }
+
+    // Redis에 저장된 토큰의 남은 유효 기간을 가져오는 메서드
+    public long getExpiration(String prefix, String key) {
+        Long expiration = redisTemplate.getExpire(prefix + key, TimeUnit.MILLISECONDS);
+        return expiration != null ? expiration : 0L;
+    }
 }
