@@ -1,7 +1,5 @@
 # WeatherWear
-<Main Page Image>
-
-
+<img src="https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/8d75ca45-6c1b-438b-aeb1-d7ee14b6a3a0/1.jpg?table=block&id=bf1f7ee6-9206-4982-b7bf-60211dc05a98&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1723881600000&signature=Ij18XWOmws8w_h_mYDgxVgdk-mViF7Kz7sjuMYWTXow&downloadName=1.jpg" width="700px;" alt=""/>
 
 ## 🌈 팀원 소개 BACK-END
 <table>
@@ -72,30 +70,13 @@
 </table>
 
 
-## 💚 프로젝트 소개
+### 💚 개발 목표
 
+### 💚 기술 스택
 
-
-
-## 💚 기술 아키텍처
-<img src="https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/b5b1d229-6c50-42bf-86cb-b8383c3ab6c0/image.png?table=block&id=ba04be01-f5a2-46f9-ad38-7f3c09b7f4d4&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1723874400000&signature=Upc2ig3DPDg5VIeCstwjaNZ2MynIhh6n0BZqRX4fJ8o&downloadName=image.png" width="800px;" alt=""/>
-
-
-
-## 💚 주요 기능
-
-
-
-## 💚 기능별 소개
-
-
-## 💚 성능 측정
-
-
-
-## 💚 ERD
+### 💚 ERD
 <img src="https://file.notion.so/f/f/580978a3-c9a7-47f5-bafb-ccd33c1fd74a/4e80565c-8046-42a7-a0dd-56f709b75f05/Untitled.png?table=block&id=4f08046d-8ed4-45e1-969a-b1c9f2bc6820&spaceId=580978a3-c9a7-47f5-bafb-ccd33c1fd74a&expirationTimestamp=1723874400000&signature=6GBXjW6ONfIF7Zedq18daQZ1EwQKR63HHG8omMPbFCI&downloadName=Untitled.png" width="800px;" alt=""/>
 
+### 💚 성능 측정
 
 
-## 💚 발표 자료
