@@ -139,22 +139,22 @@
 <img src="https://file.notion.so/f/f/580978a3-c9a7-47f5-bafb-ccd33c1fd74a/4e80565c-8046-42a7-a0dd-56f709b75f05/Untitled.png?table=block&id=4f08046d-8ed4-45e1-969a-b1c9f2bc6820&spaceId=580978a3-c9a7-47f5-bafb-ccd33c1fd74a&expirationTimestamp=1723874400000&signature=6GBXjW6ONfIF7Zedq18daQZ1EwQKR63HHG8omMPbFCI&downloadName=Untitled.png" width="800px;" alt=""/>
 
 ### 💚 성능 측정
-## Weather API 성능 테스트 결과 및 개선 방안
+### Weather API 성능 테스트 결과 및 개선 방안
 
-# 1. 테스트 개요
+##### 1. 테스트 개요
 
 - **테스트 대상**: Weather API
 - **테스트 툴**: Apache JMeter 5.6.3
 - **테스트 목표**: 1000명의 동시 사용자가 접속할 때 시스템 성능 분석
 
-# 2. 주요 성능 지표
+##### 2. 주요 성능 지표
 
 - **평균 응답 시간**: 984ms → **개선 후** 492ms
 - **최대 응답 시간**: 14971ms → **개선 후** 4500ms
 - **처리량**: 10.0/min → **개선 후** 12.0/min
 - **오류율**: 0.1% → **개선 후** 0.03%
 
-# 3. 성능 개선 요약
+##### 3. 성능 개선 요약
 
 - **Redis 캐싱 도입**: 자주 조회되는 데이터 캐싱으로 응답 시간 단축
 - **쿼리 최적화**: 인덱싱 및 쿼리 성능 개선
