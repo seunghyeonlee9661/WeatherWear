@@ -70,15 +70,15 @@
    <tr/>
    <tr>
       <td align="center">
-	      <a href="https://github.com/HaJunyoung" target="_blank">
+	      <a href="https://github.com/HanBeom98" target="_blank">
 	      <img src="" alt=""/>
 	      <br />
-	      <sub><b>하준영(Team Member)</b></sub>
+	      <sub><b>조한범(Team Member)</b></sub>
 	      </a>
 	      <br />
        	      </td>
       <td align="left">
-	   arizona19973@naver.com
+	   carry9691@gmail.com
      	    </td>
       <td align="left">
 	    :purple_heart: 1 <br />
@@ -87,15 +87,15 @@
    <tr/>
    <tr>
       <td align="center">
-	      <a href="https://github.com/HaJunyoung" target="_blank">
+	      <a href="https://github.com/GoGeunWoo" target="_blank">
 	      <img src="" alt=""/>
 	      <br />
-	      <sub><b>하준영(Team Member)</b></sub>
+	      <sub><b>고근우(Team Member)</b></sub>
 	      </a>
 	      <br />
        	      </td>
       <td align="left">
-	   arizona19973@naver.com
+	   gkw0314@naver.com
      	    </td>
       <td align="left">
 	    :purple_heart: 1 <br />
