@@ -12,6 +12,8 @@ import com.sparta.WeatherWear.user.entity.User;
 import com.sparta.WeatherWear.user.repository.UserRepository;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final Log log = LogFactory.getLog(UserService.class);
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
@@ -70,16 +73,21 @@ public class UserService {
         if(!user.getNickname().equals(nickname) && userRepository.existsByNickname(nickname)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Nickname is already taken.");
 
         String url = user.getImage();
+        log.info("사용자 이미지 확인");
         if(file == null || file.isEmpty()){
             if(deleteImage) {
                 url = null;
+                log.info("이미지 삭제");
                 s3Service.deleteFileByUrl(user.getImage());
             }
         }else{
+            log.info("이미지 수정");
             if(user.getImage() != null) s3Service.deleteFileByUrl(user.getImage());
             File webPFile = imageTransformService.convertToWebP(file);
+            log.info("이미지 업로드");
             url = s3Service.uploadFile(webPFile);
         }
+        log.info("이미지 url : " + url);
         user.updateInfo(nickname,url);
         userRepository.save(user);
         return ResponseEntity.ok().body("User updated successfully");
