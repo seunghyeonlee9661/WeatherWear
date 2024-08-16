@@ -17,8 +17,7 @@ public class RedisService {
     private RedisTemplate<String, String> redisTemplate;
 
     public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";    // 24시간 조회수 제한을 위한 상수
-//    public static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000L; // Refresh Token 만료시간 : 7일
-    public static final long REFRESH_TOKEN_VALIDITY = 60 * 1000L; // Refresh Token 만료시간 : 60초
+    public static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000L; // Refresh Token 만료시간 : 7일
 
     public static final String VIEW_LIMIT_PREFIX = "viewCount:";    // 24시간 조회수 제한을 위한 상수
     public static final long VIEW_LIMIT_DURATION = 24 * 60 * 60 * 1000; // 24시간을 밀리초로 표현
