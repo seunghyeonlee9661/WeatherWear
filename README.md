@@ -31,7 +31,7 @@
 	    :purple_heart: 3 <br />
      	    </td>
       <td align="center" rowspan="5">
-	    2022.12.22 ~ 2023.01.30 (약 5주)
+	    2024.07.19 ~ 2023.08.16 (약 4주)
       </td>
    <tr/>
    <tr>
@@ -45,6 +45,40 @@
        	      </td>
 	   <td align="left">
 	   summereuna@gmail.com
+     	    </td>
+      <td align="left">
+	    :purple_heart: 1 <br />
+	    :purple_heart: 2 <br />
+     	    </td>
+   <tr/>
+   <tr>
+      <td align="center">
+	      <a href="https://github.com/HaJunyoung" target="_blank">
+	      <img src="" alt=""/>
+	      <br />
+	      <sub><b>하준영(Team Member)</b></sub>
+	      </a>
+	      <br />
+       	      </td>
+      <td align="left">
+	   arizona19973@naver.com
+     	    </td>
+      <td align="left">
+	    :purple_heart: 1 <br />
+	    :purple_heart: 2 <br />
+     	    </td>
+   <tr/>
+   <tr>
+      <td align="center">
+	      <a href="https://github.com/HaJunyoung" target="_blank">
+	      <img src="" alt=""/>
+	      <br />
+	      <sub><b>하준영(Team Member)</b></sub>
+	      </a>
+	      <br />
+       	      </td>
+      <td align="left">
+	   arizona19973@naver.com
      	    </td>
       <td align="left">
 	    :purple_heart: 1 <br />
