@@ -71,12 +71,54 @@
 
 
 ### 💚 개발 목표
+<ul>
+	<li>날씨 & 유저 정보 & 다른 회원의 <</li>
+	<li><</li>
+	<li><</li>
+	<li><</li>
+	<li><</li>
+</ul>
+		
+### 💚 기술 스택 (이미지 형식으로 업로드 예정)
 
-### 💚 기술 스택
+1. 스프링부트
+2. JPA
+3. Java
+4. Gradle
+5. Spring Security
+6. NGNIX
+7. Route 53
+8. ELB
+9. EC2
+10. Github
+11. Github Actions
+12. S3
+13. CodeDeploy
+14. postman
+15. Redis
+16. MySQL
+17. Amazon RDS
+
+### 💚 주요 기능
+1. 유저 기능
+   1) 로그인 & 회원가입
+   2) Token
+   3) 위시리스트
+   4) 사용자 맞춤 옷 추천
+   5) 비밀번호 찾기 
+3. 날씨 정보
+   	1) 기상청 Open Api 호출
+5. 게시물 기능
+	1) 게시판 CRUD
+ 	2) 검색 기능 
+ 	3) 게시판 댓글
+  	4) 게시판 좋아요 기능   
+
+
 
 ### 💚 ERD
 <img src="https://file.notion.so/f/f/580978a3-c9a7-47f5-bafb-ccd33c1fd74a/4e80565c-8046-42a7-a0dd-56f709b75f05/Untitled.png?table=block&id=4f08046d-8ed4-45e1-969a-b1c9f2bc6820&spaceId=580978a3-c9a7-47f5-bafb-ccd33c1fd74a&expirationTimestamp=1723874400000&signature=6GBXjW6ONfIF7Zedq18daQZ1EwQKR63HHG8omMPbFCI&downloadName=Untitled.png" width="800px;" alt=""/>
 
 ### 💚 성능 측정
-
+1) Jmeter 측정표
 
