@@ -9,6 +9,7 @@ import com.sparta.WeatherWear.user.service.RecommendService;
 import com.sparta.WeatherWear.user.service.UserService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -73,8 +74,8 @@ public class UserController {
     }
     /* 사용자 정보 삭제 */
     @DeleteMapping("/users")
-    public ResponseEntity<String>  removeUser(@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return userService.removeUser(userDetails);
+    public ResponseEntity<String>  removeUser(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse res) throws IOException {
+        return userService.removeUser(userDetails,res);
     }
 
     /* 추천 아이템들 불러오기 */
