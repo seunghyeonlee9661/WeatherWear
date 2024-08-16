@@ -12,7 +12,13 @@ chown ubuntu:ubuntu $LOGDIR
 echo "Starting application at $(date)" >> $LOGFILE
 
 # 환경 변수 로드
-source /etc/profile
+if [ -f /home/ubuntu/spring/WeatherWear/env-vars.env ]; then
+    export $(grep -v '^#' /home/ubuntu/spring/WeatherWear/env-vars.env | xargs)
+    echo "Environment variables loaded from env-vars.env" >> $LOGFILE
+else
+    echo "Environment variables file not found!" >> $LOGFILE
+    exit 1
+fi
 
 # 애플리케이션 디렉토리로 이동
 echo "Changing directory to /home/ubuntu/spring/WeatherWear" >> $LOGFILE
