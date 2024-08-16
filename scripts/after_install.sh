@@ -24,8 +24,5 @@ aws s3 cp s3://${AWS_S3_BUCKET_NAME}/env-vars.env $ENV_VARS_FILE
 # 환경 변수 파일의 권한 설정
 chown ubuntu:ubuntu $ENV_VARS_FILE
 
-# 환경 변수 적용
-export $(grep -v '^#' /home/ubuntu/spring/WeatherWear/env-vars.env | xargs)
-
 # 로그 기록
 echo "$(date): Environment variables set." >> $LOGFILE

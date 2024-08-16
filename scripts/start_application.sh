@@ -13,12 +13,22 @@ echo "Starting application at $(date)" >> $LOGFILE
 
 # 환경 변수 로드
 if [ -f /home/ubuntu/spring/WeatherWear/env-vars.env ]; then
-    export $(grep -v '^#' /home/ubuntu/spring/WeatherWear/env-vars.env | xargs)
+    # 환경 변수 파일의 내용을 로그에 출력
+    echo "Loading environment variables from /home/ubuntu/spring/WeatherWear/env-vars.env" >> $LOGFILE
+    while IFS= read -r line; do
+        echo "Loading: $line" >> $LOGFILE
+    done < /home/ubuntu/spring/WeatherWear/env-vars.env
+
+    # 환경 변수 파일의 내용 로드
+    source /home/ubuntu/spring/WeatherWear/env-vars.env
+
+    # 환경 변수 적용 확인
     echo "Environment variables loaded from env-vars.env" >> $LOGFILE
 else
     echo "Environment variables file not found!" >> $LOGFILE
     exit 1
 fi
+
 
 # 애플리케이션 디렉토리로 이동
 echo "Changing directory to /home/ubuntu/spring/WeatherWear" >> $LOGFILE
