@@ -3,7 +3,7 @@
 
 
 
-## 🌈 팀원 소개
+## 🌈 팀원 소개 BACK-END
 <table>
 
   <tbody>
