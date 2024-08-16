@@ -24,7 +24,7 @@ public class EmailService {
             message.setFrom(String.format("%s <%s>", senderName, senderEmail)); // 발송자 이름과 이메일 주소 설정
             message.setSubject("Password Reset Request");
             //TODO : 사용자에게 비밀번호 재설정을 위해 전송할 웹 페이지 수정 필요
-            message.setText("To reset your password, please use the following link: " + "http://your-website.com/reset-password?token=" + token);
+            message.setText("To reset your password, please use the following link: " + "https://weatherwearclothing.com/login/find?token=" + token);
             emailSender.send(message); // 이메일 전송
             return true; // 전송 성공
         } catch (Exception e) { // 이메일 전송 실패 시 예외 처리

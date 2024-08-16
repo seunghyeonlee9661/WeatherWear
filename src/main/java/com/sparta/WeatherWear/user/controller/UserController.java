@@ -1,6 +1,5 @@
 package com.sparta.WeatherWear.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.WeatherWear.board.dto.BoardCreateResponseDto;
 import com.sparta.WeatherWear.board.dto.SimpleBoardResponseDTO;
 import com.sparta.WeatherWear.global.dto.ResponseDTO;
 import com.sparta.WeatherWear.user.dto.UserCreateRequestDTO;
@@ -9,9 +8,7 @@ import com.sparta.WeatherWear.user.dto.UserResponseDTO;
 import com.sparta.WeatherWear.user.service.RecommendService;
 import com.sparta.WeatherWear.user.service.UserService;
 import com.sparta.WeatherWear.global.security.UserDetailsImpl;
-import com.sparta.WeatherWear.user.service.KakaoLoginService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /*
 작성자 : 이승현
