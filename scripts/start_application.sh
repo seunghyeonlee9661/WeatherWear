@@ -11,6 +11,9 @@ chown ubuntu:ubuntu $LOGDIR
 # 현재 시간 출력
 echo "Starting application at $(date)" >> $LOGFILE
 
+# 환경 변수 로드
+source /etc/profile
+
 # 애플리케이션 디렉토리로 이동
 echo "Changing directory to /home/ubuntu/spring/WeatherWear" >> $LOGFILE
 cd /home/ubuntu/spring/WeatherWear >> $LOGFILE 2>&1
