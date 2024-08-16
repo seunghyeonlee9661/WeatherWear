@@ -162,7 +162,9 @@
 - **예외 처리 로직 개선**: 오류율 감소를 위해 예외 처리 강화
 - **모니터링 도구(AWS Control Tower) 도입**: 실시간 오류 대응 시스템 구축
 
-[자세한 성능 테스트 결과 및 분석은 여기를 참조하세요](https://www.notion.so/weatherwer-f9f4ad791994422c8b5e24af9cfcae80?pvs=4) _(링크된 상세 문서로 이동)_
+[**JMeter 날씨 1000명 부하**](https://www.notion.so/weatherwer-f9f4ad791994422c8b5e24af9cfcae80?pvs=4) _(링크된 상세 문서로 이동)_
+
+
 
 
 
