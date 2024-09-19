@@ -27,7 +27,7 @@ Welcome to **WeatherWear**! This project is the result of a team effort from the
 | [Project URL](https://weatherwearclothing.com/) | [Notion](https://www.notion.so/Weather-Wear-9e4122225f5d446489d14b9a028046f3) | [Project GitHub](https://github.com/WeatherWearTeam) |
 
 ## 🛠️ Tech Stack
-
+![image (2)](https://github.com/user-attachments/assets/f4e5e1f7-9609-4245-aa18-b82d43254f53)
 | Technology                                             | Description                                    | Reason                                                                                         |
 |--------------------------------------------------------|------------------------------------------------|------------------------------------------------------------------------------------------------|
 | ![Java & Spring Boot](https://img.shields.io/badge/-Java-ED8B00?style=for-the-badge&logo=java&logoColor=white) ![Spring Boot](https://img.shields.io/badge/-Spring%20Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white) | Java is a stable and widely-used object-oriented programming language. Spring Boot is an application framework based on the Spring framework. | Java provides strong performance and platform independence, while Spring Boot offers easy setup and faster development, enhancing productivity compared to the standard Spring framework. |
