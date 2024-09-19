@@ -2,32 +2,31 @@
 ![1 (1)](https://github.com/user-attachments/assets/d7c9202e-c07e-4521-a3a1-86305b9e09e7)
 
 ## Table of Contents
-1. [Project Introduction](#project-introduction)
-2. [Tech Stack](#tech-stack)
-3. [Project Structure](#project-structure)
-4. [Key Features](#key-features)
-5. [API Documentation](#api-documentation)
-6. [Testing](#testing)
-7. [Deployment](#deployment)
+1. [📄 Project Introduction](#project-introduction)
+2. [🛠️ Tech Stack](#tech-stack)
+3. [🗂️ Project Structure](#project-structure)
+4. [🌟 Key Features](#key-features)
+5. [📑 API Documentation](#api-documentation)
+6. [🧪 Testing](#testing)
+7. [🚀 Deployment](#deployment)
 
+## 📄 Project Introduction
+Welcome to **WeatherWear**! This project is the result of a team effort from the 2024 Sparta Coding Club - Innovation Camp.
 
-## Project Introduction
-This repository presents the results of a team project from the 2024 Sparta Coding Club - Innovation Camp.
+**WeatherWear** is an innovative system designed to recommend daily outfits based on the weather. By analyzing weather data from the user's location, it suggests appropriate outfits using factors such as clothing type and color.
 
-**WeatherWear** is a system designed to recommend daily outfits based on the weather. By analyzing the weather data based on the user's location, it suggests appropriate outfits using factors like clothing type and color.
+**Key Features**:
+- 🎯 **Personalized Outfit Recommendations**: Get daily outfit suggestions tailored to today's weather, your wardrobe, similar past outfits, and data from other users.
+- 🗣️ **OOTD Sharing**: Register and share your Outfit of the Day (OOTD) with others.
+- 🔍 **Search Functionality**: Search for outfits using keywords, weather icons, clothing types, and colors.
+- 🚀 **Future Enhancements**: Includes real-time notifications, event-based recommendations, and specific date suggestions.
+- ⚙️ **Performance Optimization**: Optimized for stable server performance through load testing.
 
-Key features include:
-- Personalized outfit recommendations based on today's weather, your wardrobe, similar past outfits, and other users' outfit choices.
-- Register and share your Outfit of the Day (OOTD).
-- Search for outfits using keywords, weather icons, clothing types, and colors.
-- Future updates will include real-time notifications, event-based outfit recommendations, and specific date suggestions.
-- Performance optimization through load testing for stable server operations.
+**Project URL**: [WeatherWear](https://weatherwearclothing.com/)  
+**Notion**: [Notion Page](https://www.notion.so/Weather-Wear-9e4122225f5d446489d14b9a028046f3)  
+**Project GitHub**: [GitHub Repository](https://github.com/WeatherWearTeam)
 
-**Project URL:** [https://weatherwearclothing.com/](https://weatherwearclothing.com/)  
-**Notion:** [https://www.notion.so/Weather-Wear-9e4122225f5d446489d14b9a028046f3](https://www.notion.so/Weather-Wear-9e4122225f5d446489d14b9a028046f3)  
-**Project GitHub:** [https://github.com/WeatherWearTeam](https://github.com/WeatherWearTeam)
-
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Technology                                             | Description                                    | Reason                                                                                         |
 |--------------------------------------------------------|------------------------------------------------|------------------------------------------------------------------------------------------------|
@@ -48,8 +47,7 @@ Key features include:
 | ![CodeDeploy](https://img.shields.io/badge/-AWS%20CodeDeploy-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS's deployment automation service. | Automates application deployment and management, offering various deployment strategies and rollback features for reliable deployments. Reduces manual errors and improves deployment efficiency. |
 | ![Amazon RDS](https://img.shields.io/badge/-AWS%20RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS's managed relational database service. | Automates backups, patching, and monitoring to reduce database management complexity. Provides improved operational efficiency and stability compared to self-managed databases. |
 
-
-## Project Structure
+## 🗂️ Project Structure
 <details>
 <summary>File Structure</summary>
 <pre>
@@ -82,7 +80,8 @@ src
  │    ├── 📂entity
  │    ├── 📂enums
  │    ├── 📂repository
- │    └── 📂service
+ │    ├── 📂service
+ │    └── 📂utils
  ├── 📂weather
  │    ├── 📂controller
  │    ├── 📂dto
@@ -90,7 +89,6 @@ src
  │    ├── 📂repository
  │    └── 📂service
  ├── 📂wishlist
- │    ├── 📂controller
  │    ├── 📂dto
  │    ├── 📂entity
  │    ├── 📂repository
@@ -99,72 +97,13 @@ src
 </pre>
 </details>
 
-### Domain-Specific Explanations
+## 🌟 Key Features
+- **Personalized Outfit Recommendations**: Get daily outfit suggestions tailored to today's weather, your wardrobe, similar past outfits, and data from other users.
+- **OOTD Sharing**: Register and share your Outfit of the Day (OOTD) with others.
+- **Search Functionality**: Search for outfits using keywords, weather icons, clothing types, and colors.
+- **Future Enhancements**: Includes real-time notifications, event-based recommendations, and specific date suggestions.
+- **Performance Optimization**: Optimized for stable server performance through load testing.
 
-- **board**: Manages OOTD (Outfit of the Day) posts and related comments.
-- **clothes**: Manages functionalities related to the list of clothes owned by the user.
-- **global**: Handles basic functionalities such as Redis, Spring Security, JUnit, image file management, error handling, and AWS EC2 health checks.
-- **user**: Manages user authorization and functionalities related to user accounts, including OAuth and external APIs.
-- **weather**: Fetches weather information from the Korea Meteorological Administration API and stores it in the database.
-- **wishlist**: Manages the retrieval of recommended items from the Naver Shopping API and stores them in the user's wishlist.
-
-## Key Features
-
-<details>
-<summary>Social Login</summary>
-<ul>
-    <li> 👉 Social login functionality is available to alleviate the inconvenience caused during the registration process.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/4616e8be-3dd1-4e98-852c-8b15b9690300" alt="Social Login GIF">
-</details>
-
-<details>
-<summary>Weather Information</summary>
-<ul>
-    <li>👉 Weather information can be obtained based on the user's location. You can choose or search for a desired area through Kakao Map to get weather information for that region. This feature provides a briefing on today's weather and recommends clothing suitable for the temperature.</li>
-</ul>
-<img width="1424" alt="스크린샷 2024-08-17 오후 4 33 54" src="https://github.com/user-attachments/assets/f1a7d44d-0acd-49dc-abbc-a7b11d611aba">
-<img width="1425" alt="스크린샷 2024-08-17 오후 4 32 28" src="https://github.com/user-attachments/assets/2b8ee837-1568-45d5-8dc5-83989e7bd566">
-<img width="1428" alt="스크린샷 2024-08-17 오후 4 29 11" src="https://github.com/user-attachments/assets/bbd04119-00e6-40a6-a50e-daa7bb79aa1b">
-</details>
-
-<details>
-<summary>Personalized Outfit Recommendations</summary>
-<ul>
-    <li>👉 Before going out, get personalized outfit recommendations based on today's weather data, the clothes registered in your wardrobe, similar outfits worn in similar weather, and data from other users.</li>
-</ul> 
-<img src="https://github.com/user-attachments/assets/4fdd56ae-1c72-42d3-b8e8-74b61cdf0910">
-</details>
-
-<details>
-<summary>Wishlist</summary>
-<ul>
-    <li>👉 Based on Naver Shopping API, recommend clothes suitable for the current weather. Favorite items can be saved to a wishlist. The wishlist provides information and purchase links for convenient shopping.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/69808e08-26b5-4119-822d-775160f1b3c9">
-</details>
-
-<details>
-<summary>Board & Comments</summary>
-<ul>
-    <li>👉 Users can register and share their Outfit of the Day (OOTD) with others. Comments can be freely added to the posts.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/f07f940d-5523-4eab-89fb-da3aa715c71c" alt="Board & Comments GIF">
-<img src="https://github.com/user-attachments/assets/1589a0d5-76b9-45d1-a504-27089fd86d36" alt="Comments GIF">
-</details>
-
-<details>
-<summary>Search Functionality</summary>
-<ul>
-    <li>👉 Search functionality to find desired information easily with keywords, weather icons, and clothing types/colors to enhance the search experience.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/2cd8ae06-b5b3-4371-9660-db93f0669c9c" alt="Board & Comments GIF">
-<img src="https://github.com/user-attachments/assets/5cbb9f41-6272-4ab0-94a1-ab4c3c57978a" alt="Board & Comments GIF">
-</details>
-
-
-
-## API Documentation
-For detailed API specifications and endpoints, please refer to the [Swagger UI](http://weatherwearapi.com/swagger-ui/index.html#/).
-
+## 📑 API Documentation
+You can view the API documentation using [Swagger UI](http://localhost:8080/swagger-ui.html).
 
