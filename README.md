@@ -105,7 +105,7 @@ src
 - **weather**: Fetches weather information from the Korea Meteorological Administration API and stores it in the database.
 - **wishlist**: Manages the retrieval of recommended items from the Naver Shopping API and stores them in the user's wishlist.
 
-## Key Features
+## 🌟 Key Features
 
 <details>
 <summary>Social Login</summary>
