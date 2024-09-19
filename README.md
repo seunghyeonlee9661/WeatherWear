@@ -22,9 +22,9 @@ Welcome to **WeatherWear**! This project is the result of a team effort from the
 - 🚀 **Future Enhancements**: Includes real-time notifications, event-based recommendations, and specific date suggestions.
 - ⚙️ **Performance Optimization**: Optimized for stable server performance through load testing.
 
-**Project URL**: [WeatherWear](https://weatherwearclothing.com/)  
-**Notion**: [Notion Page](https://www.notion.so/Weather-Wear-9e4122225f5d446489d14b9a028046f3)  
-**Project GitHub**: [GitHub Repository](https://github.com/WeatherWearTeam)
+| ![WeatherWear](https://img.shields.io/badge/-WeatherWear-FFD700?style=for-the-badge&logo=weather&logoColor=white) | ![Notion](https://img.shields.io/badge/-Notion-000000?style=for-the-badge&logo=notion&logoColor=white) | ![GitHub](https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white) |
+|:-------------------------------------------------:|:-----------------------------------------------------:|:-------------------------------------------------------:|
+| [Project URL](https://weatherwearclothing.com/) | [Notion](https://www.notion.so/Weather-Wear-9e4122225f5d446489d14b9a028046f3) | [Project GitHub](https://github.com/WeatherWearTeam) |
 
 ## 🛠️ Tech Stack
 
