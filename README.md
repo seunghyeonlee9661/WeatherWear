@@ -97,6 +97,14 @@ src
 </pre>
 </details>
 
+### Domain-Specific Explanations
+- **board**: Manages OOTD (Outfit of the Day) posts and related comments.
+- **clothes**: Manages functionalities related to the list of clothes owned by the user.
+- **global**: Handles basic functionalities such as Redis, Spring Security, JUnit, image file management, error handling, and AWS EC2 health checks.
+- **user**: Manages user authorization and functionalities related to user accounts, including OAuth and external APIs.
+- **weather**: Fetches weather information from the Korea Meteorological Administration API and stores it in the database.
+- **wishlist**: Manages the retrieval of recommended items from the Naver Shopping API and stores them in the user's wishlist.
+
 ## 🌟 Key Features
 - **Personalized Outfit Recommendations**: Get daily outfit suggestions tailored to today's weather, your wardrobe, similar past outfits, and data from other users.
 - **OOTD Sharing**: Register and share your Outfit of the Day (OOTD) with others.
