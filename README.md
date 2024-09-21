@@ -160,5 +160,5 @@ src
 </details>
 
 ## 📑 API Documentation
-You can view the API documentation using [Swagger UI](http://localhost:8080/swagger-ui.html).
+You can view the API documentation using [Swagger UI](http://weatherwearapi.com/swagger-ui/index.html).
 
