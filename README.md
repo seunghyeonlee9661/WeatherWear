@@ -162,6 +162,57 @@ src
 <img src="https://github.com/user-attachments/assets/5cbb9f41-6272-4ab0-94a1-ab4c3c57978a" alt="Board & Comments GIF">
 </details>
 
+## 🔨 Trouble Shooting
+<details>
+  <summary><strong>Improving Image Data Processing Efficiency through WebP Conversion</strong></summary>
+
+  <blockquote>
+    <strong>Problem</strong> ❗: The web service spent a significant amount of time fetching large images, affecting performance.<br>
+    <strong>Cause</strong> 🔍: The existing image formats (JPEG, PNG) resulted in larger file sizes, which led to slower image loading times.<br>
+    <strong>Solution</strong> ✅: WebP was chosen to reduce image size while maintaining quality, improving loading times and overall service performance.
+  </blockquote>
+</details>
+
+<details>
+  <summary><strong>Implementing RefreshToken Security for Preventing Token Theft and Enhancing User Convenience</strong></summary>
+
+  <blockquote>
+    <strong>Problem</strong> ❗: JWT tokens stored in cookies could be maliciously used if stolen, as the server did not track token states.<br>
+    <strong>Cause</strong> 🔍: Shortening token expiration times increased user login frequency, while longer expiration increased security risks.<br>
+    <strong>Solution</strong> ✅: Short-lived AccessTokens were combined with Redis-stored RefreshTokens, minimizing token theft risks and reducing user login frequency.
+  </blockquote>
+</details>
+
+<details>
+  <summary><strong>Performance Improvement through Caching of Recommended Items</strong></summary>
+
+  <blockquote>
+    <strong>Problem</strong> ❗: As the service's main screen repeatedly displayed complex recommendations, database load and response time increased.<br>
+    <strong>Cause</strong> 🔍: Complex computations on large datasets slowed down the recommendation process.<br>
+    <strong>Solution</strong> ✅: Redis was used as a cache to store recommendations for one hour, allowing faster retrieval and reducing server load.
+  </blockquote>
+</details>
+
+<details>
+  <summary><strong>net::ERR_CERT_COMMON_NAME_INVALID Error in Frontend Requests</strong></summary>
+
+  <blockquote>
+    <strong>Problem</strong> ❗: Frontend requests were failing with `net::ERR_CERT_COMMON_NAME_INVALID`, preventing requests from reaching the server.<br>
+    <strong>Cause</strong> 🔍: The frontend and backend shared a single domain, which caused issues with certificate CN and path settings.<br>
+    <strong>Solution</strong> ✅: Separated frontend and backend domains, and configured Nginx with the load balancer to route traffic correctly, ensuring requests were processed successfully.
+  </blockquote>
+</details>
+
+<details>
+  <summary><strong>CORS Issue during Frontend Requests</strong></summary>
+
+  <blockquote>
+    <strong>Problem</strong> ❗: The frontend experienced CORS errors when making requests to the backend in an HTTPS environment.<br>
+    <strong>Cause</strong> 🔍: The frontend sent HTTP requests in an HTTPS environment, violating CORS policies.<br>
+    <strong>Solution</strong> ✅: Installed SSL certificates on the load balancer and configured Nginx to handle HTTPS requests, resolving the CORS issue.
+  </blockquote>
+</details>
+
 ## 📑 API Documentation
 You can view the API documentation using [Swagger UI](http://weatherwearapi.com/swagger-ui/index.html).
 
