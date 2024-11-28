@@ -49,7 +49,7 @@
 | ![RDS](https://img.shields.io/badge/-AWS%20RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS의 관계형 데이터베이스 서비스입니다. | 데이터베이스의 설정, 운영, 확장 등을 자동으로 관리하여 편리한 데이터베이스 운영을 지원합니다. |
 
 
-## 🗂️ Project Structure
+## 🗂️ 프로젝트 구조
 <details>
 <summary>File Structure</summary>
 <pre>
@@ -98,14 +98,6 @@ src
  └── 📜WeatherWearApplication.java
 </pre>
 </details>
-
-### Domain-Specific Explanations
-- **board**: Manages OOTD (Outfit of the Day) posts and related comments.
-- **clothes**: Manages functionalities related to the list of clothes owned by the user.
-- **global**: Handles basic functionalities such as Redis, Spring Security, JUnit, image file management, error handling, and AWS EC2 health checks.
-- **user**: Manages user authorization and functionalities related to user accounts, including OAuth and external APIs.
-- **weather**: Fetches weather information from the Korea Meteorological Administration API and stores it in the database.
-- **wishlist**: Manages the retrieval of recommended items from the Naver Shopping API and stores them in the user's wishlist.
 
 ### 도메인 별 설명
 - **board**: OOTD(Outfit of the Day) 게시물과 관련된 댓글을 관리합니다.
