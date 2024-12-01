@@ -1,54 +1,47 @@
-# WeatherWear
+# ☂️ WeatherWear
 ![1 (1)](https://github.com/user-attachments/assets/d7c9202e-c07e-4521-a3a1-86305b9e09e7)
 
-## 목차
-1. [📄 프로젝트 소개](#프로젝트-소개)
-2. [🛠️ 기술 스택](#기술-스택)
-3. [🗂️ 프로젝트 구조](#프로젝트-구조)
-4. [🌟 주요 기능](#주요-기능)
-5. [📑 API 문서](#api-문서)
-6. [🧪 테스트](#테스트)
-7. [🚀 배포](#배포)
-
 ## 📄 프로젝트 소개
-**WeatherWear**에 오신 것을 환영합니다! 이 프로젝트는 2024년 스파르타 코딩클럽 이노베이션 캠프의 팀 프로젝트입니다.
-
-**WeatherWear**는 사용자의 위치에 따라 날씨 데이터를 분석하고, 이를 바탕으로 적절한 옷차림을 추천하는 혁신적인 시스템입니다.
-
-**주요 기능**:
-- 🎯 **맞춤형 옷차림 추천**: 오늘의 날씨, 개인적인 옷장, 비슷한 과거의 옷차림, 다른 사용자들의 데이터를 바탕으로 일일 추천 옷차림 제공.
-- 🗣️ **OOTD 공유**: 오늘의 옷차림(Outfit of the Day)을 등록하고 공유할 수 있습니다.
-- 🔍 **검색 기능**: 키워드, 날씨 아이콘, 의류 종류, 색상 등을 사용하여 옷차림을 검색할 수 있습니다.
-- 🚀 **향후 개선 사항**: 실시간 알림, 이벤트 기반 추천, 특정 날짜에 맞춘 추천 기능 등.
-- ⚙️ **성능 최적화**: 로드 테스트를 통한 서버 성능 최적화.
+**WeatherWear**는 사용자 위치와 날씨를 기반으로 옷을 추천하고 이를 공유할 수 있는 서비스의 API입니다. 해당 프로젝트는 다음과 같은 목표를 달성하고자 합니다.
+- **사용자 맞춤형 옷 추천**: 위치와 날씨 정보를 기반으로 최적의 옷을 추천합니다.
+- **Restful API 구축 및 클라이언트-서버 분리**: 유연한 시스템 설계로 유지보수성을 높입니다.
+- **AWS 기반 안정성 및 확장성 확보**: AWS 인프라를 활용해 안정적이고 확장 가능한 시스템을 제공합니다.
+- **트래픽 분산과 자동 확장**: AWS **ELB**와 **Auto Scaling**을 통해 트래픽을 분산하고 자원을 자동 확장합니다.
+- **성능 개선을 위한 캐시**: **AWS ElastiCache(Redis)**로 응답 시간을 단축하고 성능을 향상시킵니다.
+- **API 문서화 및 팀 통합**: **Swagger**로 API 명세서를 자동 생성하여 팀 간 협업을 지원합니다.
 
 [![WeatherWear](https://img.shields.io/badge/-WeatherWear-FFD700?style=for-the-badge&logo=weather&logoColor=white)](https://weatherwearclothing.com/) 
-[![Notion](https://img.shields.io/badge/-Notion-000000?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/Weather-Wear-9e4122225f5d446489d14b9a028046f3) 
+[![Notion](https://img.shields.io/badge/-Notion-000000?style=for-the-badge&logo=notion&logoColor=white)](https://leather-pixie-4bc.notion.site/WeatherWear-313dbd50df7c47eaacb3f3622c551905?pvs=74) 
 [![GitHub](https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/WeatherWearTeam) 
 [![Swagger](https://img.shields.io/badge/-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)](http://weatherwearapi.com/swagger-ui/index.html)
 
-## 🛠️ 기술 스택
-![image (2)](https://github.com/user-attachments/assets/f4e5e1f7-9609-4245-aa18-b82d43254f53)
-| 기술                                                     | 설명                                               | 선택 이유                                                                                          |
-|--------------------------------------------------------|--------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| ![Java & Spring Boot](https://img.shields.io/badge/-Java-ED8B00?style=for-the-badge&logo=java&logoColor=white) ![Spring Boot](https://img.shields.io/badge/-Spring%20Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white) | Java는 안정적이고 널리 사용되는 객체지향 프로그래밍 언어이며, Spring Boot는 Spring 프레임워크 기반의 애플리케이션 프레임워크입니다. | Java는 뛰어난 성능과 플랫폼 독립성을 제공하며, Spring Boot는 설정이 용이하고 개발 속도가 빨라 생산성을 향상시킵니다. |
-| ![JPA](https://img.shields.io/badge/-JPA-6DB33F?style=for-the-badge&logo=hibernate&logoColor=white) | Java Persistence API는 객체와 데이터베이스 간의 매핑을 지원합니다. | SQL을 작성하지 않고 객체 지향 방식으로 데이터베이스 작업을 할 수 있어 코드 가독성과 유지보수가 용이합니다. |
-| ![Gradle](https://img.shields.io/badge/-Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white) | 빌드 자동화 도구로 유연한 빌드 시스템과 종속성 관리를 지원합니다. | Maven보다 성능과 커스터마이징이 우수하며, 복잡한 빌드 구성을 위한 Groovy나 Kotlin DSL을 지원합니다. |
-| ![Spring Security](https://img.shields.io/badge/-Spring%20Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white) | Spring 애플리케이션을 위한 보안 프레임워크입니다. | OAuth2와 JWT와 같은 최신 보안 표준을 지원하며, 유연한 인증 및 권한 부여 기능을 제공합니다. |
-| ![NGINX](https://img.shields.io/badge/-NGINX-009639?style=for-the-badge&logo=nginx&logoColor=white) | HTTP와 HTTPS 간의 통신을 처리하는 웹 서버 및 리버스 프록시 서버입니다. | 높은 성능과 낮은 메모리 사용으로 웹 애플리케이션의 응답 시간을 개선하며, 로드 밸런싱 및 캐싱을 통해 성능을 향상시킵니다. |
-| ![Github](https://img.shields.io/badge/-Github-181717?style=for-the-badge&logo=github&logoColor=white) | 코드 버전 관리 및 협업 도구입니다. | 코드 협업 및 버전 관리를 지원하며, Pull Request와 Issues 기능을 통해 효율적인 개발 프로세스를 제공합니다. |
-| ![Github Actions](https://img.shields.io/badge/-Github%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white) | CI/CD 파이프라인 자동화 도구입니다. | GitHub와의 통합이 용이하며, 코드 변경 사항을 자동으로 빌드하고 테스트하며 배포합니다. |
-| ![Postman](https://img.shields.io/badge/-Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) | API 개발 및 테스트 도구입니다. | API 요청과 응답을 시각적으로 테스트할 수 있으며, 자동화 기능을 제공하여 개발 편의성을 높입니다. |
-| ![Redis](https://img.shields.io/badge/-Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) | 빠른 데이터 액세스 및 캐싱을 제공하는 인메모리 데이터베이스입니다. | 고성능 데이터 캐싱 및 세션 관리를 지원하며, 다른 데이터베이스에 비해 빠른 데이터 접근을 제공합니다. |
-| ![MySQL](https://img.shields.io/badge/-MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) | 오픈 소스 관계형 데이터베이스 관리 시스템입니다. | 안정적이고 성숙한 데이터베이스 시스템으로 관계형 데이터 모델을 지원하며 ACID 트랜잭션을 보장합니다. |
-| ![Route 53](https://img.shields.io/badge/-AWS%20Route%2053-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS의 DNS 웹 서비스입니다. | 고가용성과 빠른 응답 시간을 제공하며, 전 세계적인 지역에서 일관된 성능을 유지합니다. |
-| ![ELB](https://img.shields.io/badge/-AWS%20ELB-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS의 로드 밸런서 서비스입니다. | 트래픽을 분배하고 서버 부하를 줄여 애플리케이션의 가용성과 확장성을 높입니다. |
-| ![EC2](https://img.shields.io/badge/-AWS%20EC2-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS의 가상 서버 인스턴스 서비스입니다. | 서버 리소스를 유연하게 관리하고 고도의 확장성을 제공하며, 다양한 워크로드에 적합한 인스턴스를 선택할 수 있습니다. |
-| ![S3](https://img.shields.io/badge/-AWS%20S3-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS의 객체 스토리지 서비스입니다. | 다양한 저장 클래스와 쉬운 데이터 접근을 통해 신뢰할 수 있고 확장성 있는 데이터를 저장합니다. |
-| ![CodeDeploy](https://img.shields.io/badge/-AWS%20CodeDeploy-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS의 배포 자동화 서비스입니다. | 애플리케이션 배포를 자동화하여 일관된 배포 프로세스를 제공합니다. |
-| ![RDS](https://img.shields.io/badge/-AWS%20RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) | AWS의 관계형 데이터베이스 서비스입니다. | 데이터베이스의 설정, 운영, 확장 등을 자동으로 관리하여 편리한 데이터베이스 운영을 지원합니다. |
 
+## 🛠️ 기술 의사 결정
+![image](https://github.com/user-attachments/assets/4274dc34-13f1-4cd8-ad50-4e173e3c409f)
 
+### 주요 기술 스택
+| **기술**                          | **설명**                                                                                                                                           |
+|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Spring Boot**                  | 빠른 개발과 간단한 설정, 다양한 연계 기술 활용 가능                                                                                                          |
+| **Spring Security**              | OAuth2와 JWT를 통한 인증/인가 구현 및 보안 표준 준수                                                                                                          |
+| **NGINX**                        | SSL 처리와 로드 밸런싱으로 EC2 기반 웹 애플리케이션의 보안 및 응답 속도 향상                                                                                       |
+| **Postman & Swagger**            | API 요청 및 응답 테스트, 팀 간 API 통합 지원                                                                                                          |
+| **AWS ElastiCache (Redis)**      | RefreshToken을 통한 JWT 취약점 보완과 캐시 구현으로 성능 개선 및 자원 절약                                                                                       |
+| **AWS EC2 & ELB**                | 확장성과 가용성을 위한 서버 호스팅 및 로드 밸런싱                                                                                                           |
+| **AWS S3**                       | 이미지 파일 및 배포 아티팩트 저장/관리                                                                                                                    |
+| **Github Actions & AWS CodeDeploy** | CI/CD를 통한 자동 배포 및 코드 관리                                                                                                                      |
+#### 1. **AWS ElastiCache vs EC2 Redis**
+- 🟢 **장점**: ElastiCache는 AWS에서 간편하게 Redis 캐시를 처리할 수 있으며, AutoScaling으로 서버 확장에서 동시성 충돌을 방지합니다.  
+- 🔴 **단점**: 프로젝트 규모가 작으면 고가용성 기능을 활용할 수 없고, 비용이 증가할 수 있습니다.
+
+#### 2. **AWS S3 vs 서버 파일 시스템**
+- 🟢 **장점**: AWS S3는 확장성이 뛰어나고, 데이터 손실 걱정 없이 안정적인 저장소를 제공합니다.  
+- 🔴 **단점**: 보안 설정이 복잡하고, 외부 시스템과의 연동이 어려울 수 있습니다.
+
+#### 3. **Github Actions + AWS CodeDeploy**
+- 🟢 **장점**: 자동화된 배포와 빌드 과정을 지원하고, 다양한 배포 전략을 통해 유연한 배포 관리가 가능합니다.  
+- 🔴 **단점**: IAM 설정이 복잡하고, 추가적인 비용이 발생할 수 있습니다.
+ 
 ## 🗂️ 프로젝트 구조
 <details>
 <summary>File Structure</summary>
@@ -161,7 +154,7 @@ src
 <img src="https://github.com/user-attachments/assets/5cbb9f41-6272-4ab0-94a1-ab4c3c57978a" alt="게시판 & 댓글 GIF">
 </details>
 
-## 🔨 문제 해결
+## 🔨 트러블 슈팅
 
 <details>
   <summary><strong>WebP 변환을 통한 이미지 데이터 처리 효율성 향상</strong></summary>
@@ -213,6 +206,32 @@ src
   </blockquote>
 </details>
 
-## 📑 API 문서
-[Swagger UI](http://weatherwearapi.com/swagger-ui/index.html)에서 API 문서를 확인할 수 있습니다.
+## 🔗 성능 개선
+### **성능 측정 및 개선**
+#### 개요
+- **측정 목표** : `Redis Cache`를 적용하여 추천 결과를 캐싱하고 성능 개선
+- **측정 대상** : 메인 페이지에서 사용자 추천 결과 호출 기능
+- **측정 도구** : `Apache JMeter 5.6.3`
 
+#### 측정 과정
+1. **기존 추천 결과 측정**
+    - 1000명의 사용자가 추천 API를 10번 반복 호출하고 응답 시간을 기록
+2. **기존 기능을 개선 후 측정**
+    - 검색 결과를 사용자 ID를 기반으로 Redis에 저장하고 TTL 30분 적용
+    - 동일한 조건으로 성능 측정 후 응답 시간 기록
+3. **결과 분석**
+
+#### 측정 결과
+
+- **평균 응답 시간** : 984ms → **개선 후** 492ms `(+50%)`
+- **최대 응답 시간** : 14971ms → **개선 후** 4500ms `(+70%)`
+- **처리량** : 10.0/min → **개선 후** 12.0/min `(+20%)`
+- **오류율** : 0.1% → **개선 후** 0.03% `(+70%)`
+
+#### 결론
+- **Redis 성능 개선 효과**: 캐시를 통한 응답 시간 50% 개선, 최대 응답 시간 70% 감소, 처리량 20% 증가 등 성능 향상이 확실함.
+- **단점**: 캐시와 데이터 간 일관성 문제 발생 가능. 또한, 많은 사용자 요청 시 메모리 사용량 증가로 캐시 만료 위험 있음.
+- **추가 개선 방향**:
+    1. **일관성 문제 해결**: 새로고침 기능 및 데이터 변경 시 캐시 갱신
+    2. **캐시 최적화**: 캐시 데이터 용량 줄여 메모리 절약
+    3. **메모리 정책 적용**: `LRU` 또는 `LFU` 정책 적용하여 성능 저하 예방
