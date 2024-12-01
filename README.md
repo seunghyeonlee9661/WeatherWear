@@ -41,7 +41,61 @@
 #### 3. **Github Actions + AWS CodeDeploy**
 - 🟢 **장점**: 자동화된 배포와 빌드 과정을 지원하고, 다양한 배포 전략을 통해 유연한 배포 관리가 가능합니다.  
 - 🔴 **단점**: IAM 설정이 복잡하고, 추가적인 비용이 발생할 수 있습니다.
- 
+
+## 🌟 주요 기능
+
+<details>
+<summary>소셜 로그인</summary>
+<ul>
+    <li> 👉 소셜 로그인 기능을 제공하여 회원가입 시의 불편함을 덜어줍니다.</li>
+</ul>
+<img src="https://github.com/user-attachments/assets/4616e8be-3dd1-4e98-852c-8b15b9690300" alt="소셜 로그인 GIF">
+</details>
+
+<details>
+<summary>날씨 정보</summary>
+<ul>
+    <li>👉 사용자의 위치를 바탕으로 날씨 정보를 확인할 수 있습니다. 카카오 맵을 통해 원하는 지역을 검색하거나 선택하여 해당 지역의 날씨 정보를 확인할 수 있습니다. 이 기능은 오늘의 날씨를 안내하고, 해당 온도에 적합한 옷을 추천해줍니다.</li>
+</ul>
+<img width="1424" alt="스크린샷 2024-08-17 오후 4 33 54" src="https://github.com/user-attachments/assets/f1a7d44d-0acd-49dc-abbc-a7b11d611aba">
+<img width="1425" alt="스크린샷 2024-08-17 오후 4 32 28" src="https://github.com/user-attachments/assets/2b8ee837-1568-45d5-8dc5-83989e7bd566">
+<img width="1428" alt="스크린샷 2024-08-17 오후 4 29 11" src="https://github.com/user-attachments/assets/bbd04119-00e6-40a6-a50e-daa7bb79aa1b">
+</details>
+
+<details>
+<summary>개인화된 옷차림 추천</summary>
+<ul>
+    <li>👉 외출 전에 오늘의 날씨 데이터, 사용자 옷장에 등록된 옷, 비슷한 날씨에 착용한 옷, 다른 사용자의 데이터를 바탕으로 개인화된 옷차림을 추천합니다.</li>
+</ul> 
+<img src="https://github.com/user-attachments/assets/4fdd56ae-1c72-42d3-b8e8-74b61cdf0910">
+</details>
+
+<details>
+<summary>위시리스트</summary>
+<ul>
+    <li>👉 Naver Shopping API를 기반으로 현재 날씨에 적합한 옷을 추천합니다. 좋아요 표시된 아이템은 위시리스트에 저장할 수 있으며, 위시리스트에서는 해당 아이템에 대한 정보와 구매 링크를 제공합니다.</li>
+</ul>
+<img src="https://github.com/user-attachments/assets/69808e08-26b5-4119-822d-775160f1b3c9">
+</details>
+
+<details>
+<summary>게시판 & 댓글</summary>
+<ul>
+    <li>👉 사용자가 OOTD(Outfit of the Day)를 등록하고, 다른 사람들과 공유할 수 있습니다. 게시물에는 자유롭게 댓글을 추가할 수 있습니다.</li>
+</ul>
+<img src="https://github.com/user-attachments/assets/f07f940d-5523-4eab-89fb-da3aa715c71c" alt="게시판 & 댓글 GIF">
+<img src="https://github.com/user-attachments/assets/1589a0d5-76b9-45d1-a504-27089fd86d36" alt="댓글 GIF">
+</details>
+
+<details>
+<summary>검색 기능</summary>
+<ul>
+    <li>👉 키워드, 날씨 아이콘, 옷 종류/색상 등을 활용한 검색 기능으로 원하는 정보를 쉽게 찾을 수 있습니다.</li>
+</ul>
+<img src="https://github.com/user-attachments/assets/2cd8ae06-b5b3-4371-9660-db93f0669c9c" alt="게시판 & 댓글 GIF">
+<img src="https://github.com/user-attachments/assets/5cbb9f41-6272-4ab0-94a1-ab4c3c57978a" alt="게시판 & 댓글 GIF">
+</details>
+
 ## 🗂️ 프로젝트 구조
 <details>
 <summary>File Structure</summary>
@@ -99,60 +153,6 @@ src
 - **user**: 사용자 인증과 사용자 계정과 관련된 기능을 관리합니다. OAuth 및 외부 API와 관련된 기능도 포함됩니다.
 - **weather**: 기상청 API를 통해 날씨 정보를 가져와 데이터베이스에 저장합니다.
 - **wishlist**: Naver Shopping API에서 추천된 아이템을 가져와 사용자 위시리스트에 저장합니다.
-
-## 🌟 주요 기능
-
-<details>
-<summary>소셜 로그인</summary>
-<ul>
-    <li> 👉 소셜 로그인 기능을 제공하여 회원가입 시의 불편함을 덜어줍니다.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/4616e8be-3dd1-4e98-852c-8b15b9690300" alt="소셜 로그인 GIF">
-</details>
-
-<details>
-<summary>날씨 정보</summary>
-<ul>
-    <li>👉 사용자의 위치를 바탕으로 날씨 정보를 확인할 수 있습니다. 카카오 맵을 통해 원하는 지역을 검색하거나 선택하여 해당 지역의 날씨 정보를 확인할 수 있습니다. 이 기능은 오늘의 날씨를 안내하고, 해당 온도에 적합한 옷을 추천해줍니다.</li>
-</ul>
-<img width="1424" alt="스크린샷 2024-08-17 오후 4 33 54" src="https://github.com/user-attachments/assets/f1a7d44d-0acd-49dc-abbc-a7b11d611aba">
-<img width="1425" alt="스크린샷 2024-08-17 오후 4 32 28" src="https://github.com/user-attachments/assets/2b8ee837-1568-45d5-8dc5-83989e7bd566">
-<img width="1428" alt="스크린샷 2024-08-17 오후 4 29 11" src="https://github.com/user-attachments/assets/bbd04119-00e6-40a6-a50e-daa7bb79aa1b">
-</details>
-
-<details>
-<summary>개인화된 옷차림 추천</summary>
-<ul>
-    <li>👉 외출 전에 오늘의 날씨 데이터, 사용자 옷장에 등록된 옷, 비슷한 날씨에 착용한 옷, 다른 사용자의 데이터를 바탕으로 개인화된 옷차림을 추천합니다.</li>
-</ul> 
-<img src="https://github.com/user-attachments/assets/4fdd56ae-1c72-42d3-b8e8-74b61cdf0910">
-</details>
-
-<details>
-<summary>위시리스트</summary>
-<ul>
-    <li>👉 Naver Shopping API를 기반으로 현재 날씨에 적합한 옷을 추천합니다. 좋아요 표시된 아이템은 위시리스트에 저장할 수 있으며, 위시리스트에서는 해당 아이템에 대한 정보와 구매 링크를 제공합니다.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/69808e08-26b5-4119-822d-775160f1b3c9">
-</details>
-
-<details>
-<summary>게시판 & 댓글</summary>
-<ul>
-    <li>👉 사용자가 OOTD(Outfit of the Day)를 등록하고, 다른 사람들과 공유할 수 있습니다. 게시물에는 자유롭게 댓글을 추가할 수 있습니다.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/f07f940d-5523-4eab-89fb-da3aa715c71c" alt="게시판 & 댓글 GIF">
-<img src="https://github.com/user-attachments/assets/1589a0d5-76b9-45d1-a504-27089fd86d36" alt="댓글 GIF">
-</details>
-
-<details>
-<summary>검색 기능</summary>
-<ul>
-    <li>👉 키워드, 날씨 아이콘, 옷 종류/색상 등을 활용한 검색 기능으로 원하는 정보를 쉽게 찾을 수 있습니다.</li>
-</ul>
-<img src="https://github.com/user-attachments/assets/2cd8ae06-b5b3-4371-9660-db93f0669c9c" alt="게시판 & 댓글 GIF">
-<img src="https://github.com/user-attachments/assets/5cbb9f41-6272-4ab0-94a1-ab4c3c57978a" alt="게시판 & 댓글 GIF">
-</details>
 
 ## 🔨 트러블 슈팅
 
